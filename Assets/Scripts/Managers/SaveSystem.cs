@@ -1,37 +1,49 @@
-using UnityEngine;
 using System.IO;
+using UnityEngine;
 using ArrowBlast.Data;
 
 namespace ArrowBlast.Managers
 {
     public static class SaveSystem
     {
-        public static void SaveLevel(LevelData data, string fileName)
+        private static string SavePath => Path.Combine(Application.persistentDataPath, "Levels");
+
+        public static void SaveLevel(LevelData level, string levelName)
         {
-            string json = JsonUtility.ToJson(data, true);
-            string path = Path.Combine(Application.persistentDataPath, fileName + ".json");
-            File.WriteAllText(path, json);
-            Debug.Log("Saved level to " + path);
+            if (!Directory.Exists(SavePath))
+            {
+                Directory.CreateDirectory(SavePath);
+            }
+
+            string json = JsonUtility.ToJson(level, true);
+            string filePath = Path.Combine(SavePath, $"{levelName}.json");
+            File.WriteAllText(filePath, json);
+            
+            Debug.Log($"Level saved to: {filePath}");
         }
 
-        public static LevelData LoadLevel(string fileName)
+        public static LevelData LoadLevel(string levelName)
         {
-            // First check Resources (for Story mode logic usually)
-            // Or persistentDataPath
+            string filePath = Path.Combine(SavePath, $"{levelName}.json");
             
-            string path = Path.Combine(Application.persistentDataPath, fileName + ".json");
-            if (File.Exists(path))
+            if (File.Exists(filePath))
             {
-                string json = File.ReadAllText(path);
-                return JsonUtility.FromJson<LevelData>(json);
+                string json = File.ReadAllText(filePath);
+                LevelData level = JsonUtility.FromJson<LevelData>(json);
+                Debug.Log($"Level loaded from: {filePath}");
+                return level;
             }
-            
-            // As fallback check TextAsset in Resources if you implement that system
-            // TextAsset ta = Resources.Load<TextAsset>("Levels/" + fileName);
-            // if(ta) return JsonUtility.FromJson<LevelData>(ta.text);
+            else
+            {
+                Debug.LogWarning($"Level file not found: {filePath}");
+                return null;
+            }
+        }
 
-            Debug.LogError("Level file not found: " + fileName);
-            return null;
+        public static bool LevelExists(string levelName)
+        {
+            string filePath = Path.Combine(SavePath, $"{levelName}.json");
+            return File.Exists(filePath);
         }
     }
 }

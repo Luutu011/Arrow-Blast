@@ -1,19 +1,24 @@
 using UnityEngine;
+using System.Collections.Generic;
 using ArrowBlast.Core;
 
 namespace ArrowBlast.Game
 {
+    /// <summary>
+    /// 3D Arrow with MeshRenderer
+    /// Moves with 2D-style animation when collected
+    /// </summary>
     public class Arrow : MonoBehaviour
     {
         public BlockColor Color { get; private set; }
         public Direction ArrowDirection { get; private set; }
-        public int Length { get; private set; } // 1, 2, 3, 4
-        
+        public int Length { get; private set; }
+
         public int GridX { get; private set; }
         public int GridY { get; private set; }
 
-        [SerializeField] private SpriteRenderer bodyRenderer;
-        [SerializeField] private SpriteRenderer headRenderer;
+        [SerializeField] private MeshRenderer bodyRenderer;
+        [SerializeField] private MeshRenderer headRenderer;
         [SerializeField] private Color[] colorDefinitions;
 
         public void Init(BlockColor color, Direction dir, int length, int x, int y)
@@ -25,59 +30,93 @@ namespace ArrowBlast.Game
             GridY = y;
 
             UpdateVisuals();
-        }
 
-        public void UpdateGridPosition(int x, int y)
-        {
-            GridX = x;
-            GridY = y;
-            transform.localPosition = new Vector3(x, y, 0);
+            // Ensure collider is present and enabled
+            Collider col = GetComponent<Collider>();
+            if (col == null)
+            {
+                Debug.LogWarning($"[ARROW INIT] No collider found on arrow at ({x}, {y})! Adding BoxCollider.");
+                col = gameObject.AddComponent<BoxCollider>();
+                col.isTrigger = false;
+            }
+
+            col.enabled = true;
+            Debug.Log($"[ARROW INIT] Arrow initialized at ({x}, {y}), Collider: {col.GetType().Name}, Enabled: {col.enabled}");
         }
 
         public int GetAmmoAmount()
         {
-            // Length 1 = 10, 2 = 20, 3 = 20 (Wait, prompt said 3=20?), 4=40
-            // Prompt: 1=10, 2=20, 3=20, 4=40. 
-            // This might be a typo in prompt (3=30?), but I will follow instructions strictly.
-            // "Length 3 = 20 Ammo"
-            
             switch (Length)
             {
                 case 1: return 10;
                 case 2: return 20;
-                case 3: return 20; // Following prompt strictly
+                case 3: return 20;
                 case 4: return 40;
                 default: return 10;
             }
         }
 
-        public System.Collections.Generic.List<Vector2Int> GetOccupiedCells()
+        public List<Vector2Int> GetOccupiedCells()
         {
-            var cells = new System.Collections.Generic.List<Vector2Int>();
+            var cells = new List<Vector2Int>();
             Vector2Int head = new Vector2Int(GridX, GridY);
             cells.Add(head);
 
             Vector2Int back = Vector2Int.zero;
-            switch(ArrowDirection)
+            switch (ArrowDirection)
             {
-                case Direction.Up: back = new Vector2Int(0, 1); break; // Forward is GridY-1 (Up), Back is +1 (Down)
+                case Direction.Up: back = new Vector2Int(0, 1); break;
                 case Direction.Down: back = new Vector2Int(0, -1); break;
                 case Direction.Left: back = new Vector2Int(1, 0); break;
                 case Direction.Right: back = new Vector2Int(-1, 0); break;
             }
 
-            for(int i = 1; i < Length; i++)
+            for (int i = 1; i < Length; i++)
             {
                 cells.Add(head + back * i);
             }
             return cells;
         }
 
+        /// <summary>
+        /// Animate arrow moving from bottom grid to middle slot position (2D-style)
+        /// </summary>
+        public void AnimateToSlot(Vector3 targetPosition, System.Action onComplete = null)
+        {
+            StartCoroutine(MoveToSlotCoroutine(targetPosition, onComplete));
+        }
+
+        private System.Collections.IEnumerator MoveToSlotCoroutine(Vector3 target, System.Action onComplete)
+        {
+            Vector3 start = transform.position;
+            float duration = 0.5f;
+            float elapsed = 0;
+
+            while (elapsed < duration)
+            {
+                elapsed += Time.deltaTime;
+                float t = Mathf.Clamp01(elapsed / duration);
+
+                // Smooth ease out
+                t = 1f - Mathf.Pow(1f - t, 2f);
+
+                // Move in 2D plane (XY only, Z stays 0)
+                Vector3 currentPos = Vector3.Lerp(start, target, t);
+                currentPos.z = 0;
+                transform.position = currentPos;
+
+                yield return null;
+            }
+
+            transform.position = target;
+            onComplete?.Invoke();
+        }
+
         private void UpdateVisuals()
         {
-            // Rotate based on direction
+            // Rotate based on direction (2D rotation on Z axis)
             float rotZ = 0;
-            switch(ArrowDirection)
+            switch (ArrowDirection)
             {
                 case Direction.Up: rotZ = 0; break;
                 case Direction.Right: rotZ = -90; break;
@@ -90,32 +129,16 @@ namespace ArrowBlast.Game
             if (colorDefinitions != null && (int)Color < colorDefinitions.Length)
             {
                 Color c = colorDefinitions[(int)Color];
-                if(bodyRenderer) bodyRenderer.color = c;
-                if(headRenderer) headRenderer.color = c;
+                if (bodyRenderer) bodyRenderer.material.color = c;
+                if (headRenderer) headRenderer.material.color = c;
             }
 
-            // Length scaling
-            // Pivot is at Head? 
-            // If sprite is tail-based, we scale differently.
-            // Assuming simplified sprite logic for now: Body scales, Head separate.
-            // Or just stretch one sprite?
-            if(bodyRenderer)
+            // Length scaling for body
+            if (bodyRenderer)
             {
-                // Length 1 = 1 unit size. Length 4 = 4 units.
-                // Center needs to shift?
-                // If Pivot is center of Length 1 sprite.
-                // Better: Just scale Y.
                 Vector3 scale = bodyRenderer.transform.localScale;
-                scale.y = Length; 
+                scale.y = Length;
                 bodyRenderer.transform.localScale = scale;
-                
-                // If Pivot is at Head (Top of sprite?), then scaling Y extends down?
-                // If Pivot is Center, scaling extends both ways.
-                // Adjust position locally if needed explicitly.
-                // Assuming standard "Pivot at Bottom/Tail" or "Pivot at Top/Head" sprite setup.
-                // Ideally Sprite Pivot is Top-Center (Head). 
-                // So scaling Y (negative?) or just scaling extends away.
-                // Let's assume User has set up Prefab correct for pivot.
             }
         }
     }

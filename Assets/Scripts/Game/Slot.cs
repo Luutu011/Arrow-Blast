@@ -1,19 +1,24 @@
 using UnityEngine;
-using UnityEngine.UI; // Assuming UI based slots or World space
-using TMPro; // Assuming TextMeshPro
+using TMPro;
 using ArrowBlast.Core;
 
 namespace ArrowBlast.Game
 {
+    /// <summary>
+    /// 3D GameObject-based Slot using MeshRenderer + TextMeshPro
+    /// All slots shoot simultaneously - no "active shooter" concept
+    /// Slots don't shift when empty - they just clear
+    /// </summary>
     public class Slot : MonoBehaviour
     {
         public BlockColor CurrentColor { get; private set; }
         public int AmmoCount { get; private set; }
         public bool IsOccupied { get; private set; }
 
-        [SerializeField] private Image bgImage;
-        [SerializeField] private TextMeshProUGUI ammoText;
+        [SerializeField] private MeshRenderer bgMesh;
+        [SerializeField] private TextMeshPro ammoText;
         [SerializeField] private Color[] colorDefinitions;
+        [SerializeField] private Color emptyColor = Color.gray;
 
         public void Initialize()
         {
@@ -28,17 +33,10 @@ namespace ArrowBlast.Game
             UpdateVisuals();
         }
 
-        public void AddAmmo(int amount)
-        {
-            if (!IsOccupied) return;
-            AmmoCount += amount;
-            UpdateVisuals();
-        }
-
         public bool UseAmmo(int amount = 1)
         {
             if (!IsOccupied || AmmoCount <= 0) return false;
-            
+
             AmmoCount -= amount;
             if (AmmoCount <= 0)
             {
@@ -56,21 +54,21 @@ namespace ArrowBlast.Game
         {
             IsOccupied = false;
             AmmoCount = 0;
-            // Set visual to empty state
-            if(bgImage) bgImage.color = Color.gray; 
-            if(ammoText) ammoText.text = "";
+
+            if (bgMesh) bgMesh.material.color = emptyColor;
+            if (ammoText) ammoText.text = "";
         }
 
         private void UpdateVisuals()
         {
-             if(bgImage && (int)CurrentColor < colorDefinitions.Length) 
-             {
-                 bgImage.color = colorDefinitions[(int)CurrentColor];
-             }
-             if(ammoText)
-             {
-                 ammoText.text = AmmoCount.ToString();
-             }
+            if (bgMesh && (int)CurrentColor < colorDefinitions.Length) 
+            {
+                bgMesh.material.color = colorDefinitions[(int)CurrentColor];
+            }
+            if (ammoText)
+            {
+                ammoText.text = AmmoCount.ToString();
+            }
         }
     }
 }

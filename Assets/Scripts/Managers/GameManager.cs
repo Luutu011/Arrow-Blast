@@ -1,20 +1,27 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
+using UnityEngine.InputSystem;
 using ArrowBlast.Core;
 using ArrowBlast.Data;
 using ArrowBlast.Game;
 
 namespace ArrowBlast.Managers
 {
+    /// <summary>
+    /// Main game manager for Arrow Blast - Portrait Mobile Layout - FULL 3D
+    /// Layout (Top to Bottom): Wall (y=6) -> Shooter Slots (y=0) -> Arrow Grid (y=-6)
+    /// All occupied slots shoot simultaneously (no "active shooter")
+    /// Slots don't shift when empty
+    /// Uses 3D physics and 3D objects with 2D-style animations
+    /// </summary>
     public class GameManager : MonoBehaviour
     {
         [Header("Components")]
         [SerializeField] private LevelGenerator levelGenerator;
         [SerializeField] private Transform wallContainer;
-        [SerializeField] private Transform puzzleContainer;
         [SerializeField] private Transform slotsContainer;
+        [SerializeField] private Transform arrowContainer;
 
         [Header("Prefabs")]
         [SerializeField] private Block blockPrefab;
@@ -22,9 +29,9 @@ namespace ArrowBlast.Managers
         [SerializeField] private Slot slotPrefab;
 
         [Header("Settings")]
-        [SerializeField] private float cellSize = 1.0f;
+        [SerializeField] private float cellSize = 0.8f;
         [SerializeField] private float fireRate = 0.2f;
-        
+
         [Header("Game State")]
         public bool isStoryMode = false;
         public string storyLevelName = "Level1";
@@ -38,11 +45,16 @@ namespace ArrowBlast.Managers
 
         private float shootTimer;
         private bool isGameOver;
+        private int debugFrameCount = 0;
 
         private void Start()
         {
+            Debug.Log("[GAMEMANAGER] Start() called");
+
             InitializeSlots();
-            
+
+            Debug.Log($"[GAMEMANAGER] Slots initialized: {slots.Count} slots created");
+
             if (isStoryMode)
             {
                 LoadStoryLevel(storyLevelName);
@@ -50,6 +62,41 @@ namespace ArrowBlast.Managers
             else
             {
                 CreateRandomLevel();
+            }
+
+            Debug.Log("[GAMEMANAGER] Level loaded successfully");
+            Debug.Log($"[INPUT SYSTEM] Mouse.current is: {(Mouse.current != null ? "AVAILABLE" : "NULL - INPUT SYSTEM NOT CONFIGURED!")}");
+        }
+
+        // Debug display to show input status on screen
+        private void OnGUI()
+        {
+            GUIStyle style = new GUIStyle();
+            style.fontSize = 20;
+            style.normal.textColor = Color.yellow;
+
+            GUI.Label(new Rect(10, 10, 500, 30), $"GameManager Running: YES", style);
+            GUI.Label(new Rect(10, 40, 500, 30), $"Update() Frames: {debugFrameCount}", style);
+            GUI.Label(new Rect(10, 70, 500, 30), $"Mouse.current: {(Mouse.current != null ? "YES" : "NO")}", style);
+            GUI.Label(new Rect(10, 100, 500, 30), $"Arrows in scene: {FindObjectsOfType<Arrow>().Length}", style);
+            GUI.Label(new Rect(10, 130, 500, 30), $"Click anywhere to test", style);
+
+            if (Mouse.current != null)
+            {
+                Vector2 mousePos = Mouse.current.position.ReadValue();
+                GUI.Label(new Rect(10, 160, 500, 30), $"Mouse: {mousePos}", style);
+
+                bool isPressed = Mouse.current.leftButton.isPressed;
+                bool wasPressedThisFrame = Mouse.current.leftButton.wasPressedThisFrame;
+
+                GUI.Label(new Rect(10, 190, 500, 30), $"Button Held: {isPressed}", style);
+                GUI.Label(new Rect(10, 220, 600, 30), $"wasPressedThisFrame: {wasPressedThisFrame}", style);
+
+                if (wasPressedThisFrame)
+                {
+                    style.normal.textColor = Color.red;
+                    GUI.Label(new Rect(10, 250, 800, 40), $">>> CLICK DETECTED <<<", style);
+                }
             }
         }
 
@@ -59,6 +106,7 @@ namespace ArrowBlast.Managers
             for (int i = 0; i < 5; i++)
             {
                 Slot s = Instantiate(slotPrefab, slotsContainer);
+                s.transform.localPosition = new Vector3((i - 2) * 1.2f, 0, 0); // Spread horizontally
                 s.Initialize();
                 slots.Add(s);
             }
@@ -66,14 +114,14 @@ namespace ArrowBlast.Managers
 
         private void CreateRandomLevel()
         {
-            LevelData data = levelGenerator.GenerateRandomLevel(1, 6, 8, 8, 6); // Hardcoded sizes for demo
+            LevelData data = levelGenerator.GenerateRandomLevel(1, 6, 8, 8, 6);
             BuildLevel(data);
         }
 
         private void LoadStoryLevel(string levelName)
         {
             LevelData data = SaveSystem.LoadLevel(levelName);
-            if(data != null)
+            if (data != null)
             {
                 BuildLevel(data);
             }
@@ -87,51 +135,70 @@ namespace ArrowBlast.Managers
         private void BuildLevel(LevelData data)
         {
             // Clear existing
-            foreach(Transform t in wallContainer) Destroy(t.gameObject);
-            foreach(Transform t in puzzleContainer) Destroy(t.gameObject);
+            foreach (Transform t in wallContainer) Destroy(t.gameObject);
+            foreach (Transform t in arrowContainer) Destroy(t.gameObject);
 
             wallWidth = data.width;
             wallHeight = data.height;
             wallGrid = new Block[wallWidth, wallHeight];
 
-            foreach(var bd in data.blocks)
+            // Build wall blocks
+            foreach (var bd in data.blocks)
             {
                 Block b = Instantiate(blockPrefab, wallContainer);
                 b.Init((BlockColor)bd.colorIndex, bd.gridX, bd.gridY);
-                b.UpdateGridPosition(bd.gridX, bd.gridY); 
-                b.transform.localPosition = new Vector3(bd.gridX * cellSize, bd.gridY * cellSize, 0);
+                b.transform.localPosition = GetWallWorldPosition(bd.gridX, bd.gridY);
                 wallGrid[bd.gridX, bd.gridY] = b;
             }
 
-            arrowRows = data.gridRows; 
+            arrowRows = data.gridRows;
             arrowCols = data.gridCols;
             arrowGrid = new Arrow[arrowCols, arrowRows];
 
-            foreach(var ad in data.arrows)
+            // Build arrow grid
+            foreach (var ad in data.arrows)
             {
-                Arrow a = Instantiate(arrowPrefab, puzzleContainer);
+                Arrow a = Instantiate(arrowPrefab, arrowContainer);
                 a.Init((BlockColor)ad.colorIndex, (Direction)ad.direction, ad.length, ad.gridX, ad.gridY);
-                a.transform.localPosition = new Vector3(ad.gridX * cellSize, -ad.gridY * cellSize - 2.0f, 0); 
-                
-                // occupy grid
+                a.transform.localPosition = GetArrowWorldPosition(ad.gridX, ad.gridY);
+
+                // Occupy grid cells
                 var occupied = a.GetOccupiedCells();
-                foreach(var c in occupied)
+                foreach (var c in occupied)
                 {
-                    if(IsValidCell(c.x, c.y))
+                    if (IsValidCell(c.x, c.y))
                     {
                         arrowGrid[c.x, c.y] = a;
                     }
                 }
             }
         }
-        
+
         private bool IsValidCell(int x, int y)
         {
-            return x >=0 && x < arrowCols && y >= 0 && y < arrowRows;
+            return x >= 0 && x < arrowCols && y >= 0 && y < arrowRows;
+        }
+
+        // Helper: Convert wall grid coordinates to centered world position
+        private Vector3 GetWallWorldPosition(int gridX, int gridY)
+        {
+            float offsetX = -(wallWidth / 2f) * cellSize + (cellSize / 2f);
+            float offsetY = -(wallHeight / 2f) * cellSize + (cellSize / 2f);
+            return new Vector3(gridX * cellSize + offsetX, gridY * cellSize + offsetY, 0);
+        }
+
+        // Helper: Convert arrow grid coordinates to centered world position
+        private Vector3 GetArrowWorldPosition(int gridX, int gridY)
+        {
+            float offsetX = -(arrowCols / 2f) * cellSize + (cellSize / 2f);
+            float offsetY = -(arrowRows / 2f) * cellSize + (cellSize / 2f);
+            return new Vector3(gridX * cellSize + offsetX, gridY * cellSize + offsetY, 0);
         }
 
         private void Update()
         {
+            debugFrameCount++;
+
             if (isGameOver) return;
 
             HandleInput();
@@ -141,30 +208,69 @@ namespace ArrowBlast.Managers
 
         private void HandleInput()
         {
-            if (Input.GetMouseButtonDown(0))
+            if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
             {
-                // Raycast
-                Vector2 worldPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                RaycastHit2D hit = Physics2D.Raycast(worldPoint, Vector2.zero);
+                Vector2 mousePosition = Mouse.current.position.ReadValue();
+                Debug.Log($"[INPUT] Mouse clicked at screen position: {mousePosition}");
 
-                // Use Physics Raycast if 3D
-                if(hit.collider == null)
-                {
-                    Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                    if(Physics.Raycast(ray, out RaycastHit hit3d))
-                    {
-                         Arrow arrow = hit3d.collider.GetComponent<Arrow>(); 
-                         if(arrow) TryCollectArrow(arrow);
-                         return;
-                    }
-                }
+                // 3D Physics Raycast (no 2D physics)
+                Ray ray = Camera.main.ScreenPointToRay(mousePosition);
+                Debug.Log($"[RAYCAST] Ray origin: {ray.origin}, direction: {ray.direction}");
+                Debug.Log($"[CAMERA] Camera position: {Camera.main.transform.position}, ortho size: {Camera.main.orthographicSize}");
 
-                if (hit.collider != null)
+                // Increase raycast distance significantly for orthographic camera
+                float raycastDistance = 1000f;
+
+                // Try raycast with no layer mask
+                if (Physics.Raycast(ray, out RaycastHit hit, raycastDistance))
                 {
+                    Debug.Log($"[HIT] Raycast hit: {hit.collider.gameObject.name} at position {hit.point}, distance: {hit.distance}");
+                    Debug.Log($"[HIT] Hit object layer: {LayerMask.LayerToName(hit.collider.gameObject.layer)}");
+
                     Arrow arrow = hit.collider.GetComponent<Arrow>();
                     if (arrow != null)
                     {
+                        Debug.Log($"[ARROW] Found arrow at grid ({arrow.GridX}, {arrow.GridY}), Direction: {arrow.ArrowDirection}, Color: {arrow.Color}");
                         TryCollectArrow(arrow);
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"[NO ARROW] Hit object '{hit.collider.gameObject.name}' has no Arrow component.");
+                        Component[] components = hit.collider.GetComponents<Component>();
+                        Debug.Log($"[COMPONENTS] {string.Join(", ", System.Array.ConvertAll(components, c => c.GetType().Name))}");
+                    }
+                }
+                else
+                {
+                    Debug.LogWarning("[NO HIT] Raycast didn't hit anything!");
+
+                    // Debug: Show all arrows in scene
+                    Arrow[] allArrows = FindObjectsOfType<Arrow>();
+                    Debug.Log($"[DEBUG] Total arrows in scene: {allArrows.Length}");
+
+                    if (allArrows.Length > 0)
+                    {
+                        foreach (var a in allArrows)
+                        {
+                            Collider col = a.GetComponent<Collider>();
+                            Debug.Log($"  - Arrow '{a.gameObject.name}' at world pos {a.transform.position}, " +
+                                     $"has collider: {col != null}, " +
+                                     $"enabled: {(col != null ? col.enabled.ToString() : "N/A")}, " +
+                                     $"layer: {LayerMask.LayerToName(a.gameObject.layer)}");
+
+                            if (col != null)
+                            {
+                                BoxCollider box = col as BoxCollider;
+                                if (box != null)
+                                {
+                                    Debug.Log($"    BoxCollider size: {box.size}, center: {box.center}, bounds: {box.bounds}");
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Debug.LogError("[ERROR] No arrows found in scene!");
                     }
                 }
             }
@@ -174,18 +280,19 @@ namespace ArrowBlast.Managers
         {
             if (CanArrowEscape(arrow))
             {
-                // Add to Slot
                 if (TryAddToSlot(arrow.Color, arrow.GetAmmoAmount()))
                 {
-                    // Remove from Grid (Clear ALL occupied cells)
+                    // Remove from grid
                     var occupied = arrow.GetOccupiedCells();
-                    foreach(var c in occupied)
+                    foreach (var c in occupied)
                     {
-                        if(IsValidCell(c.x, c.y) && arrowGrid[c.x,c.y] == arrow)
+                        if (IsValidCell(c.x, c.y) && arrowGrid[c.x, c.y] == arrow)
                         {
                             arrowGrid[c.x, c.y] = null;
                         }
                     }
+
+                    // Optional: Animate arrow moving to slot before destroying
                     Destroy(arrow.gameObject);
                 }
             }
@@ -193,25 +300,23 @@ namespace ArrowBlast.Managers
 
         private bool CanArrowEscape(Arrow arrow)
         {
-            int cx = arrow.GridX; // Head position
+            int cx = arrow.GridX;
             int cy = arrow.GridY;
             int dx = 0, dy = 0;
 
-            switch(arrow.ArrowDirection)
+            switch (arrow.ArrowDirection)
             {
-                case Direction.Up: dy = -1; break; 
+                case Direction.Up: dy = -1; break;
                 case Direction.Down: dy = 1; break;
                 case Direction.Left: dx = -1; break;
                 case Direction.Right: dx = 1; break;
             }
-            
-            // Check path from Head
+
             int nx = cx + dx;
             int ny = cy + dy;
 
             while (IsValidCell(nx, ny))
             {
-                // If any cell in path is not null, BLOCKED
                 if (arrowGrid[nx, ny] != null) return false;
                 nx += dx;
                 ny += dy;
@@ -222,21 +327,14 @@ namespace ArrowBlast.Managers
 
         private bool TryAddToSlot(BlockColor color, int amount)
         {
-            // Find first empty or matching last slot?
-            // "Queue". You have 5 slots.
-            // Logic: Fill first available slot.
-            // If slots[0] is occupied, try slots[1].
-            
-            foreach(var slot in slots)
+            // Find first empty slot
+            foreach (var slot in slots)
             {
                 if (!slot.IsOccupied)
                 {
                     slot.FillSlot(color, amount);
                     return true;
                 }
-                // If we want merge logic:
-                // if (slot.IsOccupied && slot.CurrentColor == color && slot == lastFilledSlot) ...
-                // But prompt implies distinct slots in queue.
             }
             return false;
         }
@@ -246,76 +344,42 @@ namespace ArrowBlast.Managers
             shootTimer += Time.deltaTime;
             if (shootTimer < fireRate) return;
 
-            // Check first occupied slot
-            Slot activeSlot = slots.Find(s => s.IsOccupied);
-            if (activeSlot == null) return;
-
-            // Try to find target
-            if (TryDestroyBlock(activeSlot.CurrentColor))
+            // ALL OCCUPIED SLOTS SHOOT SIMULTANEOUSLY
+            bool anySlotShot = false;
+            foreach (var slot in slots)
             {
-                activeSlot.UseAmmo(1);
+                if (slot.IsOccupied)
+                {
+                    if (TryDestroyBlock(slot.CurrentColor))
+                    {
+                        slot.UseAmmo(1);
+                        anySlotShot = true;
+                    }
+                }
+            }
+
+            if (anySlotShot)
+            {
                 shootTimer = 0;
-                
-                // Shift slots if empty? 
-                // Slot logic handles internal clearing.
-                // But if Slot 0 becomes empty, do we shift 1->0?
-                // "Queue" implies shifting.
-                if (!activeSlot.IsOccupied)
-                {
-                    ShiftSlots();
-                }
             }
-        }
-
-        private void ShiftSlots()
-        {
-            // Move 1->0, 2->1 ...
-            for(int i=0; i<slots.Count-1; i++)
-            {
-                Slot current = slots[i];
-                Slot next = slots[i+1];
-                
-                if (!current.IsOccupied && next.IsOccupied)
-                {
-                    current.FillSlot(next.CurrentColor, next.AmmoCount);
-                    next.ClearSlot();
-                }
-            }
-            // Repeat bubble sort? Or just once is enough if we do it every frame/update.
-            // If we just expended Slot 0, it's empty. Next call will shift 1 to 0.
         }
 
         private bool TryDestroyBlock(BlockColor color)
         {
-            // Find bottom-most block of this color
-            // Iterate columns?
-            // "Look at the bottom row of the wall." 
-            // Blocks fall. So we just need to find any block that is "Exposed" at the bottom.
-            // Exposed = No block below it.
-            
-            // Find ALL exposed blocks matching color.
-            // "The Active Shooter ... will only shoot at Red blocks that are at the bottom".
-            // Pick ONE. (Say, leftmost?)
-            
+            // Find bottom-most exposed block of matching color
             for (int x = 0; x < wallWidth; x++)
             {
-                // Find bottom-most in this column
                 for (int y = 0; y < wallHeight; y++)
                 {
-                    // Assuming Y=0 is bottom? 
-                    // In BuildLevel: y * cellSize. So 0 is Bottom.
                     Block b = wallGrid[x, y];
                     if (b != null)
                     {
-                        // Found the lowest block in this column
                         if (b.Color == color)
                         {
-                            // Destroy it
                             DestroyBlock(x, y);
                             return true;
                         }
-                        // If bottom block is NOT color, then this column is blocked.
-                        break; 
+                        break; // Column blocked
                     }
                 }
             }
@@ -325,95 +389,91 @@ namespace ArrowBlast.Managers
         private void DestroyBlock(int x, int y)
         {
             Block b = wallGrid[x, y];
-            if(b) Destroy(b.gameObject);
+            if (b) Destroy(b.gameObject);
             wallGrid[x, y] = null;
-            
-            // Gravity: Move blocks above down
-            // In array and visual
+
+            // Gravity: Move blocks above down (2D-style animation)
             for (int k = y + 1; k < wallHeight; k++)
             {
                 Block above = wallGrid[x, k];
                 if (above != null)
                 {
-                    wallGrid[x, k-1] = above;
+                    wallGrid[x, k - 1] = above;
                     wallGrid[x, k] = null;
-                    above.UpdateGridPosition(x, k-1);
-                    // Visual tween should happen here
-                    above.transform.localPosition = new Vector3(x * cellSize, (k-1) * cellSize, 0);
+                    above.UpdateGridPosition(x, k - 1, GetWallWorldPosition(x, k - 1)); // Pass centered world position
                 }
             }
         }
 
         private void CheckWinCondition()
         {
-             bool hasBlocks = false;
-             foreach(var b in wallGrid) if(b != null) hasBlocks = true;
-             
-             if (!hasBlocks)
-             {
-                 Debug.Log("Victory!");
-                 isGameOver = true;
-                 return;
-             }
+            bool hasBlocks = false;
+            foreach (var b in wallGrid) if (b != null) hasBlocks = true;
 
-             // Loss Condition 1: Slots Full and Active Shooter Stuck
-             bool slotsFull = slots.TrueForAll(s => s.IsOccupied);
-             if (slotsFull)
-             {
-                 Slot active = slots[0]; // Assuming shift logic keeps 0 as active
-                 // Check if active matches ANY bottom block
-                 bool canShoot = false;
-                 // We need to peek if TryDestroyBlock WOULD succeed.
-                 // Actually we can just check if ANY bottom block matches active color
-                 if (CanHitAnyBlock(active.CurrentColor)) canShoot = true;
+            if (!hasBlocks)
+            {
+                Debug.Log("Victory!");
+                isGameOver = true;
+                return;
+            }
 
-                 if (!canShoot)
-                 {
-                     Debug.Log("Game Over: Slots Full and Stuck!");
-                     isGameOver = true;
-                     return;
-                 }
-             }
+            // Loss: Slots full and no matching blocks
+            bool slotsFull = true;
+            foreach (var s in slots) if (!s.IsOccupied) slotsFull = false;
 
-             // Loss Condition 2: No Ammo Left
-             bool arrowsRemaining = false;
-             foreach(var a in arrowGrid) if(a != null) arrowsRemaining = true;
-             
-             bool slotsEmpty = slots.TrueForAll(s => !s.IsOccupied);
+            if (slotsFull)
+            {
+                bool canAnySlotShoot = false;
+                foreach (var slot in slots)
+                {
+                    if (CanHitAnyBlock(slot.CurrentColor))
+                    {
+                        canAnySlotShoot = true;
+                        break;
+                    }
+                }
 
-             if (!arrowsRemaining && slotsEmpty && hasBlocks)
-             {
-                  Debug.Log("Game Over: Out of Ammo!");
-                  isGameOver = true;
-             }
+                if (!canAnySlotShoot)
+                {
+                    Debug.Log("Game Over: All Slots Full and Stuck!");
+                    isGameOver = true;
+                    return;
+                }
+            }
+
+            // Loss: Out of ammo
+            bool arrowsRemaining = false;
+            foreach (var a in arrowGrid) if (a != null) arrowsRemaining = true;
+
+            bool slotsEmpty = true;
+            foreach (var s in slots) if (s.IsOccupied) slotsEmpty = false;
+
+            if (!arrowsRemaining && slotsEmpty && hasBlocks)
+            {
+                Debug.Log("Game Over: Out of Ammo!");
+                isGameOver = true;
+            }
         }
 
         private bool CanHitAnyBlock(BlockColor color)
         {
             for (int x = 0; x < wallWidth; x++)
             {
-                // Find bottom-most
                 for (int y = 0; y < wallHeight; y++)
                 {
                     Block b = wallGrid[x, y];
                     if (b != null)
                     {
                         if (b.Color == color) return true;
-                        break; // Blocked by wrong color
+                        break;
                     }
                 }
             }
             return false;
         }
+
         public void SaveCurrentLevel(string levelName)
         {
-            // Reconstruct LevelData from current state logic not fully implemented
-            // But we can save the 'Initial' state if we stored it, or generating a new one to verify generator
-            // Use LevelGenerator to generate and then Save
-            
-            // To fulfill request: "in random a LevelGenerator with Json save"
-            // We'll generate a fresh level and save it for future Story use.
-            
             LevelData newData = levelGenerator.GenerateRandomLevel(1, wallWidth, wallHeight, arrowRows, arrowCols);
             newData.levelName = levelName;
             SaveSystem.SaveLevel(newData, levelName);
