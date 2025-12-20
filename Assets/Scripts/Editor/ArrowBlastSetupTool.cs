@@ -50,7 +50,7 @@ namespace ArrowBlast.Editor
             // Create GameManager
             GameObject gmObj = new GameObject("GameManager");
             GameManager gm = gmObj.AddComponent<GameManager>();
-            LevelGenerator lg = gmObj.AddComponent<LevelGenerator>();
+            LevelManager lm = gmObj.AddComponent<LevelManager>();
             AutoScaler autoScaler = gmObj.AddComponent<AutoScaler>();
 
             // Create containers
@@ -65,7 +65,7 @@ namespace ArrowBlast.Editor
 
             // Assign to GameManager via SerializedObject
             SerializedObject so = new SerializedObject(gm);
-            so.FindProperty("levelGenerator").objectReferenceValue = lg;
+            so.FindProperty("levelManager").objectReferenceValue = lm;
             so.FindProperty("wallContainer").objectReferenceValue = wallContainer.transform;
             so.FindProperty("slotsContainer").objectReferenceValue = slotsContainer.transform;
             so.FindProperty("arrowContainer").objectReferenceValue = arrowContainer.transform;

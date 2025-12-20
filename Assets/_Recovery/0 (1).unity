@@ -559,7 +559,9 @@ MonoBehaviour:
   wallContainer: {fileID: 700366138}
   slotsContainer: {fileID: 1128602142}
   arrowContainer: {fileID: 147405615}
+  wallWidth: 6
   wallHeight: 8
+  arrowWidth: 6
   arrowHeight: 8
   cellSize: 0.8
   padding: 1

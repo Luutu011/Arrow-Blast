@@ -14,7 +14,9 @@ namespace ArrowBlast.Managers
         [SerializeField] private Transform arrowContainer;
 
         [Header("Grid Settings")]
+        [SerializeField] private int wallWidth = 6;
         [SerializeField] private int wallHeight = 8;
+        [SerializeField] private int arrowWidth = 6;
         [SerializeField] private int arrowHeight = 8;
         [SerializeField] private float cellSize = 0.8f;
         [SerializeField] private float padding = 1f; // Space between sections
@@ -36,6 +38,16 @@ namespace ArrowBlast.Managers
             }
         }
 
+        public void UpdateSettings(int wWidth, int wHeight, int aWidth, int aHeight, float cSize)
+        {
+            wallWidth = wWidth;
+            wallHeight = wHeight;
+            arrowWidth = aWidth;
+            arrowHeight = aHeight;
+            cellSize = cSize;
+            CalculateAndApplyPositions();
+        }
+
         public void CalculateAndApplyPositions()
         {
             if (mainCamera == null) mainCamera = Camera.main;
@@ -45,7 +57,10 @@ namespace ArrowBlast.Managers
             float visibleHeight = mainCamera.orthographicSize * 2f;
 
             // Calculate total required height for all sections
-            float wallSectionHeight = wallHeight * cellSize;
+            // We only want to reserve space for 8 rows of the wall in the "main" view.
+            // Blocks above this will be off-camera (hidden) and fall down later.
+            float visibleWallRows = Mathf.Min(8, wallHeight);
+            float wallSectionHeight = visibleWallRows * cellSize;
             float slotSectionHeight = 1.5f; // Slots are roughly 1.5 units tall
             float arrowSectionHeight = arrowHeight * cellSize;
             float totalRequiredHeight = wallSectionHeight + slotSectionHeight + arrowSectionHeight + (padding * 2);
@@ -55,7 +70,20 @@ namespace ArrowBlast.Managers
             {
                 mainCamera.orthographicSize = totalRequiredHeight / 2f + 1f; // +1 for extra margin
                 visibleHeight = mainCamera.orthographicSize * 2f;
-                Debug.Log($"Camera size adjusted to {mainCamera.orthographicSize} to fit all sections");
+            }
+
+            // Horizontal fit check
+            float requiredWallWidth = wallWidth * cellSize + 1.5f; // +1.5 margin
+            float requiredArrowWidth = arrowWidth * cellSize + 1.5f;
+            float maxRequiredWidth = Mathf.Max(requiredWallWidth, requiredArrowWidth);
+
+            float currentVisibleWidth = visibleHeight * mainCamera.aspect;
+            if (maxRequiredWidth > currentVisibleWidth)
+            {
+                // Increase orthographicSize to fit the width
+                mainCamera.orthographicSize = (maxRequiredWidth / mainCamera.aspect) / 2f;
+                visibleHeight = mainCamera.orthographicSize * 2f;
+                Debug.Log($"Camera size adjusted to {mainCamera.orthographicSize} to fit screen width");
             }
 
             // Calculate positions from top to bottom
@@ -63,11 +91,16 @@ namespace ArrowBlast.Managers
             float topPadding = visibleHeight * 0.1f;
             float topY = (visibleHeight / 2f) - topPadding - 1f; // Start from top with padding and margin
 
-            // Wall at top
-            float wallY = topY - (wallSectionHeight / 2f);
+            // Wall at top (Bottom-anchored logic: container is at bottom of wall section, blocks grow up)
+            // So we place container such that TOP of blocks aligns with topY
+            // Blocks go from 0 to wallSectionHeight. So containerY = topY - wallSectionHeight.
+            float wallY = topY - wallSectionHeight;
 
             // Slots in middle
-            float slotsY = wallY - (wallSectionHeight / 2f) - padding - (slotSectionHeight / 2f);
+            // Slots should be below wall container.
+            // Wall container is at the bottom of the wall blocks.
+            // So slots should be below that by padding.
+            float slotsY = wallY - padding - (slotSectionHeight / 2f);
 
             // Arrows at bottom
             float arrowY = slotsY - (slotSectionHeight / 2f) - padding - (arrowSectionHeight / 2f);
