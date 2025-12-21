@@ -14,6 +14,12 @@ namespace ArrowBlast.Game
         public BlockColor CurrentColor { get; private set; }
         public int AmmoCount { get; private set; }
         public bool IsOccupied { get; private set; }
+        public bool IsReserved { get; private set; }
+
+        public void SetReserved(bool reserved)
+        {
+            IsReserved = reserved;
+        }
 
         [SerializeField] private MeshRenderer bgMesh;
         [SerializeField] private TextMeshPro ammoText;
@@ -28,6 +34,7 @@ namespace ArrowBlast.Game
         public void FillSlot(BlockColor color, int amount)
         {
             IsOccupied = true;
+            IsReserved = false; // Head has landed, slot is now officially occupied
             CurrentColor = color;
             AmmoCount = amount;
             UpdateVisuals();
@@ -53,6 +60,7 @@ namespace ArrowBlast.Game
         public void ClearSlot()
         {
             IsOccupied = false;
+            IsReserved = false;
             AmmoCount = 0;
 
             if (bgMesh) bgMesh.material.color = emptyColor;
@@ -61,7 +69,7 @@ namespace ArrowBlast.Game
 
         private void UpdateVisuals()
         {
-            if (bgMesh && (int)CurrentColor < colorDefinitions.Length) 
+            if (bgMesh && (int)CurrentColor < colorDefinitions.Length)
             {
                 bgMesh.material.color = colorDefinitions[(int)CurrentColor];
             }
