@@ -63,5 +63,18 @@ namespace ArrowBlast.Managers
         {
             currentLevelIndex = 0;
         }
+
+        public int GetLevelCount()
+        {
+            return levels != null ? levels.Count : 0;
+        }
+
+        public void SetLevelIndex(int index)
+        {
+            if (index >= 0 && index < levels.Count)
+            {
+                currentLevelIndex = index;
+            }
+        }
     }
 }

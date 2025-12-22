@@ -37,11 +37,16 @@ namespace ArrowBlast.Managers
         private float shootTimer;
         private bool isGameOver;
 
+        public void RestartLevel()
+        {
+            LoadCurrentLevel();
+        }
+
         private void Start()
         {
             InitializeSlots();
             if (levelManager == null) levelManager = FindObjectOfType<LevelManager>();
-            if (levelManager != null) LoadCurrentLevel();
+            // if (levelManager != null) LoadCurrentLevel(); // Removed: Load only from UI
         }
 
         private void LoadCurrentLevel()
@@ -346,7 +351,7 @@ namespace ArrowBlast.Managers
 
         private void CheckWinCondition()
         {
-            if (isGameOver) return;
+            if (isGameOver || wallGrid == null) return;
 
             bool hasBlocks = false;
             foreach (var b in wallGrid) if (b != null) hasBlocks = true;

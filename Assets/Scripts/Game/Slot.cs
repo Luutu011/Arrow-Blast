@@ -25,6 +25,7 @@ namespace ArrowBlast.Game
         [SerializeField] private TextMeshPro ammoText;
         [SerializeField] private Color[] colorDefinitions;
         [SerializeField] private Color emptyColor = Color.gray;
+        [SerializeField] private Color textColor = Color.black;
 
         public void Initialize()
         {
@@ -76,6 +77,7 @@ namespace ArrowBlast.Game
             if (ammoText)
             {
                 ammoText.text = AmmoCount.ToString();
+                ammoText.color = textColor;
             }
         }
     }

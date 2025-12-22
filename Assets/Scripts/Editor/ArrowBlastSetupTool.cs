@@ -4,6 +4,7 @@ using UnityEditor;
 using TMPro;
 using ArrowBlast.Managers;
 using ArrowBlast.Game;
+using UnityEngine.UI;
 
 namespace ArrowBlast.Editor
 {
@@ -17,6 +18,160 @@ namespace ArrowBlast.Editor
         public static void ShowWindow()
         {
             GetWindow<ArrowBlastSetupTool>("Arrow Blast Setup");
+        }
+
+        [MenuItem("Arrow Blast/Setup UI")]
+        public static void SetupUI()
+        {
+            // 1. Create Canvas
+            GameObject canvasObj = new GameObject("MainMenuCanvas");
+            Canvas canvas = canvasObj.AddComponent<Canvas>();
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvasObj.AddComponent<GraphicRaycaster>();
+            canvasObj.AddComponent<CanvasScaler>().uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+
+            GameObject existingEventSystem = GameObject.Find("EventSystem");
+            if (existingEventSystem == null)
+            {
+                GameObject eventSystem = new GameObject("EventSystem");
+                eventSystem.AddComponent<UnityEngine.EventSystems.EventSystem>();
+                eventSystem.AddComponent<UnityEngine.EventSystems.StandaloneInputModule>();
+            }
+
+            // 2. Main Menu Component
+            var mainMenu = canvasObj.AddComponent<ArrowBlast.UI.MainMenu>();
+
+            // 3. Main Panel
+            GameObject mainPanel = CreatePanel("MainPanel", canvasObj.transform, new Color(0, 0, 0, 0.8f));
+            
+            // Title
+            CreateText("Title", mainPanel.transform, "ARROW BLAST", 80, new Vector2(0, 300));
+
+            // Buttons Container
+            GameObject btnContainer = new GameObject("ButtonContainer");
+            btnContainer.transform.SetParent(mainPanel.transform, false);
+            var btnRt = btnContainer.AddComponent<RectTransform>();
+            btnRt.sizeDelta = new Vector2(400, 500);
+            var vlg = btnContainer.AddComponent<VerticalLayoutGroup>();
+            vlg.spacing = 20;
+            vlg.childAlignment = TextAnchor.MiddleCenter;
+            vlg.childControlHeight = false;
+            vlg.childControlWidth = false;
+
+            Button startBtn = CreateButton("StartButton", btnContainer.transform, "PLAY", null);
+            Button settingsBtn = CreateButton("SettingsButton", btnContainer.transform, "SETTINGS", null);
+            Button exitBtn = CreateButton("ExitButton", btnContainer.transform, "EXIT", null);
+
+            // 4. Level Panel
+            GameObject levelPanel = CreatePanel("LevelPanel", canvasObj.transform, new Color(0.1f, 0.1f, 0.1f, 0.95f));
+            levelPanel.SetActive(false);
+            CreateText("LevelTitle", levelPanel.transform, "SELECT LEVEL", 60, new Vector2(0, 400));
+            
+            GameObject levelGridObj = new GameObject("LevelGrid");
+            levelGridObj.transform.SetParent(levelPanel.transform, false);
+            var gridRt = levelGridObj.AddComponent<RectTransform>();
+            gridRt.sizeDelta = new Vector2(600, 600);
+            var glg = levelGridObj.AddComponent<GridLayoutGroup>();
+            glg.cellSize = new Vector2(100, 100);
+            glg.spacing = new Vector2(20, 20);
+            glg.startCorner = GridLayoutGroup.Corner.UpperLeft;
+            glg.childAlignment = TextAnchor.UpperCenter;
+
+            Button backBtnLvl = CreateButton("BackButton", levelPanel.transform, "BACK", null);
+            SetRect(backBtnLvl.GetComponent<RectTransform>(), new Vector2(0, -450), new Vector2(200, 60));
+
+            // 5. Settings Panel
+            GameObject settingsPanel = CreatePanel("SettingsPanel", canvasObj.transform, new Color(0.1f, 0.1f, 0.1f, 0.95f));
+            settingsPanel.SetActive(false);
+            CreateText("SettingsTitle", settingsPanel.transform, "SETTINGS", 60, new Vector2(0, 400));
+            CreateText("DummyText", settingsPanel.transform, "Music: ON\nSound: ON", 40, Vector2.zero);
+
+            Button backBtnSet = CreateButton("BackButton", settingsPanel.transform, "BACK", null);
+            SetRect(backBtnSet.GetComponent<RectTransform>(), new Vector2(0, -450), new Vector2(200, 60));
+
+            // 6. Level Button Prefab (Generic button for grid)
+            Button lvlBtnPrefab = CreateButton("LevelButtonPrefab", null, "1", null);
+            lvlBtnPrefab.gameObject.SetActive(false); // Hide it, it's a prefab
+
+            // Assign to MainMenu
+            SerializedObject so = new SerializedObject(mainMenu);
+            so.FindProperty("mainPanel").objectReferenceValue = mainPanel;
+            so.FindProperty("levelPanel").objectReferenceValue = levelPanel;
+            so.FindProperty("settingsPanel").objectReferenceValue = settingsPanel;
+            
+            so.FindProperty("playButton").objectReferenceValue = startBtn;
+            so.FindProperty("settingsButton").objectReferenceValue = settingsBtn;
+            so.FindProperty("exitButton").objectReferenceValue = exitBtn;
+            so.FindProperty("levelBackButton").objectReferenceValue = backBtnLvl;
+            so.FindProperty("settingsBackButton").objectReferenceValue = backBtnSet;
+
+            so.FindProperty("levelGrid").objectReferenceValue = gridRt;
+            so.FindProperty("levelButtonPrefab").objectReferenceValue = lvlBtnPrefab;
+            so.ApplyModifiedProperties();
+
+            Debug.Log("✓ Arrow Blast UI Setup complete!");
+        }
+
+        private static GameObject CreatePanel(string name, Transform parent, Color color)
+        {
+            GameObject panel = new GameObject(name);
+            panel.transform.SetParent(parent, false);
+            var rt = panel.AddComponent<RectTransform>();
+            rt.anchorMin = Vector2.zero;
+            rt.anchorMax = Vector2.one;
+            rt.sizeDelta = Vector2.zero;
+            var img = panel.AddComponent<Image>();
+            img.color = color;
+            return panel;
+        }
+
+        private static TextMeshProUGUI CreateText(string name, Transform parent, string content, int size, Vector2 pos)
+        {
+            GameObject textObj = new GameObject(name);
+            textObj.transform.SetParent(parent, false);
+            var rt = textObj.AddComponent<RectTransform>();
+            rt.anchoredPosition = pos;
+            rt.sizeDelta = new Vector2(800, 200);
+            var tmp = textObj.AddComponent<TextMeshProUGUI>();
+            tmp.text = content;
+            tmp.fontSize = size;
+            tmp.alignment = TextAlignmentOptions.Center;
+            return tmp;
+        }
+
+        private static Button CreateButton(string name, Transform parent, string label, System.Action onClick)
+        {
+            GameObject btnObj = new GameObject(name);
+            if (parent != null) btnObj.transform.SetParent(parent, false);
+            var rt = btnObj.AddComponent<RectTransform>();
+            rt.sizeDelta = new Vector2(300, 80);
+            
+            var img = btnObj.AddComponent<Image>();
+            img.color = new Color(0.2f, 0.2f, 0.2f);
+            
+            var btn = btnObj.AddComponent<Button>();
+            if (onClick != null) btn.onClick.AddListener(() => onClick.Invoke());
+
+            GameObject txtObj = new GameObject("Label");
+            txtObj.transform.SetParent(btnObj.transform, false);
+            var txtRt = txtObj.AddComponent<RectTransform>();
+            txtRt.anchorMin = Vector2.zero;
+            txtRt.anchorMax = Vector2.one;
+            txtRt.sizeDelta = Vector2.zero;
+            
+            var tmp = txtObj.AddComponent<TextMeshProUGUI>();
+            tmp.text = label;
+            tmp.fontSize = 32;
+            tmp.alignment = TextAlignmentOptions.Center;
+            tmp.color = Color.white;
+
+            return btn;
+        }
+
+        private static void SetRect(RectTransform rt, Vector2 pos, Vector2 size)
+        {
+            rt.anchoredPosition = pos;
+            rt.sizeDelta = size;
         }
 
         private void OnGUI()
@@ -96,13 +251,18 @@ namespace ArrowBlast.Editor
 
         private Block CreateBlockPrefab3D()
         {
-            // Create 3D Cube for block
-            GameObject obj = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            obj.name = "Block";
+            GameObject obj = new GameObject("Block");
             obj.transform.localScale = new Vector3(0.75f, 0.75f, 0.75f);
 
+            MeshFilter mf = obj.AddComponent<MeshFilter>();
+            MeshRenderer mr = obj.AddComponent<MeshRenderer>();
+            RoundedCube roundedCube = obj.AddComponent<RoundedCube>();
+            roundedCube.xSize = 10; roundedCube.ySize = 10; roundedCube.zSize = 10;
+            roundedCube.roundness = 2f; // Increased for a softer look
+            roundedCube.Generate();
+
             Block block = obj.AddComponent<Block>();
-            MeshRenderer mr = obj.GetComponent<MeshRenderer>();
+            obj.AddComponent<BoxCollider>().size = Vector3.one;
 
             // Create material
             Material mat = new Material(Shader.Find("Standard"));
@@ -144,31 +304,38 @@ namespace ArrowBlast.Editor
             GameObject obj = new GameObject("Arrow");
             Arrow arrow = obj.AddComponent<Arrow>();
 
-            // Create 3D body (elongated cube)
-            GameObject bodyObj = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            bodyObj.name = "Body";
+            // Create 3D body (elongated rounded cube)
+            GameObject bodyObj = new GameObject("Body");
             bodyObj.transform.SetParent(obj.transform);
             bodyObj.transform.localPosition = new Vector3(0, -0.4f, 0);
             bodyObj.transform.localScale = new Vector3(0.4f, 0.8f, 0.4f);
-            MeshRenderer bodyMr = bodyObj.GetComponent<MeshRenderer>();
+            
+            bodyObj.AddComponent<MeshFilter>();
+            MeshRenderer bodyMr = bodyObj.AddComponent<MeshRenderer>();
+            RoundedCube bodyRc = bodyObj.AddComponent<RoundedCube>();
+            bodyRc.xSize = 5; bodyRc.ySize = 10; bodyRc.zSize = 5;
+            bodyRc.roundness = 1.5f;
+            bodyRc.Generate();
+            
             Material bodyMat = new Material(Shader.Find("Standard"));
             bodyMr.material = bodyMat;
-            
-            // Remove child colliders (we'll use parent collider)
-            DestroyImmediate(bodyObj.GetComponent<Collider>());
 
-            // Create 3D head (pyramid-like using cube scaled)
-            GameObject headObj = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            // Create 3D head (shorter rounded cube)
+            GameObject headObj = new GameObject("Head");
             headObj.name = "Head";
             headObj.transform.SetParent(obj.transform);
             headObj.transform.localPosition = new Vector3(0, 0, 0);
-            headObj.transform.localScale = new Vector3(0.5f, 0.3f, 0.4f);
-            MeshRenderer headMr = headObj.GetComponent<MeshRenderer>();
+            headObj.transform.localScale = new Vector3(0.55f, 0.35f, 0.4f);
+            
+            headObj.AddComponent<MeshFilter>();
+            MeshRenderer headMr = headObj.AddComponent<MeshRenderer>();
+            RoundedCube headRc = headObj.AddComponent<RoundedCube>();
+            headRc.xSize = 8; headRc.ySize = 5; headRc.zSize = 5;
+            headRc.roundness = 1.2f;
+            headRc.Generate();
+            
             Material headMat = new Material(Shader.Find("Standard"));
             headMr.material = headMat;
-            
-            // Remove child colliders (we'll use parent collider)
-            DestroyImmediate(headObj.GetComponent<Collider>());
 
             // Add 3D collider to parent (BoxCollider, not BoxCollider2D)
             BoxCollider col = obj.AddComponent<BoxCollider>();
@@ -208,14 +375,18 @@ namespace ArrowBlast.Editor
 
         private Slot CreateSlotPrefab3D()
         {
-            // Create 3D Quad (or thin cube) for slot background
-            GameObject obj = GameObject.CreatePrimitive(PrimitiveType.Quad);
-            obj.name = "Slot";
+            GameObject obj = new GameObject("Slot");
             obj.transform.localScale = new Vector3(1, 1, 1);
 
+            MeshFilter mf = obj.AddComponent<MeshFilter>();
+            MeshRenderer mr = obj.AddComponent<MeshRenderer>();
+            RoundedCube rc = obj.AddComponent<RoundedCube>();
+            rc.xSize = 10; rc.ySize = 10; rc.zSize = 10;
+            rc.roundness = 0.15f;
+            rc.Generate();
+
             Slot slot = obj.AddComponent<Slot>();
-            MeshRenderer mr = obj.GetComponent<MeshRenderer>();
-            
+
             // Create material
             Material mat = new Material(Shader.Find("Standard"));
             mr.material = mat;
@@ -223,13 +394,13 @@ namespace ArrowBlast.Editor
             // Create TextMeshPro for ammo count (world space)
             GameObject textObj = new GameObject("AmmoText");
             textObj.transform.SetParent(obj.transform);
-            textObj.transform.localPosition = new Vector3(0, 0, -0.1f);
+            textObj.transform.localPosition = new Vector3(0, 0, -0.6f); // Move in front of rounded surface
             textObj.transform.localScale = Vector3.one;
             
             TextMeshPro tmp = textObj.AddComponent<TextMeshPro>();
             tmp.fontSize = 4;
             tmp.alignment = TextAlignmentOptions.Center;
-            tmp.color = Color.white;
+            tmp.color = Color.black;
 
             // Assign colors
             Color[] colors = new Color[]
@@ -242,6 +413,7 @@ namespace ArrowBlast.Editor
             SerializedObject so = new SerializedObject(slot);
             so.FindProperty("bgMesh").objectReferenceValue = mr;
             so.FindProperty("ammoText").objectReferenceValue = tmp;
+            so.FindProperty("textColor").colorValue = Color.black;
             
             SerializedProperty colorProp = so.FindProperty("colorDefinitions");
             colorProp.arraySize = 6;

@@ -25,8 +25,10 @@ namespace ArrowBlast.Game
         [SerializeField] private Material headMaterial;
         [SerializeField] private Material bodyMaterial;
         [SerializeField] private Color[] colorDefinitions;
+        [SerializeField] private Sprite arrowIconSprite;
 
         private GameObject headObject;
+        private GameObject iconObject;
         private List<GameObject> bodyParts = new List<GameObject>(); // Individual body segments for animation
 
         public void Init(BlockColor color, Direction dir, int length, int x, int y, List<Vector2Int> segments = null, float cellSize = 0.8f)
@@ -61,7 +63,7 @@ namespace ArrowBlast.Game
             // Adjust collider to cover all segments
             FitColliderToSegments(col);
             col.enabled = true;
-            Debug.Log($"[ARROW INIT] Arrow initialized at ({x}, {y}), Length: {Length}, Body parts will be created");
+            Debug.Log($"[ARROW INIT] Arrow initialized at ({GridX}, {GridY}), Length: {Length}");
         }
 
         public int GetAmmoAmount()
@@ -123,10 +125,11 @@ namespace ArrowBlast.Game
             return cells;
         }
 
+
+
         private void CreateProceduralVisuals()
         {
-            // 1. Cleanup ALL children to ensure no legacy prefab parts remain
-            // We use a while loop because childCount changes as we destroy
+            // 1. Cleanup ALL children
             for (int i = transform.childCount - 1; i >= 0; i--)
             {
                 Destroy(transform.GetChild(i).gameObject);
@@ -136,14 +139,14 @@ namespace ArrowBlast.Game
             if (Segments == null || Segments.Count == 0) return;
 
             Color arrowColor = GetArrowColor();
-            float visualScale = 0.95f; // Slightly smaller than cell to show separation
+            // Set scale to 1.0f so segments connect perfectly without gaps
+            float visualScale = 1.0f;
 
             // 2. Create Head (at Segments[0])
-            headObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            headObject.name = "Head";
+            headObject = new GameObject("Head");
             headObject.transform.SetParent(transform);
-            headObject.transform.localPosition = Vector3.zero; // Head is always at the arrow's root position
-            headObject.transform.localScale = new Vector3(visualScale, visualScale, visualScale) * CellSize;
+            headObject.transform.localPosition = Vector3.zero;
+            headObject.transform.localScale = Vector3.one * visualScale * CellSize;
 
             // Visual rotation for the head to show direction
             float rotZ = 0;
@@ -156,51 +159,59 @@ namespace ArrowBlast.Game
             }
             headObject.transform.localRotation = Quaternion.Euler(0, 0, rotZ);
 
-            MeshRenderer headMr = headObject.GetComponent<MeshRenderer>();
-            if (headMaterial != null)
+            MeshFilter hMf = headObject.AddComponent<MeshFilter>();
+            MeshRenderer hMr = headObject.AddComponent<MeshRenderer>();
+            RoundedCube hRc = headObject.AddComponent<RoundedCube>();
+            hRc.xSize = 5; hRc.ySize = 5; hRc.zSize = 5; // Resolution
+            hRc.roundness = 0.15f; // Soft beveled look
+            hRc.Generate();
+
+            hMr.material = headMaterial != null ? new Material(headMaterial) : new Material(Shader.Find("Standard"));
+            hMr.material.color = arrowColor;
+
+            // Add Sprite Icon on top
+            if (arrowIconSprite != null)
             {
-                headMr.material = new Material(headMaterial);
-                headMr.material.color = arrowColor;
+                iconObject = new GameObject("Icon");
+                iconObject.transform.SetParent(headObject.transform);
+                iconObject.transform.localPosition = new Vector3(0, 0, -0.6f);
+                iconObject.transform.localScale = Vector3.one * 0.3f;
+                iconObject.transform.localRotation = Quaternion.identity;
+
+                SpriteRenderer sr = iconObject.AddComponent<SpriteRenderer>();
+                sr.sprite = arrowIconSprite;
+                sr.color = UnityEngine.Color.black;
             }
-            else
-            {
-                headMr.material.color = arrowColor;
-            }
-            Destroy(headObject.GetComponent<Collider>());
 
             // 3. Create Body Parts (Remaining segments)
             for (int i = 1; i < Segments.Count; i++)
             {
                 Vector2Int cell = Segments[i];
-                Vector2Int head = Segments[0]; // Reference for offset
+                Vector2Int head = Segments[0];
 
-                GameObject bodyPart = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                bodyPart.name = $"BodyPart_{i}";
+                GameObject bodyPart = new GameObject($"BodyPart_{i}");
                 bodyPart.transform.SetParent(transform);
 
                 // Position relative to head in grid space
-                // Since the root is NOT rotated, we can use direct grid offsets
                 bodyPart.transform.localPosition = new Vector3(
                     (cell.x - head.x) * CellSize,
                     (cell.y - head.y) * CellSize,
                     0
                 );
 
-                bodyPart.transform.localScale = new Vector3(visualScale * 0.85f, visualScale * 0.85f, visualScale * 0.85f) * CellSize;
+                bodyPart.transform.localScale = Vector3.one * visualScale * CellSize;
                 bodyPart.transform.localRotation = Quaternion.identity;
 
-                MeshRenderer bodyMr = bodyPart.GetComponent<MeshRenderer>();
-                if (bodyMaterial != null)
-                {
-                    bodyMr.material = new Material(bodyMaterial);
-                    bodyMr.material.color = arrowColor;
-                }
-                else
-                {
-                    bodyMr.material.color = arrowColor;
-                }
+                MeshFilter bMf = bodyPart.AddComponent<MeshFilter>();
+                MeshRenderer bMr = bodyPart.AddComponent<MeshRenderer>();
+                RoundedCube bRc = bodyPart.AddComponent<RoundedCube>();
+                bRc.xSize = 5; bRc.ySize = 5; bRc.zSize = 5;
+                bRc.roundness = 0.15f;
+                bRc.Generate();
 
-                Destroy(bodyPart.GetComponent<Collider>());
+                bMr.material = bodyMaterial != null ? new Material(bodyMaterial) : new Material(Shader.Find("Standard"));
+                bMr.material.color = arrowColor;
+
                 bodyParts.Add(bodyPart);
             }
         }
@@ -284,9 +295,11 @@ namespace ArrowBlast.Game
             // Step 1: Move entire arrow to exit position
             sequence.Append(transform.DOMove(exitTargetPosition, moveDuration).SetEase(Ease.OutQuad));
 
-            // Step 2: Unparent body parts so they stay at exit while head moves
+            // Step 2: Unparent body parts and hide icon
             sequence.AppendCallback(() =>
             {
+                if (iconObject != null) iconObject.SetActive(false); // Hide icon as soon as we leave the grid
+
                 foreach (var part in bodyParts)
                 {
                     if (part != null)

@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 5004723797491870159}
   - component: {fileID: 8235927079378045788}
   - component: {fileID: 2126982914838082015}
+  - component: {fileID: 1921482690566149060}
   m_Layer: 0
   m_Name: Block
   m_TagString: Untagged
@@ -132,3 +133,19 @@ MonoBehaviour:
   - {r: 1, g: 0.9, b: 0.2, a: 1}
   - {r: 0.8, g: 0.3, b: 1, a: 1}
   - {r: 1, g: 0.6, b: 0.2, a: 1}
+--- !u!114 &1921482690566149060
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 600457280498303630}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69fb7188a4e62c54680ee119ac73c6b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowBlast.Game.RoundedCube
+  xSize: 10
+  ySize: 10
+  zSize: 10
+  roundness: 0.2
