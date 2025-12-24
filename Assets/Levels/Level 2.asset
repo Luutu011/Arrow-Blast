@@ -13,11 +13,14 @@ MonoBehaviour:
   m_Name: Level 2
   m_EditorClassIdentifier: Assembly-CSharp::ArrowBlast.Data.LevelData
   levelName: 
-  width: 4
-  height: 1
-  gridRows: 4
-  gridCols: 1
+  width: 3
+  height: 5
+  gridRows: 5
+  gridCols: 3
   blocks:
+  - colorIndex: 0
+    gridX: 0
+    gridY: 0
   - colorIndex: 0
     gridX: 3
     gridY: 4
@@ -36,6 +39,9 @@ MonoBehaviour:
   - colorIndex: 0
     gridX: 2
     gridY: 2
+  - colorIndex: 0
+    gridX: 3
+    gridY: 0
   - colorIndex: 1
     gridX: 5
     gridY: 3
@@ -51,23 +57,4 @@ MonoBehaviour:
   - colorIndex: 1
     gridX: 1
     gridY: 4
-  - colorIndex: 2
-    gridX: 2
-    gridY: 0
-  - colorIndex: 1
-    gridX: 1
-    gridY: 0
-  - colorIndex: 0
-    gridX: 0
-    gridY: 0
-  - colorIndex: 3
-    gridX: 3
-    gridY: 0
-  arrows:
-  - colorIndex: 0
-    direction: 0
-    length: 1
-    gridX: 0
-    gridY: 0
-    segments:
-    - {x: 0, y: 0}
+  arrows: []
