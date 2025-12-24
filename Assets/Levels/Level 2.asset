@@ -18,16 +18,19 @@ MonoBehaviour:
   gridRows: 1
   gridCols: 4
   blocks:
-  - colorIndex: 3
+  - colorIndex: 2
+    gridX: 0
+    gridY: 0
+  - colorIndex: 2
     gridX: 0
     gridY: 1
-  - colorIndex: 3
+  - colorIndex: 2
     gridX: 0
     gridY: 2
-  - colorIndex: 1
+  - colorIndex: 0
     gridX: 0
     gridY: 3
-  - colorIndex: 1
+  - colorIndex: 0
     gridX: 0
     gridY: 4
   - colorIndex: 1
@@ -41,20 +44,23 @@ MonoBehaviour:
     gridY: 7
   - colorIndex: 3
     gridX: 1
-    gridY: 1
+    gridY: 0
   - colorIndex: 3
+    gridX: 1
+    gridY: 1
+  - colorIndex: 0
     gridX: 1
     gridY: 2
-  - colorIndex: 2
+  - colorIndex: 0
     gridX: 1
     gridY: 3
-  - colorIndex: 3
+  - colorIndex: 1
     gridX: 1
     gridY: 4
-  - colorIndex: 3
+  - colorIndex: 1
     gridX: 1
     gridY: 5
-  - colorIndex: 1
+  - colorIndex: 0
     gridX: 1
     gridY: 6
   - colorIndex: 1
@@ -62,20 +68,23 @@ MonoBehaviour:
     gridY: 7
   - colorIndex: 3
     gridX: 2
+    gridY: 0
+  - colorIndex: 2
+    gridX: 2
     gridY: 1
-  - colorIndex: 0
+  - colorIndex: 2
     gridX: 2
     gridY: 2
-  - colorIndex: 0
+  - colorIndex: 2
     gridX: 2
     gridY: 3
-  - colorIndex: 0
+  - colorIndex: 3
     gridX: 2
     gridY: 4
   - colorIndex: 0
     gridX: 2
     gridY: 5
-  - colorIndex: 1
+  - colorIndex: 0
     gridX: 2
     gridY: 6
   - colorIndex: 1
@@ -83,20 +92,23 @@ MonoBehaviour:
     gridY: 7
   - colorIndex: 3
     gridX: 3
+    gridY: 0
+  - colorIndex: 3
+    gridX: 3
     gridY: 1
   - colorIndex: 2
     gridX: 3
     gridY: 2
-  - colorIndex: 0
+  - colorIndex: 3
     gridX: 3
     gridY: 3
-  - colorIndex: 1
+  - colorIndex: 2
     gridX: 3
     gridY: 4
-  - colorIndex: 0
+  - colorIndex: 2
     gridX: 3
     gridY: 5
-  - colorIndex: 0
+  - colorIndex: 1
     gridX: 3
     gridY: 6
   - colorIndex: 0
@@ -104,40 +116,28 @@ MonoBehaviour:
     gridY: 7
   - colorIndex: 3
     gridX: 4
-    gridY: 1
+    gridY: 0
   - colorIndex: 2
+    gridX: 4
+    gridY: 1
+  - colorIndex: 3
     gridX: 4
     gridY: 2
-  - colorIndex: 2
+  - colorIndex: 3
     gridX: 4
     gridY: 3
-  - colorIndex: 2
+  - colorIndex: 0
     gridX: 4
     gridY: 4
-  - colorIndex: 2
+  - colorIndex: 1
     gridX: 4
     gridY: 5
   - colorIndex: 0
     gridX: 4
     gridY: 6
-  - colorIndex: 0
+  - colorIndex: 1
     gridX: 4
     gridY: 7
-  - colorIndex: 0
-    gridX: 1
-    gridY: 0
-  - colorIndex: 0
-    gridX: 0
-    gridY: 0
-  - colorIndex: 0
-    gridX: 4
-    gridY: 0
-  - colorIndex: 0
-    gridX: 3
-    gridY: 0
-  - colorIndex: 0
-    gridX: 2
-    gridY: 0
   arrows:
   - colorIndex: 0
     direction: 3
