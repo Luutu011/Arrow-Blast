@@ -35,9 +35,31 @@ namespace ArrowBlast.Game
         public void FillSlot(BlockColor color, int amount)
         {
             IsOccupied = true;
-            IsReserved = false; // Head has landed, slot is now officially occupied
+            IsReserved = false;
             CurrentColor = color;
             AmmoCount = amount;
+            UpdateVisuals();
+        }
+
+        public void InitializeCollection(BlockColor color)
+        {
+            CurrentColor = color;
+            AmmoCount = 0;
+            IsReserved = true;
+            IsOccupied = false;
+            UpdateVisuals();
+        }
+
+        public void FinalizeCollection()
+        {
+            IsOccupied = true;
+            IsReserved = false;
+            UpdateVisuals();
+        }
+
+        public void AddAmmo(int amount)
+        {
+            AmmoCount += amount;
             UpdateVisuals();
         }
 

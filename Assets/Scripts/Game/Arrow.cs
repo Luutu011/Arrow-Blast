@@ -275,6 +275,28 @@ namespace ArrowBlast.Game
         }
 
         /// <summary>
+        /// Visual feedback when the arrow is clicked but blocked
+        /// </summary>
+        public void AnimateBlocked()
+        {
+            // Shake the arrow slightly or pulse it
+            transform.DOComplete(); // Stop any current animation
+            transform.DOPunchScale(Vector3.one * 0.1f, 0.3f, 10, 1)
+                .SetEase(Ease.OutQuad);
+
+            // Optional: Shake position slightly in the direction it's blocked
+            Vector3 shakeDir = Vector3.zero;
+            switch (ArrowDirection)
+            {
+                case Direction.Up: shakeDir = Vector3.up; break;
+                case Direction.Down: shakeDir = Vector3.down; break;
+                case Direction.Left: shakeDir = Vector3.left; break;
+                case Direction.Right: shakeDir = Vector3.right; break;
+            }
+            transform.DOPunchPosition(shakeDir * 0.1f, 0.3f, 10, 1);
+        }
+
+        /// <summary>
         /// DOTween collection animation:
         /// 1. Move in arrow direction until head exits grid
         /// 2. Stop head, continue body parts merging
@@ -327,6 +349,10 @@ namespace ArrowBlast.Game
                 }
             });
 
+            int totalAmmo = GetAmmoAmount();
+            int ammoPerPart = totalAmmo / Length;
+            int remainder = totalAmmo % Length;
+
             // Step 5: Body parts follow to Slot one by one
             if (bodyParts.Count > 0)
             {
@@ -349,8 +375,7 @@ namespace ArrowBlast.Game
                                    if (bodyPart != null)
                                    {
                                        // Part arrived at slot
-                                       int ammoForSegment = GetAmmoPerSegment();
-                                       onAmmoIncrement?.Invoke(ammoForSegment);
+                                       onAmmoIncrement?.Invoke(ammoPerPart);
 
                                        // Pulse Head again
                                        if (headObject != null)
@@ -368,12 +393,12 @@ namespace ArrowBlast.Game
                 }
             }
 
-            // Step 6: Final Head Processing (head itself counts as ammo)
+            // Step 6: Final Head Processing (head itself counts as ammo + any remainder)
             sequence.AppendCallback(() =>
             {
-                int headAmmo = GetAmmoPerSegment();
-                onAmmoIncrement?.Invoke(headAmmo);
-                Debug.Log("[ARROW ANIM] Head added its own ammo");
+                int finalHeadAmmo = ammoPerPart + remainder;
+                onAmmoIncrement?.Invoke(finalHeadAmmo);
+                Debug.Log($"[ARROW ANIM] Head added {finalHeadAmmo} ammo (base: {ammoPerPart}, remainder: {remainder})");
             });
 
             // Step 7: Finish
@@ -391,12 +416,6 @@ namespace ArrowBlast.Game
             sequence.Play();
         }
 
-        private int GetAmmoPerSegment()
-        {
-            // Distribute ammo evenly across all segments (head + body)
-            int totalAmmo = GetAmmoAmount();
-            return Mathf.CeilToInt(totalAmmo / (float)Length);
-        }
 
         private void UpdateVisuals()
         {

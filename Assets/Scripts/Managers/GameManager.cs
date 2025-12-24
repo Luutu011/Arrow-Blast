@@ -168,7 +168,11 @@ namespace ArrowBlast.Managers
 
         private void TryCollectArrow(Arrow arrow)
         {
-            if (!CanArrowEscape(arrow)) return;
+            if (!CanArrowEscape(arrow))
+            {
+                arrow.AnimateBlocked();
+                return;
+            }
 
             Slot targetSlot = null;
             foreach (var slot in slots)
@@ -211,12 +215,10 @@ namespace ArrowBlast.Managers
 
             Vector3 slotWorldPos = targetSlot.transform.position;
             BlockColor arrowColor = arrow.Color;
-            int currentAnimationAmmo = 0;
-
             arrow.AnimateCollection(exitDirection, exitTargetPos, slotWorldPos,
-                () => { targetSlot.FillSlot(arrowColor, 0); currentAnimationAmmo = 0; },
-                (int ammoToAdd) => { currentAnimationAmmo += ammoToAdd; targetSlot.FillSlot(arrowColor, currentAnimationAmmo); },
-                () => { targetSlot.FillSlot(arrowColor, currentAnimationAmmo); Destroy(arrow.gameObject); CheckWinCondition(); });
+                () => { targetSlot.InitializeCollection(arrowColor); },
+                (int ammoToAdd) => { targetSlot.AddAmmo(ammoToAdd); },
+                () => { targetSlot.FinalizeCollection(); Destroy(arrow.gameObject); CheckWinCondition(); });
         }
 
         private bool CanArrowEscape(Arrow arrow)
