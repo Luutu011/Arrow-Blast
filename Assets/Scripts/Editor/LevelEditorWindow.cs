@@ -28,6 +28,8 @@ namespace ArrowBlast.Editor
         private ArrowData ghostArrow = null;
         private int originalDragArrowIndex = -1; // To restore if cancelled or to delete if replaced
         private BlockColor? capturedColor = null;
+        private int keyboardSelectedArrowIndex = -1;
+        private Vector2Int? keyboardSelectedCell = null;
         private List<ArrowData> solvableArrowOrder = new List<ArrowData>(); // Stores the sequence of solvable arrows during generation
 
         [MenuItem("Arrow Blast/Level Editor")]
@@ -314,16 +316,26 @@ namespace ArrowBlast.Editor
             EditorGUILayout.EndHorizontal();
             EditorGUILayout.EndHorizontal();
 
+            HandleArrowKeyInput();
+
             // Grid Visualization
             float cellSize = 40f;
             float startX = 20f;
             float startY = GUILayoutUtility.GetRect(0, cellSize * currentLevelData.gridRows + 20).y + 10;
 
             // Process Input globally
-            if (Event.current.type == EventType.MouseUp && arrowDragPath.Count > 0)
+            if (Event.current.type == EventType.MouseUp)
             {
-                 FinalizeArrowPath();
-                 Repaint();
+                // Only finalize if a real drag created a multi-cell path
+                if (arrowDragPath.Count > 1)
+                {
+                    FinalizeArrowPath();
+                }
+                // Clear transient drag state on simple click
+                arrowDragPath.Clear();
+                originalDragArrowIndex = -1;
+                capturedColor = null;
+                Repaint();
             }
 
             // Draw Background
@@ -386,65 +398,110 @@ namespace ArrowBlast.Editor
                     // Interaction
                     if (bgRect.Contains(Event.current.mousePosition) && cellRect.Contains(Event.current.mousePosition))
                     {
-                        if (Event.current.type == EventType.MouseDown && Event.current.button == 0)
+                        Vector2Int cell = new Vector2Int(x, y);
+
+                        // Shift-click paint/erase
+                        if (Event.current.shift && Event.current.type == EventType.MouseDown)
                         {
-                            if (arrow != null)
+                            if (Event.current.button == 0)
                             {
-                                originalDragArrowIndex = currentLevelData.arrows.IndexOf(arrow);
-                                capturedColor = (BlockColor)arrow.colorIndex;
-                                // Start from this cell (Head or Body)
-                                // We'll reconstruct segment order if possible
-                                List<Vector2Int> existing = GetArrowCells(arrow);
-                                int idx = existing.IndexOf(new Vector2Int(x, y));
-                                // Head is index 0. If they click body at index idx, we truncate path to [idx...tail]
-                                // and then add new cells? 
-                                // Actually, simpler: Start from tail up to this cell, or just start a new drag path.
-                                // User said: "extend it".
-                                // Let's make it so segments are TAIL to HEAD in the drag path list during drawing, 
-                                // then reverse for storage.
-                                arrowDragPath = new List<Vector2Int> { new Vector2Int(x, y) };
-                            }
-                            else
-                            {
+                                Undo.RecordObject(currentLevelData, "Paint Arrow Cell");
+                                var target = FindArrowAtCell(x, y);
+                                if (target != null)
+                                {
+                                    target.colorIndex = (int)selectedColor;
+                                    SelectArrowForKeyboard(target, cell);
+                                }
+                                else
+                                {
+                                    var newArrow = new ArrowData
+                                    {
+                                        gridX = x,
+                                        gridY = y,
+                                        colorIndex = (int)selectedColor,
+                                        direction = (int)selectedDirection,
+                                        length = 1,
+                                        segments = new List<Vector2Int> { cell }
+                                    };
+                                    currentLevelData.arrows.Add(newArrow);
+                                    SelectArrowForKeyboard(newArrow, cell);
+                                }
+
+                                EditorUtility.SetDirty(currentLevelData);
+                                arrowDragPath.Clear();
                                 originalDragArrowIndex = -1;
                                 capturedColor = null;
-                                arrowDragPath = new List<Vector2Int> { new Vector2Int(x, y) };
+                                Repaint();
+                                Event.current.Use();
                             }
-                            Event.current.Use();
-                        }
-                        
-                        if (Event.current.type == EventType.MouseDrag && arrowDragPath.Count > 0)
-                        {
-                            Vector2Int currentCell = new Vector2Int(x, y);
-                            if (currentCell != arrowDragPath[0]) // arrowDragPath[0] is most recent cell
+                            else if (Event.current.button == 1)
                             {
-                                if (IsAdjacent(currentCell, arrowDragPath[0]))
+                                var target = FindArrowAtCell(x, y);
+                                if (target != null)
                                 {
-                                    if (!arrowDragPath.Contains(currentCell))
+                                    Undo.RecordObject(currentLevelData, "Erase Arrow Cell");
+                                    ClearKeyboardSelectionIf(target);
+                                    currentLevelData.arrows.Remove(target);
+                                    EditorUtility.SetDirty(currentLevelData);
+                                    Repaint();
+                                }
+                                //Event.current.Use();
+                            }
+                        }
+                        else
+                        {
+                            if (Event.current.type == EventType.MouseDown && Event.current.button == 0)
+                            {
+                                if (arrow != null)
+                                {
+                                    SelectArrowForKeyboard(arrow, cell);
+                                    originalDragArrowIndex = currentLevelData.arrows.IndexOf(arrow);
+                                    capturedColor = (BlockColor)arrow.colorIndex;
+                                    List<Vector2Int> existing = GetArrowCells(arrow);
+                                    int idx = existing.IndexOf(cell);
+                                    arrowDragPath = new List<Vector2Int> { cell };
+                                }
+                                else
+                                {
+                                    keyboardSelectedArrowIndex = -1;
+                                    keyboardSelectedCell = null;
+                                    originalDragArrowIndex = -1;
+                                    capturedColor = null;
+                                    arrowDragPath = new List<Vector2Int> { cell };
+                                }
+                                Event.current.Use();
+                            }
+                            
+                            if (Event.current.type == EventType.MouseDrag && arrowDragPath.Count > 0)
+                            {
+                                Vector2Int currentCell = cell;
+                                if (currentCell != arrowDragPath[0]) // arrowDragPath[0] is most recent cell
+                                {
+                                    if (IsAdjacent(currentCell, arrowDragPath[0]))
                                     {
-                                        arrowDragPath.Insert(0, currentCell); // Prepend new head
-                                        Repaint();
-                                    }
-                                    else
-                                    {
-                                        // Backtrack path
-                                        int idx = arrowDragPath.IndexOf(currentCell);
-                                        if (idx > 0)
+                                        if (!arrowDragPath.Contains(currentCell))
                                         {
-                                            arrowDragPath.RemoveRange(0, idx);
+                                            arrowDragPath.Insert(0, currentCell); // Prepend new head
                                             Repaint();
+                                        }
+                                        else
+                                        {
+                                            int idx = arrowDragPath.IndexOf(currentCell);
+                                            if (idx > 0)
+                                            {
+                                                arrowDragPath.RemoveRange(0, idx);
+                                                Repaint();
+                                            }
                                         }
                                     }
                                 }
                             }
-                        }
 
-                        if (Event.current.type == EventType.MouseDown && Event.current.button == 1 && arrow != null)
-                        {
-                            Undo.RecordObject(currentLevelData, "Remove Arrow");
-                            currentLevelData.arrows.Remove(arrow);
-                            EditorUtility.SetDirty(currentLevelData);
-                            Repaint();
+                            if (Event.current.type == EventType.MouseDown && Event.current.button == 1)
+                            {
+                                // Ignore right-click in arrow grid editor — do nothing.
+                                Event.current.Use();
+                            }
                         }
                     }
 
@@ -468,7 +525,31 @@ namespace ArrowBlast.Editor
                 DrawSegmentLine(arrowDragPath[i], arrowDragPath[i+1], startX, startY, cellSize);
             }
 
-            EditorGUILayout.HelpBox("LMB Drag to Draw Path (Last point is Head). RMB to Remove.", MessageType.None);
+            EditorGUILayout.HelpBox("LMB Drag to Draw Path (Last point is Head). Shift + RMB to Remove. Shift + LMB to draw a block. Click to select and use arrow button on keyboard to assign direction.", MessageType.None);
+        }
+
+        private void HandleArrowKeyInput()
+        {
+            if (Event.current.type != EventType.KeyDown) return;
+            Direction? newDir = null;
+            switch (Event.current.keyCode)
+            {
+                case KeyCode.UpArrow: newDir = Direction.Up; break;
+                case KeyCode.DownArrow: newDir = Direction.Down; break;
+                case KeyCode.LeftArrow: newDir = Direction.Left; break;
+                case KeyCode.RightArrow: newDir = Direction.Right; break;
+            }
+
+            if (!newDir.HasValue) return;
+            if (keyboardSelectedArrowIndex < 0 || keyboardSelectedArrowIndex >= currentLevelData.arrows.Count) return;
+            var arrow = currentLevelData.arrows[keyboardSelectedArrowIndex];
+            if (arrow == null) return;
+
+            Undo.RecordObject(currentLevelData, "Change Arrow Direction");
+            arrow.direction = (int)newDir.Value;
+            EditorUtility.SetDirty(currentLevelData);
+            Event.current.Use();
+            Repaint();
         }
 
         private void DrawSegmentLine(Vector2Int a, Vector2Int b, float startX, float startY, float cellSize)
@@ -490,6 +571,27 @@ namespace ArrowBlast.Editor
             if (diff.y < 0) return Direction.Down;
             if (diff.x < 0) return Direction.Left;
             return Direction.Right;
+        }
+
+        private ArrowData FindArrowAtCell(int x, int y)
+        {
+            return currentLevelData.arrows.Find(a => (a.gridX == x && a.gridY == y) || IsBodyPart(a, x, y));
+        }
+
+        private void SelectArrowForKeyboard(ArrowData arrow, Vector2Int cell)
+        {
+            if (arrow == null) return;
+            keyboardSelectedArrowIndex = currentLevelData.arrows.IndexOf(arrow);
+            keyboardSelectedCell = cell;
+        }
+
+        private void ClearKeyboardSelectionIf(ArrowData arrow)
+        {
+            if (keyboardSelectedArrowIndex < 0) return;
+            if (keyboardSelectedArrowIndex >= currentLevelData.arrows.Count) return;
+            if (currentLevelData.arrows[keyboardSelectedArrowIndex] != arrow) return;
+            keyboardSelectedArrowIndex = -1;
+            keyboardSelectedCell = null;
         }
 
         private void FinalizeArrowPath()
