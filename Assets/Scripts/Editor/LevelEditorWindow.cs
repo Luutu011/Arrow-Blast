@@ -103,14 +103,14 @@ namespace ArrowBlast.Editor
             
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.LabelField("Wall Size:", GUILayout.Width(80));
-            int newW = EditorGUILayout.IntSlider(currentLevelData.width, 3, 8);
-            int newH = EditorGUILayout.IntSlider(currentLevelData.height, 5, 50);
+            int newW = EditorGUILayout.IntSlider(currentLevelData.width, 1, 100);
+            int newH = EditorGUILayout.IntSlider(currentLevelData.height, 1, 500);
             EditorGUILayout.EndHorizontal();
 
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.LabelField("Grid Size:", GUILayout.Width(80));
-            int newRows = EditorGUILayout.IntSlider(currentLevelData.gridRows, 5, 20);
-            int newCols = EditorGUILayout.IntSlider(currentLevelData.gridCols, 3, 8);
+            int newRows = EditorGUILayout.IntSlider(currentLevelData.gridRows, 1, 100);
+            int newCols = EditorGUILayout.IntSlider(currentLevelData.gridCols, 1, 500);
             EditorGUILayout.EndHorizontal();
 
             if (EditorGUI.EndChangeCheck())

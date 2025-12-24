@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d145348b0fc1b3498587737ca92b963, type: 3}
+  m_Name: Level 2
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowBlast.Data.LevelData
+  levelName: 
+  width: 3
+  height: 5
+  gridRows: 5
+  gridCols: 3
+  blocks:
+  - colorIndex: 0
+    gridX: 0
+    gridY: 0
+  - colorIndex: 0
+    gridX: 3
+    gridY: 4
+  - colorIndex: 0
+    gridX: 0
+    gridY: 4
+  - colorIndex: 0
+    gridX: 4
+    gridY: 6
+  - colorIndex: 0
+    gridX: 5
+    gridY: 1
+  - colorIndex: 1
+    gridX: 1
+    gridY: 6
+  - colorIndex: 0
+    gridX: 2
+    gridY: 2
+  - colorIndex: 0
+    gridX: 3
+    gridY: 0
+  - colorIndex: 1
+    gridX: 5
+    gridY: 3
+  - colorIndex: 1
+    gridX: 2
+    gridY: 1
+  - colorIndex: 1
+    gridX: 0
+    gridY: 2
+  - colorIndex: 1
+    gridX: 5
+    gridY: 7
+  - colorIndex: 1
+    gridX: 1
+    gridY: 4
+  arrows: []
