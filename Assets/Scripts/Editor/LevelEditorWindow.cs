@@ -239,28 +239,12 @@ namespace ArrowBlast.Editor
                         drawColor = GetColorFromEnum((BlockColor)block.colorIndex);
                     }
                     
-                    // Selection: click an existing colored block to select it (for applying an arrow via keyboard)
-                    if (cellRect.Contains(Event.current.mousePosition) && Event.current.type == EventType.MouseDown && Event.current.button == 0)
-                    {
-                        if (block != null)
-                        {
-                            selectedBlockPos = new Vector2Int(x, y);
-                            hasSelectedBlock = true;
-                            Repaint();
-                            Event.current.Use();
-                        }
-                        else
-                        {
-                            hasSelectedBlock = false;
-                        }
-                    }
-
-                    // Interaction: Require Shift + Click/Drag for paint/erase actions
+                    // Interaction: Click or Shift+Drag
                     bool isAction = false;
                     if (cellRect.Contains(Event.current.mousePosition))
                     {
-                        if ((Event.current.type == EventType.MouseDown || Event.current.type == EventType.MouseDrag) && Event.current.shift)
-                            isAction = true;
+                        if (Event.current.type == EventType.MouseDown) isAction = true;
+                        if (Event.current.type == EventType.MouseDrag && Event.current.shift) isAction = true;
                     }
 
                     if (isAction)
@@ -293,95 +277,13 @@ namespace ArrowBlast.Editor
 
                     EditorGUI.DrawRect(cellRect, drawColor);
 
-                    // Draw selection outline if this block is selected
-                    if (hasSelectedBlock && selectedBlockPos == new Vector2Int(x, y))
-                    {
-                        Handles.DrawSolidRectangleWithOutline(cellRect, Color.clear, Color.yellow);
-                    }
-                    // Draw arrow overlay if an arrow exists at this cell (head)
-                    var overlay = currentLevelData.arrows.Find(a => a.gridX == x && a.gridY == y);
-                    if (overlay != null)
-                    {
-                        string dirLabel = GetDirectionArrow((Direction)overlay.direction);
-                        GUIStyle style = new GUIStyle(EditorStyles.boldLabel);
-                        style.alignment = TextAnchor.MiddleCenter;
-                        style.normal.textColor = Color.black;
-                        GUI.Label(cellRect, dirLabel, style);
-                        style.normal.textColor = Color.white;
-                        GUI.Label(new Rect(cellRect.x - 1, cellRect.y - 1, cellRect.width, cellRect.height), dirLabel, style);
-                    }
+                    // (no selection/arrow overlay in Wall Editor)
                 }
             }
             
             if (GUI.changed) Repaint();
             
-            // Keyboard: if a block is selected, allow arrow keys to convert it into an arrow
-            if (Event.current.type == EventType.KeyDown && hasSelectedBlock)
-            {
-                Direction dir = Direction.Up;
-                bool keyHandled = true;
-                switch (Event.current.keyCode)
-                {
-                    case KeyCode.UpArrow: dir = Direction.Up; break;
-                    case KeyCode.DownArrow: dir = Direction.Down; break;
-                    case KeyCode.LeftArrow: dir = Direction.Left; break;
-                    case KeyCode.RightArrow: dir = Direction.Right; break;
-                    default: keyHandled = false; break;
-                }
-
-                if (keyHandled)
-                {
-                    // Verify selected position maps into arrow grid
-                    int sx = selectedBlockPos.x;
-                    int sy = selectedBlockPos.y;
-                    if (sy < 0 || sy > currentLevelData.gridCols || sx < 0 || sx > currentLevelData.gridRows)
-                    {
-                        EditorUtility.DisplayDialog("Out of Bounds", "Selected block is outside the arrow grid and cannot become an arrow: " + sx + ", " + sy + " and the current grid size is " + currentLevelData.gridCols + " and " + currentLevelData.gridRows, "OK");
-                    }
-                    else
-                    {
-                        var blockAt = currentLevelData.blocks.Find(b => b.gridX == sx && b.gridY == sy);
-                        if (blockAt == null)
-                        {
-                            EditorUtility.DisplayDialog("No Block", "Selected cell no longer contains a block.", "OK");
-                        }
-                        else
-                        {
-                            Undo.RecordObject(currentLevelData, "Convert Block To Arrow");
-
-                            // Keep the block and add or update an arrow on the same cell
-                            var existingArrow = currentLevelData.arrows.Find(a => a.gridX == sx && a.gridY == sy);
-                            if (existingArrow != null)
-                            {
-                                existingArrow.direction = (int)dir;
-                                existingArrow.colorIndex = blockAt.colorIndex;
-                                existingArrow.length = 1;
-                                existingArrow.segments = new List<Vector2Int> { new Vector2Int(sx, sy) };
-                            }
-                            else
-                            {
-                                var newArrow = new ArrowData
-                                {
-                                    gridX = sx,
-                                    gridY = sy,
-                                    colorIndex = blockAt.colorIndex,
-                                    direction = (int)dir,
-                                    length = 1,
-                                    segments = new List<Vector2Int> { new Vector2Int(sx, sy) }
-                                };
-                                currentLevelData.arrows.Add(newArrow);
-                            }
-
-                            EditorUtility.SetDirty(currentLevelData);
-                            hasSelectedBlock = false;
-                            Repaint();
-                        }
-                    }
-                    Event.current.Use();
-                }
-            }
-
-            EditorGUILayout.HelpBox("Hold Shift + LMB to Paint, Hold Shift + RMB to Erase. Click a colored block, then press an arrow key to convert it into an arrow.", MessageType.None);
+            EditorGUILayout.HelpBox("LMB to Paint, RMB to Erase. Hold Shift to Drag-Paint.", MessageType.None);
         }
 
         private void DrawArrowEditor()
@@ -450,24 +352,76 @@ namespace ArrowBlast.Editor
                 {
                     Rect cellRect = new Rect(startX + x * cellSize + 2, startY + (currentLevelData.gridRows - 1 - y) * cellSize + 2, cellSize - 4, cellSize - 4);
                     
+                    // Block paint/selection support in Arrow Editor
+                    BlockData block = currentLevelData.blocks.Find(b => b.gridX == x && b.gridY == y);
                     ArrowData arrow = currentLevelData.arrows.Find(a => a.gridX == x && a.gridY == y); // Find head
                     if (arrow == null) arrow = currentLevelData.arrows.Find(a => IsBodyPart(a, x, y)); // Body
 
                     Color drawColor = new Color(0.3f, 0.3f, 0.3f);
                     string label = "";
-                    
-                    if (arrow != null)
+
+                    bool isHead = (arrow != null && arrow.gridX == x && arrow.gridY == y);
+                    if (block != null)
+                    {
+                        drawColor = GetColorFromEnum((BlockColor)block.colorIndex);
+                        if (isHead)
+                        {
+                            label = GetDirectionArrow((Direction)arrow.direction);
+                        }
+                    }
+                    else if (arrow != null)
                     {
                         drawColor = GetColorFromEnum((BlockColor)arrow.colorIndex);
-                        if (arrow.gridX == x && arrow.gridY == y)
+                        if (isHead)
                         {
                             label = GetDirectionArrow((Direction)arrow.direction);
                             drawColor *= 1.2f;
                         }
                         else
                         {
-                             drawColor *= 0.8f;
+                            drawColor *= 0.8f;
                         }
+                    }
+
+                    // Block painting: Shift + Click/Drag to paint/erase blocks on arrow grid
+                    bool blockAction = false;
+                    if (cellRect.Contains(Event.current.mousePosition))
+                    {
+                        if ((Event.current.type == EventType.MouseDown || Event.current.type == EventType.MouseDrag) && Event.current.shift)
+                            blockAction = true;
+                    }
+
+                    if (blockAction)
+                    {
+                        Undo.RecordObject(currentLevelData, "Paint Block");
+                        if (Event.current.button == 0)
+                        {
+                            if (block == null)
+                            {
+                                currentLevelData.blocks.Add(new BlockData { gridX = x, gridY = y, colorIndex = (int)selectedColor });
+                            }
+                            else
+                            {
+                                block.colorIndex = (int)selectedColor;
+                            }
+                            GUI.changed = true;
+                        }
+                        else if (Event.current.button == 1)
+                        {
+                            if (block != null) currentLevelData.blocks.Remove(block);
+                            GUI.changed = true;
+                        }
+                        EditorUtility.SetDirty(currentLevelData);
+                        Event.current.Use();
+                    }
+
+                    // Selection: left-click a colored block to select it for keyboard arrow conversion
+                    if (cellRect.Contains(Event.current.mousePosition) && Event.current.type == EventType.MouseDown && Event.current.button == 0 && block != null)
+                    {
+                        selectedBlockPos = new Vector2Int(x, y);
+                        hasSelectedBlock = true;
+                        Repaint();
+                        Event.current.Use();
                     }
 
                     // Path Drawing Highlight
@@ -485,7 +439,7 @@ namespace ArrowBlast.Editor
                         }
                     }
 
-                    // Interaction
+                    // Interaction (arrow drawing/removal)
                     if (bgRect.Contains(Event.current.mousePosition) && cellRect.Contains(Event.current.mousePosition))
                     {
                         if (Event.current.type == EventType.MouseDown && Event.current.button == 0)
@@ -551,6 +505,12 @@ namespace ArrowBlast.Editor
                     }
 
                     EditorGUI.DrawRect(cellRect, drawColor);
+                    // Draw selection outline if this block is selected
+                    if (hasSelectedBlock && selectedBlockPos == new Vector2Int(x, y))
+                    {
+                        Handles.DrawSolidRectangleWithOutline(cellRect, Color.clear, Color.yellow);
+                    }
+
                     if (!string.IsNullOrEmpty(label))
                     {
                         GUIStyle style = new GUIStyle(EditorStyles.boldLabel);
@@ -570,7 +530,70 @@ namespace ArrowBlast.Editor
                 DrawSegmentLine(arrowDragPath[i], arrowDragPath[i+1], startX, startY, cellSize);
             }
 
-            EditorGUILayout.HelpBox("LMB Drag to Draw Path (Last point is Head). RMB to Remove.", MessageType.None);
+            // Keyboard: if a block is selected in Arrow Editor, allow arrow keys to add/update arrow while keeping the block
+            if (Event.current.type == EventType.KeyDown && hasSelectedBlock)
+            {
+                Direction dir = Direction.Up;
+                bool keyHandled = true;
+                switch (Event.current.keyCode)
+                {
+                    case KeyCode.UpArrow: dir = Direction.Up; break;
+                    case KeyCode.DownArrow: dir = Direction.Down; break;
+                    case KeyCode.LeftArrow: dir = Direction.Left; break;
+                    case KeyCode.RightArrow: dir = Direction.Right; break;
+                    default: keyHandled = false; break;
+                }
+
+                if (keyHandled)
+                {
+                    int sx = selectedBlockPos.x;
+                    int sy = selectedBlockPos.y;
+                    if (sx < 0 || sx >= currentLevelData.gridCols || sy < 0 || sy >= currentLevelData.gridRows)
+                    {
+                        EditorUtility.DisplayDialog("Out of Bounds", "Selected block is outside the arrow grid and cannot become an arrow.", "OK");
+                    }
+                    else
+                    {
+                        var blockAt = currentLevelData.blocks.Find(b => b.gridX == sx && b.gridY == sy);
+                        if (blockAt == null)
+                        {
+                            EditorUtility.DisplayDialog("No Block", "Selected cell no longer contains a block.", "OK");
+                        }
+                        else
+                        {
+                            Undo.RecordObject(currentLevelData, "Convert Block To Arrow");
+                            var existingArrow = currentLevelData.arrows.Find(a => a.gridX == sx && a.gridY == sy);
+                            if (existingArrow != null)
+                            {
+                                existingArrow.direction = (int)dir;
+                                existingArrow.colorIndex = blockAt.colorIndex;
+                                existingArrow.length = 1;
+                                existingArrow.segments = new List<Vector2Int> { new Vector2Int(sx, sy) };
+                            }
+                            else
+                            {
+                                var newArrow = new ArrowData
+                                {
+                                    gridX = sx,
+                                    gridY = sy,
+                                    colorIndex = blockAt.colorIndex,
+                                    direction = (int)dir,
+                                    length = 1,
+                                    segments = new List<Vector2Int> { new Vector2Int(sx, sy) }
+                                };
+                                currentLevelData.arrows.Add(newArrow);
+                            }
+
+                            EditorUtility.SetDirty(currentLevelData);
+                            hasSelectedBlock = false;
+                            Repaint();
+                        }
+                    }
+                    Event.current.Use();
+                }
+            }
+
+            EditorGUILayout.HelpBox("Hold Shift + LMB to Paint blocks, Hold Shift + RMB to Erase blocks. Click a colored block then press an arrow key to add/update an arrow while keeping the block. LMB Drag to Draw Path, RMB to Remove.", MessageType.None);
         }
 
         private void DrawSegmentLine(Vector2Int a, Vector2Int b, float startX, float startY, float cellSize)
