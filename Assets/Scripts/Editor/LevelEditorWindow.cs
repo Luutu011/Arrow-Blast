@@ -126,7 +126,12 @@ namespace ArrowBlast.Editor
             }
 
             // Stats
-            int totalBlocks = currentLevelData.blocks.Count;
+            int totalBlocks = 0;
+            foreach (var b in currentLevelData.blocks)
+            {
+                totalBlocks++;
+                if (b.isTwoColor) totalBlocks++;
+            }
             int totalAmmo = CalculateTotalAmmo();
             
             EditorGUILayout.LabelField($"Total Stats: {totalBlocks} Blocks vs {totalAmmo} Ammo", EditorStyles.boldLabel);
@@ -147,6 +152,11 @@ namespace ArrowBlast.Editor
             {
                 if (!blocksPerColor.ContainsKey(b.colorIndex)) blocksPerColor[b.colorIndex] = 0;
                 blocksPerColor[b.colorIndex]++;
+                if (b.isTwoColor)
+                {
+                    if (!blocksPerColor.ContainsKey(b.secondaryColorIndex)) blocksPerColor[b.secondaryColorIndex] = 0;
+                    blocksPerColor[b.secondaryColorIndex]++;
+                }
             }
             
             foreach(var a in currentLevelData.arrows)
@@ -256,10 +266,12 @@ namespace ArrowBlast.Editor
                         {
                             if (block == null)
                             {
-                                currentLevelData.blocks.Add(new BlockData { gridX = x, gridY = y, colorIndex = (int)selectedColor });
+                                currentLevelData.blocks.Add(new BlockData { gridX = x, gridY = y, colorIndex = (int)selectedColor, isTwoColor = false });
                             }
-                            else
+                            else if (block.colorIndex != (int)selectedColor)
                             {
+                                block.isTwoColor = true;
+                                block.secondaryColorIndex = block.colorIndex;
                                 block.colorIndex = (int)selectedColor;
                             }
                             GUI.changed = true;
@@ -276,6 +288,12 @@ namespace ArrowBlast.Editor
                     }
 
                     EditorGUI.DrawRect(cellRect, drawColor);
+                    if (block != null && block.isTwoColor)
+                    {
+                        float innerSize = cellSize * 0.5f;
+                        Rect innerRect = new Rect(cellRect.x + (cellRect.width - innerSize) / 2f, cellRect.y + (cellRect.height - innerSize) / 2f, innerSize, innerSize);
+                        EditorGUI.DrawRect(innerRect, GetColorFromEnum((BlockColor)block.secondaryColorIndex));
+                    }
                 }
             }
             

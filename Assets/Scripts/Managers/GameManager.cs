@@ -37,6 +37,10 @@ namespace ArrowBlast.Managers
         private float shootTimer;
         private bool isGameOver;
 
+        // Booster State
+        private bool isInstantExitActive;
+        private bool extraSlotUsedThisLevel;
+
         public void RestartLevel()
         {
             LoadCurrentLevel();
@@ -45,6 +49,7 @@ namespace ArrowBlast.Managers
         private void Start()
         {
             InitializeSlots();
+            if (slotsContainer != null) slotsContainer.gameObject.SetActive(false); // Hide on start (Main Menu)
             if (levelManager == null) levelManager = FindObjectOfType<LevelManager>();
             // if (levelManager != null) LoadCurrentLevel(); // Removed: Load only from UI
         }
@@ -56,6 +61,8 @@ namespace ArrowBlast.Managers
             if (data != null)
             {
                 isGameOver = false;
+                extraSlotUsedThisLevel = false;
+                isInstantExitActive = false;
                 BuildLevel(data);
             }
         }
@@ -74,14 +81,45 @@ namespace ArrowBlast.Managers
             for (int i = 0; i < 5; i++)
             {
                 Slot s = Instantiate(slotPrefab, slotsContainer);
-                s.transform.localPosition = new Vector3((i - 2) * 1.2f, 0, 0);
                 s.Initialize();
                 slots.Add(s);
             }
+            UpdateSlotPositions();
+        }
+
+        private void UpdateSlotPositions()
+        {
+            float spacing = 1.2f;
+            float startX = -((slots.Count - 1) * spacing) / 2f;
+            for (int i = 0; i < slots.Count; i++)
+            {
+                slots[i].transform.localPosition = new Vector3(startX + i * spacing, 0, 0);
+            }
+        }
+
+        public void ActivateInstantExitBooster()
+        {
+            if (isGameOver) return;
+            isInstantExitActive = true;
+            Debug.Log("Booster: Instant Exit Active! Click an arrow.");
+        }
+
+        public void UseExtraSlotBooster()
+        {
+            if (isGameOver || extraSlotUsedThisLevel) return;
+            extraSlotUsedThisLevel = true;
+
+            Slot s = Instantiate(slotPrefab, slotsContainer);
+            s.Initialize();
+            slots.Add(s);
+            UpdateSlotPositions();
+            Debug.Log("Booster: Extra Slot Added!");
         }
 
         private void BuildLevel(LevelData data)
         {
+            if (slotsContainer != null) slotsContainer.gameObject.SetActive(true); // Show when level starts
+
             foreach (Transform t in wallContainer) Destroy(t.gameObject);
             foreach (Transform t in arrowContainer) Destroy(t.gameObject);
 
@@ -95,7 +133,7 @@ namespace ArrowBlast.Managers
             foreach (var bd in data.blocks)
             {
                 Block b = Instantiate(blockPrefab, wallContainer);
-                b.Init((BlockColor)bd.colorIndex, bd.gridX, bd.gridY);
+                b.Init((BlockColor)bd.colorIndex, bd.gridX, bd.gridY, bd.isTwoColor, (BlockColor)bd.secondaryColorIndex);
                 b.transform.localPosition = GetWallWorldPosition(bd.gridX, bd.gridY);
                 wallGrid[bd.gridX, bd.gridY] = b;
             }
@@ -168,7 +206,7 @@ namespace ArrowBlast.Managers
 
         private void TryCollectArrow(Arrow arrow)
         {
-            if (!CanArrowEscape(arrow))
+            if (!isInstantExitActive && !CanArrowEscape(arrow))
             {
                 arrow.AnimateBlocked();
                 return;
@@ -180,6 +218,7 @@ namespace ArrowBlast.Managers
 
             if (targetSlot == null) return;
 
+            isInstantExitActive = false; // Consume booster if it was active
             targetSlot.SetReserved(true);
             var occupied = arrow.GetOccupiedCells();
             foreach (var c in occupied)
@@ -279,14 +318,17 @@ namespace ArrowBlast.Managers
                 for (int y = 0; y < wallHeight; y++)
                 {
                     Block b = wallGrid[x, y];
-                    if (b != null)
+                    if (b != null && !b.IsTargeted) // Only target non-targeted blocks
                     {
                         if (b.Color == color)
                         {
                             Vector3 targetPos = b.transform.position;
                             int targetX = x;
                             int targetY = y;
-                            wallGrid[x, y] = null;
+
+                            b.IsTargeted = true; // Reserve this layer
+                            bool willBeDestroyed = !b.IsTwoColor;
+                            if (willBeDestroyed) wallGrid[x, y] = null;
 
                             GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
                             sphere.name = $"Projectile_{color}";
@@ -298,7 +340,7 @@ namespace ArrowBlast.Managers
                             Color vColor = GetBlockColorVisual(color);
                             proj.Initialize(color, projectileMaterial, vColor, () =>
                             {
-                                if (b != null) FinalizeBlockDestruction(targetX, targetY, b);
+                                if (b != null) StartCoroutine(HandleBlockHit(targetX, targetY, b, willBeDestroyed));
                             });
 
                             float distance = Vector3.Distance(slot.transform.position, targetPos);
@@ -311,6 +353,21 @@ namespace ArrowBlast.Managers
                 }
             }
             return false;
+        }
+
+        private IEnumerator HandleBlockHit(int x, int y, Block b, bool willBeDestroyed)
+        {
+            if (willBeDestroyed)
+            {
+                yield return b.AnimateDeath();
+                FinalizeBlockDestruction(x, y, b);
+            }
+            else
+            {
+                yield return b.AnimateTransition();
+                b.IsTargeted = false; // Layer transition complete, can be targeted again
+                CheckWinCondition();
+            }
         }
 
         private void FinalizeBlockDestruction(int x, int y, Block targetBlock)

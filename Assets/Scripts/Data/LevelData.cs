@@ -22,6 +22,8 @@ namespace ArrowBlast.Data
     public class BlockData
     {
         public int colorIndex;
+        public int secondaryColorIndex;
+        public bool isTwoColor;
         public int gridX;
         public int gridY;
     }
