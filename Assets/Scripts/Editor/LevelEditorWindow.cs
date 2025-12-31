@@ -20,7 +20,7 @@ namespace ArrowBlast.Editor
         private BlockColor selectedColor = BlockColor.Red;
         private Direction selectedDirection = Direction.Up;
         private int selectedLength = 1;
-        private int concurrentArrows = 2; // Number of arrows handled at once for wall randomization
+        private int concurrentArrows = 10; // Number of arrows handled at once for wall randomization
 
         // Interaction State
         private enum RandomMode { Normal, Hard, Mixed }
@@ -725,101 +725,147 @@ namespace ArrowBlast.Editor
         {
             if (currentLevelData.arrows.Count == 0)
             {
-                EditorUtility.DisplayDialog("Error", "Please place some arrows first so I know what color blocks to generate!", "OK");
-                return;
+            EditorUtility.DisplayDialog("Error", "Please place some arrows first so I know what color blocks to generate!", "OK");
+            return;
             }
 
             Undo.RecordObject(currentLevelData, "Randomize Wall");
             currentLevelData.blocks.Clear();
 
-            // 1. Determine Sequence
-            List<ArrowData> collectionOrder = new List<ArrowData>();
-            
-            // Use the pre-calculated solvable order if it matches the current arrow count
-            if (solvableArrowOrder != null && solvableArrowOrder.Count > 0 && solvableArrowOrder.Count == currentLevelData.arrows.Count)
+            // 1. Determine Sequence -> compute total ammo per color
+            Dictionary<int, int> colorCounts = new Dictionary<int, int>();
+            foreach (var a in currentLevelData.arrows)
             {
-                collectionOrder = new List<ArrowData>(solvableArrowOrder);
-                Debug.Log("[RANDOM WALL] Using pre-calculated solvable order.");
-            }
-            else
-            {
-                // Fallback: Simulate to find an order
-                var simResult = SimulateArrowCollection();
-                foreach (var s in simResult) collectionOrder.Add(s.arrow);
-                
-                if (collectionOrder.Count < currentLevelData.arrows.Count)
-                {
-                    foreach (var a in currentLevelData.arrows)
-                    {
-                        if (!collectionOrder.Contains(a)) collectionOrder.Add(a);
-                    }
-                    Debug.LogWarning("[RANDOM WALL] Layout partially unsolvable. Blocks might be difficult to clear.");
-                }
+            int ammo = GetArrowAmmo(a);
+            if (!colorCounts.ContainsKey(a.colorIndex)) colorCounts[a.colorIndex] = 0;
+            colorCounts[a.colorIndex] += ammo;
             }
 
-            // 2. Prepare Block Pool
             int cols = currentLevelData.width;
             int rows = currentLevelData.height;
             int[,] wallGrid = new int[cols, rows];
             for (int x = 0; x < cols; x++) for (int y = 0; y < rows; y++) wallGrid[x, y] = -1;
 
-            int arrowIdx = 0;
-            while (arrowIdx < collectionOrder.Count)
+            // Constraints: each contiguous cluster of same color should be between minCluster and maxCluster
+            int minCluster = 10;
+            int maxCluster = 20;
+
+            // Utility: available empty cells
+            List<Vector2Int> GetEmptyCells()
             {
-                List<int> chunkColors = new List<int>();
-                for (int i = 0; i < concurrentArrows && arrowIdx < collectionOrder.Count; i++)
-                {
-                    ArrowData a = collectionOrder[arrowIdx++];
-                    int ammo = GetArrowAmmo(a);
-                    for (int k = 0; k < ammo; k++) chunkColors.Add(a.colorIndex);
-                }
-
-                // Shuffle the chunk
-                for (int i = 0; i < chunkColors.Count; i++)
-                {
-                    int r = Random.Range(i, chunkColors.Count);
-                    int t = chunkColors[i]; chunkColors[i] = chunkColors[r]; chunkColors[r] = t;
-                }
-
-                // Distribute chunk
-                foreach (int color in chunkColors)
-                {
-                    List<int> candidateCols = new List<int>();
-                    for (int x = 0; x < cols; x++)
-                    {
-                        if (wallGrid[x, rows - 1] == -1) candidateCols.Add(x);
-                    }
-
-                    if (candidateCols.Count == 0) break;
-
-                    int col = candidateCols[Random.Range(0, candidateCols.Count)];
-                    for (int y = 0; y < rows; y++)
-                    {
-                        if (wallGrid[col, y] == -1)
-                        {
-                            wallGrid[col, y] = color;
-                            break;
-                        }
-                    }
-                }
+            var list = new List<Vector2Int>();
+            for (int xx = 0; xx < cols; xx++)
+                for (int yy = 0; yy < rows; yy++)
+                if (wallGrid[xx, yy] == -1) list.Add(new Vector2Int(xx, yy));
+            return list;
             }
 
-            // 3. Finalize
+            // Utility: get empty neighbors of a cell (4-neighborhood)
+            List<Vector2Int> GetEmptyNeighbors(Vector2Int cell, HashSet<Vector2Int> exclude)
+            {
+            var n = new List<Vector2Int>();
+            var candidates = new Vector2Int[] {
+                new Vector2Int(cell.x + 1, cell.y),
+                new Vector2Int(cell.x - 1, cell.y),
+                new Vector2Int(cell.x, cell.y + 1),
+                new Vector2Int(cell.x, cell.y - 1)
+            };
+            foreach (var c in candidates)
+            {
+                if (c.x >= 0 && c.x < cols && c.y >= 0 && c.y < rows && wallGrid[c.x, c.y] == -1 && !exclude.Contains(c))
+                n.Add(c);
+            }
+            return n;
+            }
+
+            // For each color, create clusters sized between minCluster..maxCluster until count exhausted
+            foreach (var kv in colorCounts)
+            {
+            int color = kv.Key;
+            int remaining = kv.Value;
+
+            // Keep creating clusters for this color
+            int safeAttempts = 0;
+            while (remaining > 0)
+            {
+                if (safeAttempts++ > cols * rows * 2) break; // safety guard to avoid infinite loops
+
+                int desired = Random.Range(minCluster, maxCluster + 1);
+                desired = Mathf.Min(desired, remaining);
+
+                bool placed = false;
+                // Try decreasing sizes if placement of desired fails
+                for (int trySize = desired; trySize >= 1 && !placed; trySize--)
+                {
+                var emptyCells = GetEmptyCells();
+                if (emptyCells.Count < trySize) break;
+
+                // Try several random starting points
+                int startAttempts = Mathf.Min(30, emptyCells.Count);
+                for (int s = 0; s < startAttempts && !placed; s++)
+                {
+                    Vector2Int start = emptyCells[Random.Range(0, emptyCells.Count)];
+                    var cluster = new List<Vector2Int> { start };
+                    var visited = new HashSet<Vector2Int> { start };
+                    var frontier = new List<Vector2Int>(GetEmptyNeighbors(start, visited));
+
+                    while (cluster.Count < trySize && frontier.Count > 0)
+                    {
+                    int idx = Random.Range(0, frontier.Count);
+                    var pick = frontier[idx];
+                    frontier.RemoveAt(idx);
+                    if (visited.Contains(pick)) continue;
+                    cluster.Add(pick);
+                    visited.Add(pick);
+
+                    var neigh = GetEmptyNeighbors(pick, visited);
+                    foreach (var n in neigh) if (!frontier.Contains(n)) frontier.Add(n);
+                    }
+
+                    if (cluster.Count == trySize)
+                    {
+                    // Place cluster
+                    foreach (var c in cluster) wallGrid[c.x, c.y] = color;
+                    remaining -= cluster.Count;
+                    placed = true;
+                    }
+                }
+                }
+
+                if (!placed)
+                {
+                // Couldn't place any more clusters for this color - break to avoid infinite loop
+                break;
+                }
+            }
+            }
+
+            // If some empty cells remain, fill them randomly with any color that still has capacity (or random color)
+            var remainingEmpty = GetEmptyCells();
+            var colorKeys = new List<int>(colorCounts.Keys);
+            foreach (var e in remainingEmpty)
+            {
+            int pickColor = (colorKeys.Count > 0) ? colorKeys[Random.Range(0, colorKeys.Count)] : Random.Range(0, 6);
+            wallGrid[e.x, e.y] = pickColor;
+            }
+
+            // 3. Finalize into BlockData
             for (int x = 0; x < cols; x++)
             {
-                for (int y = 0; y < rows; y++)
+            for (int y = 0; y < rows; y++)
+            {
+                if (wallGrid[x, y] != -1)
                 {
-                    if (wallGrid[x, y] != -1)
-                    {
-                        currentLevelData.blocks.Add(new BlockData 
-                        { 
-                            gridX = x, 
-                            gridY = y, 
-                            colorIndex = wallGrid[x, y] 
-                        });
-                    }
+                currentLevelData.blocks.Add(new BlockData
+                {
+                    gridX = x,
+                    gridY = y,
+                    colorIndex = wallGrid[x, y]
+                });
                 }
             }
+            }
+
             EditorUtility.SetDirty(currentLevelData);
         }
 
