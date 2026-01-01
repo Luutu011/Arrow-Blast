@@ -27,6 +27,7 @@ namespace ArrowBlast.Game
             IsTwoColor = isTwoColor;
             GridX = x;
             GridY = y;
+            IsTargeted = false; // Reset for pooling
             transform.localScale = Vector3.one;
             UpdateVisuals();
         }

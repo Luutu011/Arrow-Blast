@@ -31,6 +31,32 @@ namespace ArrowBlast.Game
         private GameObject iconObject;
         private List<GameObject> bodyParts = new List<GameObject>(); // Individual body segments for animation
 
+        private Tween shakeTween;
+        private Vector3 originalLocalPos;
+
+        public void SetScared(bool isScared)
+        {
+            if (isScared)
+            {
+                if (shakeTween == null || !shakeTween.IsActive())
+                {
+                    originalLocalPos = transform.localPosition;
+                    shakeTween = transform.DOShakePosition(100f, 0.02f, 5, 90, false, false)
+                        .SetLoops(-1, LoopType.Restart)
+                        .SetEase(Ease.Linear);
+                }
+            }
+            else
+            {
+                if (shakeTween != null)
+                {
+                    if (shakeTween.IsActive()) shakeTween.Kill();
+                    shakeTween = null;
+                    transform.localPosition = originalLocalPos;
+                }
+            }
+        }
+
         public void Init(BlockColor color, Direction dir, int length, int x, int y, List<Vector2Int> segments = null, float cellSize = 0.8f)
         {
             Color = color;

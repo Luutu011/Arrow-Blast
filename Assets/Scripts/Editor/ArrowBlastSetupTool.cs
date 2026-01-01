@@ -198,6 +198,12 @@ namespace ArrowBlast.Editor
                 "• Wall Container (y=6) - 3D Cubes\n" +
                 "• Slots Container (y=0) - 3D Quads\n" +
                 "• Arrow Container (y=-6) - 3D Meshes", MessageType.None);
+
+            GUILayout.Space(10);
+            if (GUILayout.Button("Setup Key & Lock Prefabs", GUILayout.Height(30)))
+            {
+                SetupObstacles();
+            }
         }
 
         private void CreateCompleteSetup()
@@ -448,6 +454,103 @@ namespace ArrowBlast.Editor
             cam.backgroundColor = new Color(0.1f, 0.1f, 0.15f);
 
             Debug.Log("✓ Camera configured for portrait 3D view");
+        }
+
+        private void SetupObstacles()
+        {
+            GameManager gm = FindObjectOfType<GameManager>();
+            if (gm == null)
+            {
+                EditorUtility.DisplayDialog("Error", "GameManager not found in scene. Please run 'Create Complete 3D Setup' first or add a GameManager to your scene.", "OK");
+                return;
+            }
+
+            KeyBlock keyPrefab = CreateKeyBlockPrefab3D();
+            LockObstacle lockPrefab = CreateLockObstaclePrefab3D();
+
+            SerializedObject so = new SerializedObject(gm);
+            so.FindProperty("keyBlockPrefab").objectReferenceValue = keyPrefab;
+            so.FindProperty("lockObstaclePrefab").objectReferenceValue = lockPrefab;
+            so.ApplyModifiedProperties();
+
+            Debug.Log("✓ Key and Lock prefabs setup and assigned to GameManager!");
+            EditorUtility.DisplayDialog("Success", "Key and Lock prefabs created in Assets/Prefabs and assigned to GameManager.", "OK");
+        }
+
+        private KeyBlock CreateKeyBlockPrefab3D()
+        {
+            GameObject obj = new GameObject("KeyBlock");
+            obj.transform.localScale = Vector3.one * 0.75f;
+
+            MeshFilter mf = obj.AddComponent<MeshFilter>();
+            MeshRenderer mr = obj.AddComponent<MeshRenderer>();
+            RoundedCube rc = obj.AddComponent<RoundedCube>();
+            rc.xSize = 5; rc.ySize = 5; rc.zSize = 5;
+            rc.roundness = 0.5f;
+            rc.Generate();
+
+            Material mat = new Material(Shader.Find("Standard"));
+            mat.color = new Color(1f, 0.84f, 0f); // Gold
+            mr.material = mat;
+
+            obj.AddComponent<BoxCollider>();
+            KeyBlock key = obj.AddComponent<KeyBlock>();
+
+            SerializedObject so = new SerializedObject(key);
+            so.FindProperty("meshRenderer").objectReferenceValue = mr;
+            so.FindProperty("keyColor").colorValue = new Color(1f, 0.84f, 0f);
+            so.ApplyModifiedProperties();
+
+            string path = "Assets/Prefabs/KeyBlock.prefab";
+            EnsureDirectory("Assets/Prefabs");
+            PrefabUtility.SaveAsPrefabAsset(obj, path);
+            DestroyImmediate(obj);
+
+            return AssetDatabase.LoadAssetAtPath<KeyBlock>(path);
+        }
+
+        private LockObstacle CreateLockObstaclePrefab3D()
+        {
+            GameObject obj = new GameObject("LockObstacle");
+            obj.transform.localScale = Vector3.one;
+
+            MeshFilter mf = obj.AddComponent<MeshFilter>();
+            MeshRenderer mr = obj.AddComponent<MeshRenderer>();
+            RoundedCube rc = obj.AddComponent<RoundedCube>();
+            rc.xSize = 5; rc.ySize = 5; rc.zSize = 5;
+            rc.roundness = 0.5f;
+            rc.Generate();
+
+            Material mat = new Material(Shader.Find("Standard"));
+            mat.color = new Color(0.3f, 0.3f, 0.3f, 0.6f); // Dark gray semi-transparent
+            
+            // Setup for transparency
+            mat.SetFloat("_Mode", 3); // Transparent mode
+            mat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+            mat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+            mat.SetInt("_ZWrite", 0);
+            mat.DisableKeyword("_ALPHATEST_ON");
+            mat.EnableKeyword("_ALPHABLEND_ON");
+            mat.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+            mat.renderQueue = 3000;
+
+            mr.material = mat;
+
+            obj.AddComponent<BoxCollider>().isTrigger = false;
+            LockObstacle lockObs = obj.AddComponent<LockObstacle>();
+
+            SerializedObject so = new SerializedObject(lockObs);
+            so.FindProperty("meshRenderer").objectReferenceValue = mr;
+            so.FindProperty("lockedColor").colorValue = new Color(0.3f, 0.3f, 0.3f, 0.6f);
+            so.FindProperty("unlockingColor").colorValue = new Color(0.8f, 0.8f, 0.2f, 1f);
+            so.ApplyModifiedProperties();
+
+            string path = "Assets/Prefabs/LockObstacle.prefab";
+            EnsureDirectory("Assets/Prefabs");
+            PrefabUtility.SaveAsPrefabAsset(obj, path);
+            DestroyImmediate(obj);
+
+            return AssetDatabase.LoadAssetAtPath<LockObstacle>(path);
         }
 
         private void EnsureDirectory(string path)

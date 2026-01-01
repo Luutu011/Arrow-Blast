@@ -15,11 +15,15 @@ namespace ArrowBlast.Managers
         [SerializeField] private Transform wallContainer;
         [SerializeField] private Transform slotsContainer;
         [SerializeField] private Transform arrowContainer;
+        [SerializeField] private BoosterUIManager boosterUIManager;
+        [SerializeField] private ArrowBlast.UI.MainMenu mainMenu;
 
         [Header("Prefabs")]
         [SerializeField] private Block blockPrefab;
         [SerializeField] private Arrow arrowPrefab;
         [SerializeField] private Slot slotPrefab;
+        [SerializeField] private KeyBlock keyBlockPrefab;
+        [SerializeField] private LockObstacle lockObstaclePrefab;
 
         [Header("Settings")]
         [SerializeField] private float cellSize = 0.8f;
@@ -31,11 +35,19 @@ namespace ArrowBlast.Managers
         private Block[,] wallGrid;
         private Arrow[,] arrowGrid;
         private List<Slot> slots = new List<Slot>();
+        private List<KeyBlock> activeKeys = new List<KeyBlock>();
+        private List<LockObstacle> activeLocks = new List<LockObstacle>();
         private int wallWidth, wallHeight;
         private int arrowRows, arrowCols;
 
         private float shootTimer;
         private bool isGameOver;
+
+        // Object Pooling & Dynamic Wall
+        private Queue<Block> blockPool = new Queue<Block>();
+        private List<object>[] columnData;
+        private const int ACTIVE_COL_HEIGHT = 12;
+        private const int VISIBLE_COL_HEIGHT = 8;
 
         // Booster State
         private bool isInstantExitActive;
@@ -49,7 +61,12 @@ namespace ArrowBlast.Managers
         private void Start()
         {
             InitializeSlots();
-            if (slotsContainer != null) slotsContainer.gameObject.SetActive(false); // Hide on start (Main Menu)
+            if (slotsContainer != null) slotsContainer.gameObject.SetActive(false); // Hide on start
+            if (boosterUIManager != null)
+            {
+                boosterUIManager.Initialize(this);
+                boosterUIManager.SetVisible(false); // Hide boosters on menu
+            }
             if (levelManager == null) levelManager = FindObjectOfType<LevelManager>();
             // if (levelManager != null) LoadCurrentLevel(); // Removed: Load only from UI
         }
@@ -97,11 +114,29 @@ namespace ArrowBlast.Managers
             }
         }
 
-        public void ActivateInstantExitBooster()
+        public void ToggleInstantExitBooster()
         {
             if (isGameOver) return;
-            isInstantExitActive = true;
-            Debug.Log("Booster: Instant Exit Active! Click an arrow.");
+            isInstantExitActive = !isInstantExitActive;
+            SetArrowsScared(isInstantExitActive);
+
+            if (boosterUIManager != null)
+                boosterUIManager.UpdateInstantExitVisual(isInstantExitActive);
+
+            Debug.Log($"Booster: Instant Exit {(isInstantExitActive ? "Active" : "Deactivated")}!");
+        }
+
+        private void SetArrowsScared(bool scared)
+        {
+            HashSet<Arrow> processed = new HashSet<Arrow>();
+            foreach (var a in arrowGrid)
+            {
+                if (a != null && !processed.Contains(a))
+                {
+                    a.SetScared(scared);
+                    processed.Add(a);
+                }
+            }
         }
 
         public void UseExtraSlotBooster()
@@ -119,24 +154,27 @@ namespace ArrowBlast.Managers
         private void BuildLevel(LevelData data)
         {
             if (slotsContainer != null) slotsContainer.gameObject.SetActive(true); // Show when level starts
+            if (boosterUIManager != null) boosterUIManager.SetVisible(true); // Show boosters when level starts
 
             foreach (Transform t in wallContainer) Destroy(t.gameObject);
             foreach (Transform t in arrowContainer) Destroy(t.gameObject);
+            activeKeys.Clear();
+            activeLocks.Clear();
 
             AutoScaler scaler = GetComponent<AutoScaler>();
-            if (scaler != null) scaler.UpdateSettings(data.width, data.height, data.gridCols, data.gridRows, cellSize);
+            if (scaler != null) scaler.UpdateSettings(data.width, VISIBLE_COL_HEIGHT, data.gridCols, data.gridRows, cellSize);
 
             wallWidth = data.width;
-            wallHeight = data.height;
+            wallHeight = ACTIVE_COL_HEIGHT;
             wallGrid = new Block[wallWidth, wallHeight];
 
-            foreach (var bd in data.blocks)
+            InitializeColumnData(data); // Pre-sort all blocks and keys
+
+            for (int x = 0; x < wallWidth; x++)
             {
-                Block b = Instantiate(blockPrefab, wallContainer);
-                b.Init((BlockColor)bd.colorIndex, bd.gridX, bd.gridY, bd.isTwoColor, (BlockColor)bd.secondaryColorIndex);
-                b.transform.localPosition = GetWallWorldPosition(bd.gridX, bd.gridY);
-                wallGrid[bd.gridX, bd.gridY] = b;
+                RefillColumn(x); // Fills up to 12 rows (8 visible + 4 buffer)
             }
+
 
             arrowRows = data.gridRows;
             arrowCols = data.gridCols;
@@ -151,6 +189,97 @@ namespace ArrowBlast.Managers
                 foreach (var c in occupied)
                     if (IsValidCell(c.x, c.y)) arrowGrid[c.x, c.y] = a;
             }
+
+            foreach (var ld in data.locks)
+            {
+                LockObstacle l = Instantiate(lockObstaclePrefab, arrowContainer);
+                // Correct multi-cell centering
+                Vector3 basePos = GetArrowWorldPosition(ld.gridX, ld.gridY);
+                float offsetX = (ld.sizeX - 1) * 0.5f * cellSize;
+                float offsetY = (ld.sizeY - 1) * 0.5f * cellSize;
+                l.transform.localPosition = basePos + new Vector3(offsetX, offsetY, -0.49f);
+
+                l.Init(ld.gridX, ld.gridY, ld.sizeX, ld.sizeY, ld.lockId, cellSize);
+                activeLocks.Add(l);
+            }
+        }
+
+        private void InitializeColumnData(LevelData data)
+        {
+            columnData = new List<object>[wallWidth];
+            for (int i = 0; i < wallWidth; i++) columnData[i] = new List<object>();
+
+            List<object> all = new List<object>();
+            foreach (var b in data.blocks) all.Add(b);
+            foreach (var k in data.keys) all.Add(k);
+
+            // Sort by gridY so lowest fall in first
+            all.Sort((a, b) =>
+            {
+                int ya = (a is BlockData ba) ? ba.gridY : ((KeyData)a).gridY;
+                int yb = (b is BlockData bb) ? bb.gridY : ((KeyData)b).gridY;
+                return ya.CompareTo(yb);
+            });
+
+            foreach (var item in all)
+            {
+                int x = (item is BlockData ba) ? ba.gridX : ((KeyData)item).gridX;
+                if (x >= 0 && x < wallWidth) columnData[x].Add(item);
+            }
+        }
+
+        private void RefillColumn(int x)
+        {
+            int currentItems = 0;
+            for (int k = 0; k < ACTIVE_COL_HEIGHT; k++)
+            {
+                if (wallGrid[x, k] != null) currentItems++;
+            }
+            currentItems += activeKeys.FindAll(k => k.GridX == x).Count;
+
+            while (currentItems < ACTIVE_COL_HEIGHT && columnData[x].Count > 0)
+            {
+                object itemData = columnData[x][0];
+                columnData[x].RemoveAt(0);
+
+                if (itemData is BlockData bd)
+                {
+                    Block b = GetBlockFromPool();
+                    b.Init((BlockColor)bd.colorIndex, x, currentItems, bd.isTwoColor, (BlockColor)bd.secondaryColorIndex);
+                    // Start from above the visible area
+                    b.transform.localPosition = GetWallWorldPosition(x, ACTIVE_COL_HEIGHT);
+                    wallGrid[x, currentItems] = b;
+                    b.UpdateGridPosition(x, currentItems, GetWallWorldPosition(x, currentItems));
+                }
+                else if (itemData is KeyData kd)
+                {
+                    KeyBlock k = Instantiate(keyBlockPrefab, wallContainer);
+                    k.Init(x, currentItems, kd.lockId);
+                    k.transform.localPosition = GetWallWorldPosition(x, ACTIVE_COL_HEIGHT);
+                    activeKeys.Add(k);
+                    k.UpdateGridPosition(x, currentItems, GetWallWorldPosition(x, currentItems));
+                    if (currentItems == 0) StartCoroutine(DelayedUnlock(k, x));
+                }
+                currentItems++;
+            }
+        }
+
+        private Block GetBlockFromPool()
+        {
+            if (blockPool.Count > 0)
+            {
+                Block b = blockPool.Dequeue();
+                b.gameObject.SetActive(true);
+                return b;
+            }
+            return Instantiate(blockPrefab, wallContainer);
+        }
+
+        private void ReturnBlockToPool(Block b)
+        {
+            if (b == null) return;
+            b.gameObject.SetActive(false);
+            blockPool.Enqueue(b);
         }
 
         private bool IsValidCell(int x, int y) => x >= 0 && x < arrowCols && y >= 0 && y < arrowRows;
@@ -218,7 +347,14 @@ namespace ArrowBlast.Managers
 
             if (targetSlot == null) return;
 
-            isInstantExitActive = false; // Consume booster if it was active
+            if (isInstantExitActive)
+            {
+                isInstantExitActive = false;
+                SetArrowsScared(false);
+                if (boosterUIManager != null)
+                    boosterUIManager.UpdateInstantExitVisual(false);
+            }
+
             targetSlot.SetReserved(true);
             var occupied = arrow.GetOccupiedCells();
             foreach (var c in occupied)
@@ -279,6 +415,12 @@ namespace ArrowBlast.Managers
                 while (IsValidCell(nx, ny))
                 {
                     if (arrowGrid[nx, ny] != null && arrowGrid[nx, ny] != arrow) return false;
+
+                    foreach (var l in activeLocks)
+                    {
+                        if (l.IsLocked && l.BlocksCell(nx, ny)) return false;
+                    }
+
                     nx += dx; ny += dy;
                 }
             }
@@ -360,7 +502,8 @@ namespace ArrowBlast.Managers
             if (willBeDestroyed)
             {
                 yield return b.AnimateDeath();
-                FinalizeBlockDestruction(x, y, b);
+                ReturnBlockToPool(b);
+                FinalizeBlockDestruction(x, y, null);
             }
             else
             {
@@ -372,26 +515,64 @@ namespace ArrowBlast.Managers
 
         private void FinalizeBlockDestruction(int x, int y, Block targetBlock)
         {
-            if (targetBlock != null) Destroy(targetBlock.gameObject);
-
-            // Robust Column Collapse: Repack all stationary blocks to the bottom
-            List<Block> columnBlocks = new List<Block>();
+            // Robust Column Collapse: Repack all stationary blocks AND keys to the bottom
+            List<Component> columnItems = new List<Component>();
             for (int k = 0; k < wallHeight; k++)
             {
                 if (wallGrid[x, k] != null)
                 {
-                    columnBlocks.Add(wallGrid[x, k]);
+                    columnItems.Add(wallGrid[x, k]);
                     wallGrid[x, k] = null;
+                }
+
+                KeyBlock key = activeKeys.Find(kb => kb.GridX == x && kb.GridY == k);
+                if (key != null)
+                {
+                    columnItems.Add(key);
                 }
             }
 
-            for (int k = 0; k < columnBlocks.Count; k++)
+            for (int k = 0; k < columnItems.Count; k++)
             {
-                wallGrid[x, k] = columnBlocks[k];
-                wallGrid[x, k].UpdateGridPosition(x, k, GetWallWorldPosition(x, k));
+                Component item = columnItems[k];
+                if (item is Block b)
+                {
+                    wallGrid[x, k] = b;
+                    b.UpdateGridPosition(x, k, GetWallWorldPosition(x, k));
+                }
+                else if (item is KeyBlock key)
+                {
+                    key.UpdateGridPosition(x, k, GetWallWorldPosition(x, k));
+                    if (k == 0) StartCoroutine(DelayedUnlock(key, x));
+                }
             }
 
+            RefillColumn(x); // Fill the gap at the top
             CheckWinCondition();
+        }
+
+        private IEnumerator DelayedUnlock(KeyBlock key, int x)
+        {
+            yield return new WaitForEndOfFrame();
+            TryUnlock(key, x);
+        }
+
+        private void TryUnlock(KeyBlock key, int x)
+        {
+            LockObstacle targetLock = activeLocks.Find(l => l.LockId == key.LockId && l.IsLocked);
+            if (targetLock != null)
+            {
+                targetLock.Unlock();
+                StartCoroutine(ExecuteUnlockSequence(key, x));
+            }
+        }
+
+        private IEnumerator ExecuteUnlockSequence(KeyBlock key, int x)
+        {
+            yield return key.AnimateUnlock();
+            activeKeys.Remove(key);
+            Destroy(key.gameObject);
+            FinalizeBlockDestruction(x, -1, null); // Trigger another collapse/refill
         }
 
         private Color GetBlockColorVisual(BlockColor color)
@@ -462,7 +643,24 @@ namespace ArrowBlast.Managers
         private IEnumerator VictoryRoutine()
         {
             yield return new WaitForSeconds(2.0f);
-            LoadNextLevel();
+            ReturnToLevelSelect();
+        }
+
+        private void ReturnToLevelSelect()
+        {
+            // Clear current game state
+            foreach (Transform t in wallContainer) Destroy(t.gameObject);
+            foreach (Transform t in arrowContainer) Destroy(t.gameObject);
+            foreach (var s in slots) s.ClearSlot();
+            
+            if (slotsContainer != null) slotsContainer.gameObject.SetActive(false);
+            if (boosterUIManager != null) boosterUIManager.SetVisible(false);
+
+            if (mainMenu != null)
+            {
+                mainMenu.gameObject.SetActive(true);
+                mainMenu.ShowLevelPanel();
+            }
         }
 
         private bool CanHitAnyBlock(BlockColor color)

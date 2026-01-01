@@ -16,6 +16,8 @@ namespace ArrowBlast.Data
 
         public List<BlockData> blocks = new List<BlockData>();
         public List<ArrowData> arrows = new List<ArrowData>();
+        public List<KeyData> keys = new List<KeyData>();
+        public List<LockData> locks = new List<LockData>();
     }
 
     [Serializable]
@@ -37,5 +39,23 @@ namespace ArrowBlast.Data
         public int gridX;       // Head position X (Legacy)
         public int gridY;       // Head position Y (Legacy)
         public List<Vector2Int> segments = new List<Vector2Int>(); // Ordered list of cells [0] is head
+    }
+
+    [Serializable]
+    public class KeyData
+    {
+        public int gridX;       // Position in arrow grid
+        public int gridY;
+        public int lockId;      // ID to match with corresponding lock
+    }
+
+    [Serializable]
+    public class LockData
+    {
+        public int gridX;       // Position in wall grid (bottom)
+        public int gridY;
+        public int sizeX;       // Width of lock (how many columns it spans)
+        public int sizeY;       // Height of lock (how many rows it spans)
+        public int lockId;      // ID to match with corresponding key
     }
 }

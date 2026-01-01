@@ -11,6 +11,7 @@ namespace ArrowBlast.Managers
 
         [Header("Runtime State")]
         [SerializeField] private int currentLevelIndex = 0;
+        public int CurrentLevelIndex => currentLevelIndex;
         [SerializeField] private bool loopLevels = true;
 
         /// <summary>

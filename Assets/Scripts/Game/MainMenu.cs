@@ -2,6 +2,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using ArrowBlast.Managers;
 using System.Collections.Generic;
+using DG.Tweening;
+using System.Collections;
 
 namespace ArrowBlast.UI
 {
@@ -37,17 +39,15 @@ namespace ArrowBlast.UI
             if (playButton) playButton.onClick.AddListener(ShowLevelPanel);
             if (settingsButton) settingsButton.onClick.AddListener(ShowSettingsPanel);
             if (exitButton) exitButton.onClick.AddListener(ExitGame);
-            if (levelBackButton) levelBackButton.onClick.AddListener(ShowMainPanel);
-            if (settingsBackButton) settingsBackButton.onClick.AddListener(ShowMainPanel);
+            if (levelBackButton) levelBackButton.onClick.AddListener(ShowLevelPanel);
+            if (settingsBackButton) settingsBackButton.onClick.AddListener(ShowLevelPanel);
 
-            ShowMainPanel();
+            ShowLevelPanel();
         }
 
         public void ShowMainPanel()
         {
-            mainPanel.SetActive(true);
-            levelPanel.SetActive(false);
-            settingsPanel.SetActive(false);
+            ShowLevelPanel(); // Always show level select now
         }
 
         public void ShowLevelPanel()
@@ -68,7 +68,7 @@ namespace ArrowBlast.UI
 
         private void PopulateLevelGrid()
         {
-            // Clear existing buttons
+            // Clear existing
             foreach (Transform child in levelGrid)
             {
                 Destroy(child.gameObject);
@@ -76,14 +76,98 @@ namespace ArrowBlast.UI
 
             if (levelManager == null) return;
 
-            // Get levels from level manager (need to make levels public or add a count)
-            int levelCount = levelManager.GetLevelCount();
-            for (int i = 0; i < levelCount; i++)
+            var glg = levelGrid.GetComponent<UnityEngine.UI.GridLayoutGroup>();
+            if (glg) glg.enabled = false;
+
+            int currentLevel = levelManager.CurrentLevelIndex;
+            int totalLevels = levelManager.GetLevelCount();
+
+            float verticalSpacing = 180f; // Increased space
+            float horizontalAmplitude = 80f; // More wobble
+
+            Vector2 lastPos = Vector2.zero;
+            bool firstPosSet = false;
+
+            // Gather buttons and calculate positions first
+            List<(RectTransform rt, int index, Vector2 pos)> elements = new List<(RectTransform rt, int index, Vector2 pos)>();
+
+            for (int i = 0; i < 5; i++)
             {
-                int index = i;
+                int levelIdx = currentLevel + i;
+                if (levelIdx >= totalLevels) break;
+
                 Button btn = Instantiate(levelButtonPrefab, levelGrid);
-                btn.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = (i + 1).ToString();
+                btn.gameObject.SetActive(true);
+                btn.transform.localScale = Vector3.zero; // Start small for animation
+
+                RectTransform rt = btn.GetComponent<RectTransform>();
+                float yPos = i * verticalSpacing - 350f; // Adjusted for more space
+                float xPos = Mathf.Sin(i * 1.5f) * horizontalAmplitude;
+                Vector2 currentPos = new Vector2(xPos, yPos);
+                rt.anchoredPosition = currentPos;
+
+                btn.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = (levelIdx + 1).ToString();
+
+                var img = btn.GetComponent<UnityEngine.UI.Image>();
+                img.color = (i == 0) ? new Color(0.2f, 0.8f, 0.2f) : new Color(0.3f, 0.3f, 0.3f);
+
+                int index = levelIdx;
                 btn.onClick.AddListener(() => OnLevelSelected(index));
+
+                // Add Dots between this and previous
+                if (firstPosSet)
+                {
+                    CreateRoadDots(lastPos, currentPos, i);
+                }
+
+                lastPos = currentPos;
+                firstPosSet = true;
+
+                // Animate button pop
+                rt.DOScale(Vector3.one, 0.5f)
+                  .SetDelay(i * 0.2f)
+                  .SetEase(Ease.OutBack);
+            }
+        }
+
+        private void CreateRoadDots(Vector2 start, Vector2 end, int levelOrder)
+        {
+            int dotCount = 5; // More dots for more space
+            float margin = 60f; // Distance from button center to start dots
+
+            Vector2 dir = (end - start).normalized;
+            float dist = Vector2.Distance(start, end);
+
+            // Adjust start and end to be outside button rect
+            Vector2 actualStart = start + dir * margin;
+            Vector2 actualEnd = end - dir * margin;
+
+            for (int j = 1; j <= dotCount; j++)
+            {
+                float t = (float)j / (dotCount + 1);
+                Vector2 dotPos = Vector2.Lerp(actualStart, actualEnd, t);
+
+                // Use the button prefab but make it a small dot
+                Button dotBtn = Instantiate(levelButtonPrefab, levelGrid);
+                dotBtn.gameObject.name = "RoadDot";
+                dotBtn.interactable = false;
+
+                // Cleanup text and components we don't need
+                var tmp = dotBtn.GetComponentInChildren<TMPro.TextMeshProUGUI>();
+                if (tmp) Destroy(tmp.gameObject);
+
+                RectTransform rt = dotBtn.GetComponent<RectTransform>();
+                rt.sizeDelta = new Vector2(15, 15);
+                rt.anchoredPosition = dotPos;
+                rt.localScale = Vector3.zero;
+
+                var img = dotBtn.GetComponent<UnityEngine.UI.Image>();
+                img.color = new Color(1f, 1f, 1f, 0.5f);
+
+                // Animate dot pop
+                rt.DOScale(Vector3.one, 0.3f)
+                  .SetDelay((levelOrder - 1) * 0.2f + (j * 0.04f))
+                  .SetEase(Ease.OutBack);
             }
         }
 

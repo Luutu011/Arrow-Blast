@@ -17,10 +17,15 @@ namespace ArrowBlast.Editor
         private string[] tabs = { "Wall Editor", "Arrow Grid Editor" };
         
         // Tool State
+        private bool isKeyMode = false;
+        private bool isLockMode = false;
         private BlockColor selectedColor = BlockColor.Red;
         private Direction selectedDirection = Direction.Up;
         private int selectedLength = 1;
-        private int concurrentArrows = 10; // Number of arrows handled at once for wall randomization
+        private int concurrentArrows = 2; // Number of arrows handled at once for wall randomization
+        private int selectedLockId = 0; // For key/lock pairing
+        private int selectedLockSizeX = 2; // Lock width
+        private int selectedLockSizeY = 1; // Lock height
 
         // Interaction State
         private enum RandomMode { Normal, Hard, Mixed }
@@ -80,9 +85,17 @@ namespace ArrowBlast.Editor
             {
                 DrawWallEditor();
             }
-            else
+            else if (selectedTab == 1)
             {
                 DrawArrowEditor();
+            }
+            else if (selectedTab == 2)
+            {
+                DrawKeyEditor();
+            }
+            else if (selectedTab == 3)
+            {
+                DrawLockEditor();
             }
 
             // 5. Global Actions
@@ -210,7 +223,16 @@ namespace ArrowBlast.Editor
             {
                 Undo.RecordObject(currentLevelData, "Clear Wall");
                 currentLevelData.blocks.Clear();
+                currentLevelData.keys.Clear();
                 EditorUtility.SetDirty(currentLevelData);
+            }
+            EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.BeginHorizontal(EditorStyles.helpBox);
+            isKeyMode = EditorGUILayout.ToggleLeft("Paint Key Mode", isKeyMode, GUILayout.Width(120));
+            if (isKeyMode)
+            {
+                selectedLockId = EditorGUILayout.IntField("Target Lock ID:", selectedLockId);
             }
             EditorGUILayout.EndHorizontal();
 
@@ -242,9 +264,14 @@ namespace ArrowBlast.Editor
                     Rect cellRect = new Rect(startX + x * cellSize + 2, startY + (currentLevelData.height - 1 - y) * cellSize + 2, cellSize - 4, cellSize - 4);
                     
                     BlockData block = currentLevelData.blocks.Find(b => b.gridX == x && b.gridY == y);
+                    KeyData key = currentLevelData.keys.Find(k => k.gridX == x && k.gridY == y);
                     
                     Color drawColor = Color.gray;
-                    if (block != null)
+                    if (key != null)
+                    {
+                        drawColor = new Color(1f, 0.84f, 0f); // Gold for Key
+                    }
+                    else if (block != null)
                     {
                         drawColor = GetColorFromEnum((BlockColor)block.colorIndex);
                     }
@@ -259,27 +286,43 @@ namespace ArrowBlast.Editor
 
                     if (isAction)
                     {
-                        Undo.RecordObject(currentLevelData, "Paint Block");
+                        Undo.RecordObject(currentLevelData, "Modify Wall");
                         
-                        // Left Click/Drag: Paint
-                        if (Event.current.button == 0) 
+                        if (Event.current.button == 0) // LMB
                         {
-                            if (block == null)
+                            if (isKeyMode)
                             {
-                                currentLevelData.blocks.Add(new BlockData { gridX = x, gridY = y, colorIndex = (int)selectedColor, isTwoColor = false });
+                                // Remove block if exists
+                                var existingBlock = currentLevelData.blocks.Find(b => b.gridX == x && b.gridY == y);
+                                if (existingBlock != null) currentLevelData.blocks.Remove(existingBlock);
+                                
+                                // Add/Update Key
+                                if (key == null) currentLevelData.keys.Add(new KeyData { gridX = x, gridY = y, lockId = selectedLockId });
+                                else key.lockId = selectedLockId;
                             }
-                            else if (block.colorIndex != (int)selectedColor)
+                            else
                             {
-                                block.isTwoColor = true;
-                                block.secondaryColorIndex = block.colorIndex;
-                                block.colorIndex = (int)selectedColor;
+                                // Remove key if exists
+                                var existingKey = currentLevelData.keys.Find(k => k.gridX == x && k.gridY == y);
+                                if (existingKey != null) currentLevelData.keys.Remove(existingKey);
+
+                                if (block == null)
+                                {
+                                    currentLevelData.blocks.Add(new BlockData { gridX = x, gridY = y, colorIndex = (int)selectedColor, isTwoColor = false });
+                                }
+                                else if (block.colorIndex != (int)selectedColor)
+                                {
+                                    block.isTwoColor = true;
+                                    block.secondaryColorIndex = block.colorIndex;
+                                    block.colorIndex = (int)selectedColor;
+                                }
                             }
                             GUI.changed = true;
                         }
-                        // Right Click/Drag: Erase
-                        else if (Event.current.button == 1) 
+                        else if (Event.current.button == 1) // RMB
                         {
                             if (block != null) currentLevelData.blocks.Remove(block);
+                            if (key != null) currentLevelData.keys.Remove(key);
                             GUI.changed = true;
                         }
                         
@@ -288,7 +331,11 @@ namespace ArrowBlast.Editor
                     }
 
                     EditorGUI.DrawRect(cellRect, drawColor);
-                    if (block != null && block.isTwoColor)
+                    if (key != null)
+                    {
+                        GUI.Label(cellRect, $"K:{key.lockId}", new GUIStyle(EditorStyles.miniBoldLabel) { alignment = TextAnchor.MiddleCenter });
+                    }
+                    else if (block != null && block.isTwoColor)
                     {
                         float innerSize = cellSize * 0.5f;
                         Rect innerRect = new Rect(cellRect.x + (cellRect.width - innerSize) / 2f, cellRect.y + (cellRect.height - innerSize) / 2f, innerSize, innerSize);
@@ -310,6 +357,18 @@ namespace ArrowBlast.Editor
             EditorGUILayout.BeginHorizontal();
             selectedColor = (BlockColor)EditorGUILayout.EnumPopup("Color:", selectedColor);
             EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+            isLockMode = EditorGUILayout.ToggleLeft("Lock Placement Mode", isLockMode, GUILayout.Width(150));
+            if (isLockMode)
+            {
+                EditorGUILayout.BeginHorizontal();
+                selectedLockId = EditorGUILayout.IntField("Lock ID:", selectedLockId);
+                selectedLockSizeX = EditorGUILayout.IntSlider("Size X:", selectedLockSizeX, 1, currentLevelData.gridCols);
+                selectedLockSizeY = EditorGUILayout.IntSlider("Size Y:", selectedLockSizeY, 1, currentLevelData.gridRows);
+                EditorGUILayout.EndHorizontal();
+            }
+            EditorGUILayout.EndVertical();
             
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.BeginHorizontal();
@@ -369,6 +428,27 @@ namespace ArrowBlast.Editor
                 {
                     DrawSegmentLine(cells[i], cells[i+1], startX, startY, cellSize);
                 }
+            }
+
+            // Draw Locks (Yellow Borders)
+            foreach (var lockData in currentLevelData.locks)
+            {
+                Rect lRect = new Rect(
+                    startX + lockData.gridX * cellSize,
+                    startY + (currentLevelData.gridRows - lockData.gridY - lockData.sizeY) * cellSize,
+                    lockData.sizeX * cellSize,
+                    lockData.sizeY * cellSize
+                );
+                
+                Handles.color = Color.yellow;
+                Handles.DrawSolidRectangleWithOutline(lRect, new Color(1, 1, 0, 0.1f), Color.yellow);
+                // Thicker outline effect
+                Handles.DrawLine(new Vector3(lRect.x-1, lRect.y-1), new Vector3(lRect.xMax+1, lRect.y-1));
+                Handles.DrawLine(new Vector3(lRect.x-1, lRect.yMax+1), new Vector3(lRect.xMax+1, lRect.yMax+1));
+                Handles.DrawLine(new Vector3(lRect.x-1, lRect.y-1), new Vector3(lRect.x-1, lRect.yMax+1));
+                Handles.DrawLine(new Vector3(lRect.xMax+1, lRect.y-1), new Vector3(lRect.xMax+1, lRect.yMax+1));
+                
+                GUI.Label(lRect, $"LOCK:{lockData.lockId}", new GUIStyle(EditorStyles.boldLabel) { alignment = TextAnchor.UpperCenter, normal = { textColor = Color.yellow } });
             }
 
             // Draw Cells
@@ -468,29 +548,48 @@ namespace ArrowBlast.Editor
                         }
                         else
                         {
-                            if (Event.current.type == EventType.MouseDown && Event.current.button == 0)
+                            if (Event.current.type == EventType.MouseDown)
                             {
-                                if (arrow != null)
+                                if (isLockMode)
                                 {
-                                    SelectArrowForKeyboard(arrow, cell);
-                                    originalDragArrowIndex = currentLevelData.arrows.IndexOf(arrow);
-                                    capturedColor = (BlockColor)arrow.colorIndex;
-                                    List<Vector2Int> existing = GetArrowCells(arrow);
-                                    int idx = existing.IndexOf(cell);
-                                    arrowDragPath = new List<Vector2Int> { cell };
+                                    Undo.RecordObject(currentLevelData, "Modify Lock");
+                                    if (Event.current.button == 0) // LMB
+                                    {
+                                        currentLevelData.locks.RemoveAll(l => l.gridX == x && l.gridY == y);
+                                        currentLevelData.locks.Add(new LockData { gridX = x, gridY = y, sizeX = selectedLockSizeX, sizeY = selectedLockSizeY, lockId = selectedLockId });
+                                    }
+                                    else if (Event.current.button == 1) // RMB
+                                    {
+                                        currentLevelData.locks.RemoveAll(l => x >= l.gridX && x < l.gridX + l.sizeX && y >= l.gridY && y < l.gridY + l.sizeY);
+                                    }
+                                    EditorUtility.SetDirty(currentLevelData);
+                                    Repaint();
+                                    Event.current.Use();
                                 }
-                                else
+                                else if (Event.current.button == 0) // LMB (Select/Start Arrow Drag)
                                 {
-                                    keyboardSelectedArrowIndex = -1;
-                                    keyboardSelectedCell = null;
-                                    originalDragArrowIndex = -1;
-                                    capturedColor = null;
-                                    arrowDragPath = new List<Vector2Int> { cell };
+                                    if (arrow != null)
+                                    {
+                                        SelectArrowForKeyboard(arrow, cell);
+                                        originalDragArrowIndex = currentLevelData.arrows.IndexOf(arrow);
+                                        capturedColor = (BlockColor)arrow.colorIndex;
+                                        List<Vector2Int> existing = GetArrowCells(arrow);
+                                        int idx = existing.IndexOf(cell);
+                                        arrowDragPath = new List<Vector2Int> { cell };
+                                    }
+                                    else
+                                    {
+                                        keyboardSelectedArrowIndex = -1;
+                                        keyboardSelectedCell = null;
+                                        originalDragArrowIndex = -1;
+                                        capturedColor = null;
+                                        arrowDragPath = new List<Vector2Int> { cell };
+                                    }
+                                    Event.current.Use();
                                 }
-                                Event.current.Use();
                             }
                             
-                            if (Event.current.type == EventType.MouseDrag && arrowDragPath.Count > 0)
+                            if (Event.current.type == EventType.MouseDrag && arrowDragPath.Count > 0 && !isLockMode)
                             {
                                 Vector2Int currentCell = cell;
                                 if (currentCell != arrowDragPath[0]) // arrowDragPath[0] is most recent cell
@@ -1336,6 +1435,110 @@ namespace ArrowBlast.Editor
             }
         }
 
+        private void DrawKeyEditor()
+        {
+            EditorGUILayout.LabelField("Key Editor (Wall Grid)", EditorStyles.boldLabel);
+            EditorGUILayout.BeginHorizontal();
+            selectedLockId = EditorGUILayout.IntField("Target Lock ID:", selectedLockId);
+            if (GUILayout.Button("Clear All Keys", GUILayout.Width(120)))
+            {
+                Undo.RecordObject(currentLevelData, "Clear Keys");
+                currentLevelData.keys.Clear();
+                EditorUtility.SetDirty(currentLevelData);
+            }
+            EditorGUILayout.EndHorizontal();
+
+            float cellSize = 40f;
+            float startX = 20f;
+            float startY = GUILayoutUtility.GetRect(0, cellSize * currentLevelData.height + 20).y + 10;
+            Rect bgRect = new Rect(startX, startY, currentLevelData.width * cellSize, currentLevelData.height * cellSize);
+            EditorGUI.DrawRect(bgRect, new Color(0.2f, 0.2f, 0.2f));
+
+            for (int y = currentLevelData.height - 1; y >= 0; y--)
+            {
+                for (int x = 0; x < currentLevelData.width; x++)
+                {
+                    Rect cellRect = new Rect(startX + x * cellSize + 2, startY + (currentLevelData.height - 1 - y) * cellSize + 2, cellSize - 4, cellSize - 4);
+                    KeyData key = currentLevelData.keys.Find(k => k.gridX == x && k.gridY == y);
+                    
+                    if (cellRect.Contains(Event.current.mousePosition) && Event.current.type == EventType.MouseDown)
+                    {
+                        Undo.RecordObject(currentLevelData, "Modify Key");
+                        if (Event.current.button == 0) // LMB
+                        {
+                            if (key == null) currentLevelData.keys.Add(new KeyData { gridX = x, gridY = y, lockId = selectedLockId });
+                            else key.lockId = selectedLockId;
+                        }
+                        else if (Event.current.button == 1) // RMB
+                        {
+                            if (key != null) currentLevelData.keys.Remove(key);
+                        }
+                        EditorUtility.SetDirty(currentLevelData);
+                        Event.current.Use();
+                    }
+
+                    EditorGUI.DrawRect(cellRect, key != null ? new Color(1f, 0.84f, 0f) : new Color(0.3f, 0.3f, 0.3f));
+                    if (key != null) GUI.Label(cellRect, key.lockId.ToString(), new GUIStyle(EditorStyles.miniBoldLabel) { alignment = TextAnchor.MiddleCenter });
+                }
+            }
+            EditorGUILayout.HelpBox("LMB to place/edit Key, RMB to remove. Set Lock ID to pair with a Lock.", MessageType.None);
+        }
+
+        private void DrawLockEditor()
+        {
+            EditorGUILayout.LabelField("Lock Editor (Arrow Grid)", EditorStyles.boldLabel);
+            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+            selectedLockId = EditorGUILayout.IntField("Lock ID:", selectedLockId);
+            selectedLockSizeX = EditorGUILayout.IntSlider("Width (Size X):", selectedLockSizeX, 1, currentLevelData.gridCols);
+            selectedLockSizeY = EditorGUILayout.IntSlider("Height (Size Y):", selectedLockSizeY, 1, currentLevelData.gridRows);
+            if (GUILayout.Button("Clear All Locks"))
+            {
+                Undo.RecordObject(currentLevelData, "Clear Locks");
+                currentLevelData.locks.Clear();
+                EditorUtility.SetDirty(currentLevelData);
+            }
+            EditorGUILayout.EndVertical();
+
+            float cellSize = 40f;
+            float startX = 20f;
+            float startY = GUILayoutUtility.GetRect(0, cellSize * currentLevelData.gridRows + 20).y + 10;
+            Rect bgRect = new Rect(startX, startY, currentLevelData.gridCols * cellSize, currentLevelData.gridRows * cellSize);
+            EditorGUI.DrawRect(bgRect, new Color(0.15f, 0.15f, 0.15f));
+
+            foreach (var lockData in currentLevelData.locks)
+            {
+                Rect lRect = new Rect(
+                    startX + lockData.gridX * cellSize + 4,
+                    startY + (currentLevelData.gridRows - lockData.gridY - lockData.sizeY) * cellSize + 4,
+                    lockData.sizeX * cellSize - 8,
+                    lockData.sizeY * cellSize - 8
+                );
+                EditorGUI.DrawRect(lRect, new Color(0.6f, 0.2f, 0.2f, 0.8f));
+                GUI.Label(lRect, $"ID:{lockData.lockId}", new GUIStyle(EditorStyles.boldLabel) { alignment = TextAnchor.MiddleCenter, normal = { textColor = Color.white } });
+            }
+
+            if (bgRect.Contains(Event.current.mousePosition) && Event.current.type == EventType.MouseDown)
+            {
+                Vector2 localMouse = Event.current.mousePosition - new Vector2(startX, startY);
+                int gx = Mathf.FloorToInt(localMouse.x / cellSize);
+                int gy = currentLevelData.gridRows - 1 - Mathf.FloorToInt(localMouse.y / cellSize);
+
+                Undo.RecordObject(currentLevelData, "Modify Lock");
+                if (Event.current.button == 0) // LMB: Place
+                {
+                    currentLevelData.locks.RemoveAll(l => l.gridX == gx && l.gridY == gy);
+                    currentLevelData.locks.Add(new LockData { gridX = gx, gridY = gy, sizeX = selectedLockSizeX, sizeY = selectedLockSizeY, lockId = selectedLockId });
+                }
+                else if (Event.current.button == 1) // RMB: Remove
+                {
+                    currentLevelData.locks.RemoveAll(l => gx >= l.gridX && gx < l.gridX + l.sizeX && gy >= l.gridY && gy < l.gridY + l.sizeY);
+                }
+                EditorUtility.SetDirty(currentLevelData);
+                Event.current.Use();
+            }
+            EditorGUILayout.HelpBox("LMB to place Lock at position (uses Size X/Y), RMB to delete locks.", MessageType.None);
+        }
+
         private List<Vector2Int> GetArrowCells(int x, int y, Direction dir, int len)
         {
             List<Vector2Int> cells = new List<Vector2Int>();
@@ -1361,11 +1564,10 @@ namespace ArrowBlast.Editor
 
         private bool IsBodyPart(ArrowData arrow, int x, int y)
         {
-            List<Vector2Int> cells = GetArrowCells(arrow);
-            // Skip index 0 (Head)
-            for(int i=1; i<cells.Count; i++)
+            if (arrow.segments == null) return false;
+            for (int i = 1; i < arrow.segments.Count; i++)
             {
-                if(cells[i].x == x && cells[i].y == y) return true;
+                if (arrow.segments[i].x == x && arrow.segments[i].y == y) return true;
             }
             return false;
         }

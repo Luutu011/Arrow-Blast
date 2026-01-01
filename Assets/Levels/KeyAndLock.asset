@@ -1,0 +1,2767 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d145348b0fc1b3498587737ca92b963, type: 3}
+  m_Name: KeyAndLock
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowBlast.Data.LevelData
+  levelName: 
+  width: 6
+  height: 82
+  gridRows: 8
+  gridCols: 6
+  blocks:
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 0
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 1
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 2
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 3
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 4
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 5
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 6
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 7
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 8
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 9
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 10
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 11
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 12
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 13
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 14
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 15
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 16
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 17
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 18
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 19
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 20
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 21
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 22
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 23
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 24
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 25
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 26
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 27
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 28
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 29
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 30
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 31
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 32
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 33
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 34
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 35
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 36
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 37
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 38
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 39
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 40
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 41
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 42
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 43
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 44
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 45
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 46
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 47
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 48
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 49
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 50
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 51
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 52
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 53
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 54
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 55
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 56
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 57
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 58
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 59
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 60
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 61
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 62
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 63
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 64
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 65
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 66
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 67
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 68
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 69
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 70
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 71
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 72
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 73
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 74
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 75
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 76
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 77
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 78
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 79
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 80
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 81
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 0
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 1
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 2
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 3
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 4
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 5
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 6
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 7
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 8
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 9
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 10
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 11
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 12
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 13
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 14
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 15
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 16
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 17
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 18
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 19
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 20
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 21
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 22
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 23
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 24
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 25
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 26
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 27
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 28
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 29
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 30
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 31
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 32
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 33
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 34
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 35
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 36
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 37
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 38
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 39
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 40
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 41
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 42
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 43
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 44
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 45
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 46
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 47
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 48
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 49
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 50
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 51
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 52
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 53
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 54
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 55
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 56
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 57
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 58
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 59
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 60
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 61
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 62
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 63
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 64
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 65
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 66
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 67
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 68
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 69
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 70
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 71
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 72
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 73
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 74
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 75
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 76
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 77
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 78
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 79
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 80
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 81
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 0
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 1
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 2
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 3
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 4
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 5
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 6
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 7
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 8
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 9
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 10
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 11
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 12
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 13
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 14
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 15
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 16
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 17
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 18
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 19
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 20
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 21
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 22
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 23
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 24
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 25
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 26
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 27
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 28
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 29
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 30
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 31
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 32
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 33
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 34
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 35
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 36
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 37
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 38
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 39
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 40
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 41
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 42
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 43
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 44
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 45
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 46
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 47
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 48
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 49
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 50
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 51
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 52
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 53
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 54
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 55
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 56
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 57
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 58
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 59
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 60
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 61
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 62
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 63
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 64
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 65
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 66
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 67
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 68
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 69
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 70
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 71
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 72
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 0
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 1
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 2
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 3
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 4
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 5
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 6
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 7
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 8
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 9
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 10
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 11
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 12
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 13
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 14
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 15
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 16
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 17
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 18
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 19
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 20
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 21
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 22
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 23
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 24
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 25
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 26
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 27
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 28
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 29
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 30
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 31
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 32
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 33
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 34
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 35
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 36
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 37
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 38
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 39
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 40
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 41
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 42
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 43
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 44
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 45
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 46
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 47
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 48
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 49
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 50
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 51
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 52
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 53
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 54
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 55
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 56
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 57
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 58
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 59
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 60
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 61
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 62
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 63
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 64
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 65
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 66
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 67
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 68
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 69
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 70
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 71
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 72
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 73
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 74
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 75
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 76
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 77
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 78
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 79
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 80
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 81
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 0
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 1
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 2
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 3
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 4
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 5
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 6
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 7
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 8
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 9
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 10
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 11
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 12
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 13
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 14
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 15
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 16
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 17
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 18
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 19
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 20
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 21
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 22
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 23
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 24
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 25
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 26
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 27
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 28
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 29
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 30
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 31
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 32
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 33
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 34
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 35
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 36
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 37
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 38
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 39
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 40
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 41
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 42
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 43
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 44
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 45
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 46
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 47
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 48
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 49
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 50
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 51
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 52
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 53
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 54
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 55
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 56
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 57
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 58
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 59
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 60
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 61
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 62
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 63
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 64
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 65
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 66
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 67
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 68
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 69
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 70
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 71
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 72
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 73
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 74
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 75
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 76
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 77
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 78
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 0
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 1
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 2
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 3
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 4
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 5
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 6
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 7
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 8
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 9
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 10
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 11
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 12
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 13
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 14
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 15
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 16
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 17
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 18
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 19
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 20
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 21
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 22
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 23
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 24
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 25
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 26
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 27
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 28
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 29
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 30
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 31
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 32
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 33
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 34
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 35
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 36
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 37
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 38
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 39
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 40
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 41
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 42
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 43
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 44
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 45
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 46
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 47
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 48
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 49
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 50
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 51
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 52
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 53
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 54
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 55
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 56
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 57
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 58
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 59
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 60
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 61
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 62
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 63
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 64
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 65
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 66
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 67
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 68
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 69
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 70
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 71
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 72
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 73
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 74
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 75
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 76
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 77
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 78
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 79
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 80
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 81
+  arrows:
+  - colorIndex: 2
+    direction: 0
+    length: 1
+    gridX: 0
+    gridY: 0
+    segments:
+    - {x: 0, y: 0}
+  - colorIndex: 5
+    direction: 1
+    length: 1
+    gridX: 0
+    gridY: 1
+    segments:
+    - {x: 0, y: 1}
+  - colorIndex: 4
+    direction: 0
+    length: 1
+    gridX: 0
+    gridY: 2
+    segments:
+    - {x: 0, y: 2}
+  - colorIndex: 4
+    direction: 1
+    length: 1
+    gridX: 0
+    gridY: 3
+    segments:
+    - {x: 0, y: 3}
+  - colorIndex: 0
+    direction: 3
+    length: 1
+    gridX: 0
+    gridY: 4
+    segments:
+    - {x: 0, y: 4}
+  - colorIndex: 0
+    direction: 1
+    length: 1
+    gridX: 0
+    gridY: 5
+    segments:
+    - {x: 0, y: 5}
+  - colorIndex: 2
+    direction: 1
+    length: 1
+    gridX: 0
+    gridY: 6
+    segments:
+    - {x: 0, y: 6}
+  - colorIndex: 1
+    direction: 0
+    length: 1
+    gridX: 0
+    gridY: 7
+    segments:
+    - {x: 0, y: 7}
+  - colorIndex: 2
+    direction: 2
+    length: 1
+    gridX: 1
+    gridY: 0
+    segments:
+    - {x: 1, y: 0}
+  - colorIndex: 5
+    direction: 0
+    length: 1
+    gridX: 1
+    gridY: 1
+    segments:
+    - {x: 1, y: 1}
+  - colorIndex: 1
+    direction: 0
+    length: 1
+    gridX: 1
+    gridY: 2
+    segments:
+    - {x: 1, y: 2}
+  - colorIndex: 4
+    direction: 1
+    length: 1
+    gridX: 1
+    gridY: 3
+    segments:
+    - {x: 1, y: 3}
+  - colorIndex: 1
+    direction: 0
+    length: 1
+    gridX: 1
+    gridY: 4
+    segments:
+    - {x: 1, y: 4}
+  - colorIndex: 1
+    direction: 1
+    length: 1
+    gridX: 1
+    gridY: 5
+    segments:
+    - {x: 1, y: 5}
+  - colorIndex: 0
+    direction: 1
+    length: 1
+    gridX: 1
+    gridY: 6
+    segments:
+    - {x: 1, y: 6}
+  - colorIndex: 4
+    direction: 1
+    length: 1
+    gridX: 1
+    gridY: 7
+    segments:
+    - {x: 1, y: 7}
+  - colorIndex: 1
+    direction: 1
+    length: 1
+    gridX: 2
+    gridY: 0
+    segments:
+    - {x: 2, y: 0}
+  - colorIndex: 2
+    direction: 1
+    length: 1
+    gridX: 2
+    gridY: 1
+    segments:
+    - {x: 2, y: 1}
+  - colorIndex: 0
+    direction: 0
+    length: 1
+    gridX: 2
+    gridY: 2
+    segments:
+    - {x: 2, y: 2}
+  - colorIndex: 5
+    direction: 1
+    length: 1
+    gridX: 2
+    gridY: 3
+    segments:
+    - {x: 2, y: 3}
+  - colorIndex: 2
+    direction: 1
+    length: 1
+    gridX: 2
+    gridY: 4
+    segments:
+    - {x: 2, y: 4}
+  - colorIndex: 1
+    direction: 1
+    length: 1
+    gridX: 2
+    gridY: 5
+    segments:
+    - {x: 2, y: 5}
+  - colorIndex: 5
+    direction: 1
+    length: 1
+    gridX: 2
+    gridY: 6
+    segments:
+    - {x: 2, y: 6}
+  - colorIndex: 3
+    direction: 0
+    length: 1
+    gridX: 2
+    gridY: 7
+    segments:
+    - {x: 2, y: 7}
+  - colorIndex: 5
+    direction: 0
+    length: 1
+    gridX: 3
+    gridY: 0
+    segments:
+    - {x: 3, y: 0}
+  - colorIndex: 5
+    direction: 0
+    length: 1
+    gridX: 3
+    gridY: 1
+    segments:
+    - {x: 3, y: 1}
+  - colorIndex: 3
+    direction: 0
+    length: 1
+    gridX: 3
+    gridY: 2
+    segments:
+    - {x: 3, y: 2}
+  - colorIndex: 1
+    direction: 1
+    length: 1
+    gridX: 3
+    gridY: 3
+    segments:
+    - {x: 3, y: 3}
+  - colorIndex: 0
+    direction: 0
+    length: 1
+    gridX: 3
+    gridY: 4
+    segments:
+    - {x: 3, y: 4}
+  - colorIndex: 0
+    direction: 0
+    length: 1
+    gridX: 3
+    gridY: 5
+    segments:
+    - {x: 3, y: 5}
+  - colorIndex: 0
+    direction: 0
+    length: 1
+    gridX: 3
+    gridY: 6
+    segments:
+    - {x: 3, y: 6}
+  - colorIndex: 4
+    direction: 1
+    length: 1
+    gridX: 3
+    gridY: 7
+    segments:
+    - {x: 3, y: 7}
+  - colorIndex: 2
+    direction: 0
+    length: 1
+    gridX: 4
+    gridY: 0
+    segments:
+    - {x: 4, y: 0}
+  - colorIndex: 5
+    direction: 0
+    length: 1
+    gridX: 4
+    gridY: 1
+    segments:
+    - {x: 4, y: 1}
+  - colorIndex: 3
+    direction: 1
+    length: 1
+    gridX: 4
+    gridY: 2
+    segments:
+    - {x: 4, y: 2}
+  - colorIndex: 0
+    direction: 0
+    length: 1
+    gridX: 4
+    gridY: 3
+    segments:
+    - {x: 4, y: 3}
+  - colorIndex: 1
+    direction: 1
+    length: 1
+    gridX: 4
+    gridY: 4
+    segments:
+    - {x: 4, y: 4}
+  - colorIndex: 3
+    direction: 0
+    length: 1
+    gridX: 4
+    gridY: 5
+    segments:
+    - {x: 4, y: 5}
+  - colorIndex: 5
+    direction: 1
+    length: 1
+    gridX: 4
+    gridY: 6
+    segments:
+    - {x: 4, y: 6}
+  - colorIndex: 3
+    direction: 0
+    length: 1
+    gridX: 4
+    gridY: 7
+    segments:
+    - {x: 4, y: 7}
+  - colorIndex: 1
+    direction: 1
+    length: 1
+    gridX: 5
+    gridY: 0
+    segments:
+    - {x: 5, y: 0}
+  - colorIndex: 3
+    direction: 1
+    length: 1
+    gridX: 5
+    gridY: 1
+    segments:
+    - {x: 5, y: 1}
+  - colorIndex: 0
+    direction: 1
+    length: 1
+    gridX: 5
+    gridY: 2
+    segments:
+    - {x: 5, y: 2}
+  - colorIndex: 5
+    direction: 0
+    length: 1
+    gridX: 5
+    gridY: 3
+    segments:
+    - {x: 5, y: 3}
+  - colorIndex: 3
+    direction: 1
+    length: 1
+    gridX: 5
+    gridY: 4
+    segments:
+    - {x: 5, y: 4}
+  - colorIndex: 0
+    direction: 1
+    length: 1
+    gridX: 5
+    gridY: 5
+    segments:
+    - {x: 5, y: 5}
+  - colorIndex: 5
+    direction: 0
+    length: 1
+    gridX: 5
+    gridY: 6
+    segments:
+    - {x: 5, y: 6}
+  - colorIndex: 2
+    direction: 1
+    length: 1
+    gridX: 5
+    gridY: 7
+    segments:
+    - {x: 5, y: 7}
+  keys:
+  - gridX: 4
+    gridY: 2
+    lockId: 0
+  locks:
+  - gridX: 3
+    gridY: 4
+    sizeX: 2
+    sizeY: 2
+    lockId: 0
