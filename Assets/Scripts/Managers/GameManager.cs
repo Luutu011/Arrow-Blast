@@ -123,7 +123,7 @@ namespace ArrowBlast.Managers
             if (boosterUIManager != null)
                 boosterUIManager.UpdateInstantExitVisual(isInstantExitActive);
 
-            Debug.Log($"Booster: Instant Exit {(isInstantExitActive ? "Active" : "Deactivated")}!");
+            //Debug.Log($"Booster: Instant Exit {(isInstantExitActive ? "Active" : "Deactivated")}!");
         }
 
         private void SetArrowsScared(bool scared)
@@ -148,7 +148,7 @@ namespace ArrowBlast.Managers
             s.Initialize();
             slots.Add(s);
             UpdateSlotPositions();
-            Debug.Log("Booster: Extra Slot Added!");
+            //Debug.Log("Booster: Extra Slot Added!");
         }
 
         private void BuildLevel(LevelData data)
@@ -598,7 +598,7 @@ namespace ArrowBlast.Managers
 
             if (!hasBlocks)
             {
-                Debug.Log("🎉 VICTORY! All blocks destroyed!");
+                //Debug.Log("🎉 VICTORY! All blocks destroyed!");
                 isGameOver = true;
                 StartCoroutine(VictoryRoutine());
                 return;
@@ -620,7 +620,7 @@ namespace ArrowBlast.Managers
 
                     if (!canAnySlotShoot)
                     {
-                        Debug.Log("💀 GAME OVER: All Slots Full, No Matching Blocks!");
+                        //Debug.Log("💀 GAME OVER: All Slots Full, No Matching Blocks!");
                         isGameOver = true;
                         return;
                     }
@@ -635,7 +635,7 @@ namespace ArrowBlast.Managers
 
             if (!arrowsRemaining && slotsEmpty && hasBlocks)
             {
-                Debug.Log("💀 GAME OVER: Out of Ammo!");
+                //Debug.Log("💀 GAME OVER: Out of Ammo!");
                 isGameOver = true;
             }
         }
