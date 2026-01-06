@@ -15,6 +15,7 @@ namespace ArrowBlast.Managers
         [SerializeField] private Transform wallContainer;
         [SerializeField] private Transform slotsContainer;
         [SerializeField] private Transform arrowContainer;
+        [SerializeField] private Transform projectileContainer;
         [SerializeField] private BoosterUIManager boosterUIManager;
         [SerializeField] private ArrowBlast.UI.MainMenu mainMenu;
 
@@ -24,12 +25,14 @@ namespace ArrowBlast.Managers
         [SerializeField] private Slot slotPrefab;
         [SerializeField] private KeyBlock keyBlockPrefab;
         [SerializeField] private LockObstacle lockObstaclePrefab;
+        [SerializeField] private Projectile projectilePrefab;
 
         [Header("Settings")]
         [SerializeField] private float cellSize = 0.8f;
         [SerializeField] private float fireRate = 0.5f;
         [SerializeField] private Material projectileMaterial;
-        [SerializeField] private float projectileSpeed = 15f;
+        [SerializeField] private float projectileSpeed = 3f;
+        [SerializeField] private int initialProjectilePoolSize = 20;
 
         // Runtime Data
         private Block[,] wallGrid;
@@ -43,8 +46,9 @@ namespace ArrowBlast.Managers
         private float shootTimer;
         private bool isGameOver;
 
-        // Object Pooling & Dynamic Wall
+        // Object Pooling
         private Queue<Block> blockPool = new Queue<Block>();
+        private Queue<Projectile> projectilePool = new Queue<Projectile>();
         private List<object>[] columnData;
         private const int ACTIVE_COL_HEIGHT = 12;
         private const int VISIBLE_COL_HEIGHT = 8;
@@ -68,6 +72,7 @@ namespace ArrowBlast.Managers
                 boosterUIManager.SetVisible(false); // Hide boosters on menu
             }
             if (levelManager == null) levelManager = FindObjectOfType<LevelManager>();
+            InitializeProjectilePool();
             // if (levelManager != null) LoadCurrentLevel(); // Removed: Load only from UI
         }
 
@@ -282,6 +287,49 @@ namespace ArrowBlast.Managers
             blockPool.Enqueue(b);
         }
 
+        private void InitializeProjectilePool()
+        {
+            if (projectilePrefab == null) return;
+
+            // Clear existing pool if any (unlikely in Start, but good for safety)
+            while (projectilePool.Count > 0)
+            {
+                Projectile p = projectilePool.Dequeue();
+                if (p != null) Destroy(p.gameObject);
+            }
+
+            for (int i = 0; i < initialProjectilePoolSize; i++)
+            {
+                Projectile p = CreateNewProjectile();
+                p.gameObject.SetActive(false);
+                projectilePool.Enqueue(p);
+            }
+        }
+
+        private Projectile CreateNewProjectile()
+        {
+            Projectile p = Instantiate(projectilePrefab, projectileContainer);
+            return p;
+        }
+
+        private Projectile GetProjectileFromPool()
+        {
+            if (projectilePool.Count > 0)
+            {
+                Projectile p = projectilePool.Dequeue();
+                p.gameObject.SetActive(true);
+                return p;
+            }
+            return CreateNewProjectile();
+        }
+
+        private void ReturnProjectileToPool(Projectile p)
+        {
+            if (p == null) return;
+            p.gameObject.SetActive(false);
+            projectilePool.Enqueue(p);
+        }
+
         private bool IsValidCell(int x, int y) => x >= 0 && x < arrowCols && y >= 0 && y < arrowRows;
 
         private Vector3 GetWallWorldPosition(int gridX, int gridY)
@@ -442,6 +490,10 @@ namespace ArrowBlast.Managers
                         slot.UseAmmo(1);
                         anySlotShot = true;
                     }
+                    else
+                    {
+                        slot.ResetRotation(); // No matching blocks, return to idle
+                    }
                 }
             }
 
@@ -468,22 +520,21 @@ namespace ArrowBlast.Managers
                             int targetX = x;
                             int targetY = y;
 
+                            slot.RotateToward(targetPos);
+
                             b.IsTargeted = true; // Reserve this layer
                             bool willBeDestroyed = !b.IsTwoColor;
                             if (willBeDestroyed) wallGrid[x, y] = null;
 
-                            GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                            sphere.name = $"Projectile_{color}";
-                            sphere.transform.position = slot.transform.position;
-                            sphere.transform.localScale = Vector3.one * 0.4f;
-                            Destroy(sphere.GetComponent<SphereCollider>());
-                            Projectile proj = sphere.AddComponent<Projectile>();
+                            Projectile proj = GetProjectileFromPool();
+                            proj.name = $"Projectile_{color}";
+                            proj.transform.position = slot.transform.position;
+                            proj.transform.localScale = Vector3.one * 0.4f;
 
-                            Color vColor = GetBlockColorVisual(color);
-                            proj.Initialize(color, projectileMaterial, vColor, () =>
+                            proj.Initialize(color, projectileMaterial, () =>
                             {
                                 if (b != null) StartCoroutine(HandleBlockHit(targetX, targetY, b, willBeDestroyed));
-                            });
+                            }, ReturnProjectileToPool);
 
                             float distance = Vector3.Distance(slot.transform.position, targetPos);
                             float duration = distance / projectileSpeed;
@@ -652,7 +703,7 @@ namespace ArrowBlast.Managers
             foreach (Transform t in wallContainer) Destroy(t.gameObject);
             foreach (Transform t in arrowContainer) Destroy(t.gameObject);
             foreach (var s in slots) s.ClearSlot();
-            
+
             if (slotsContainer != null) slotsContainer.gameObject.SetActive(false);
             if (boosterUIManager != null) boosterUIManager.SetVisible(false);
 

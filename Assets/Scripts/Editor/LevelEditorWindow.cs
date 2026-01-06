@@ -26,6 +26,8 @@ namespace ArrowBlast.Editor
         private int selectedLockId = 0; // For key/lock pairing
         private int selectedLockSizeX = 2; // Lock width
         private int selectedLockSizeY = 1; // Lock height
+        private int minWallCluster = 2; // Minimum same color adjacent
+        private int maxWallCluster = 5; // Maximum same color adjacent
 
         // Interaction State
         private enum RandomMode { Normal, Hard, Mixed }
@@ -226,6 +228,12 @@ namespace ArrowBlast.Editor
                 currentLevelData.keys.Clear();
                 EditorUtility.SetDirty(currentLevelData);
             }
+            EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.BeginHorizontal();
+            minWallCluster = EditorGUILayout.IntSlider("Min Cluster:", minWallCluster, 1, 9);
+            maxWallCluster = EditorGUILayout.IntSlider("Max Cluster:", maxWallCluster, 1, 9);
+            if (minWallCluster > maxWallCluster) maxWallCluster = minWallCluster;
             EditorGUILayout.EndHorizontal();
 
             EditorGUILayout.BeginHorizontal(EditorStyles.helpBox);
@@ -846,8 +854,8 @@ namespace ArrowBlast.Editor
             for (int x = 0; x < cols; x++) for (int y = 0; y < rows; y++) wallGrid[x, y] = -1;
 
             // Constraints: each contiguous cluster of same color should be between minCluster and maxCluster
-            int minCluster = 10;
-            int maxCluster = 20;
+            int minCluster = minWallCluster;
+            int maxCluster = maxWallCluster;
 
             // Utility: available empty cells
             List<Vector2Int> GetEmptyCells()

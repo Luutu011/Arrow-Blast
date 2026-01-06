@@ -119,6 +119,37 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &11249813
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 11249814}
+  m_Layer: 0
+  m_Name: ProjectileContainer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &11249814
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 11249813}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -6, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &34202471
 GameObject:
   m_ObjectHideFlags: 0
@@ -3767,6 +3798,7 @@ MonoBehaviour:
   wallContainer: {fileID: 700366138}
   slotsContainer: {fileID: 1128602142}
   arrowContainer: {fileID: 147405615}
+  projectileContainer: {fileID: 11249814}
   boosterUIManager: {fileID: 504090812}
   mainMenu: {fileID: 1370241097}
   blockPrefab: {fileID: 2126982914838082015, guid: d55b702d12efc814c9850cf5d851c063, type: 3}
@@ -3774,10 +3806,12 @@ MonoBehaviour:
   slotPrefab: {fileID: 1168305013567811716, guid: c9231e134d5564652b83d176b2c2ea06, type: 3}
   keyBlockPrefab: {fileID: 7731366695574434473, guid: 5b368b3ce69ef15e7b060bcac58e7e8d, type: 3}
   lockObstaclePrefab: {fileID: 6231950161874520312, guid: 9f6ea02815e5b0cdc9bcd8512c7d4d00, type: 3}
+  projectilePrefab: {fileID: -8043068810435677647, guid: 2154956673ed0bdeaa92ea68330babba, type: 3}
   cellSize: 0.8
   fireRate: 0.1
   projectileMaterial: {fileID: 2100000, guid: f9be2233af83365f4a8f981429965046, type: 2}
-  projectileSpeed: 50
+  projectileSpeed: 15
+  initialProjectilePoolSize: 20
 --- !u!4 &2093832439
 Transform:
   m_ObjectHideFlags: 0
@@ -3909,6 +3943,7 @@ SceneRoots:
   - {fileID: 700366138}
   - {fileID: 1128602142}
   - {fileID: 147405615}
+  - {fileID: 11249814}
   - {fileID: 1370241101}
   - {fileID: 973716716}
   - {fileID: 1353557362}

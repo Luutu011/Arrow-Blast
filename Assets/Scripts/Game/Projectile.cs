@@ -8,28 +8,42 @@ namespace ArrowBlast.Game
     {
         private BlockColor color;
         private System.Action onHit;
+        private System.Action<Projectile> onRelease;
+        [SerializeField] private Color[] colorDefinitions;
+        private MeshRenderer _renderer;
 
-        public void Initialize(BlockColor color, Material material, Color visualColor, System.Action onHitCallback)
+        private void Awake()
+        {
+            _renderer = GetComponent<MeshRenderer>();
+        }
+
+        public void Initialize(BlockColor color, Material material, System.Action onHitCallback, System.Action<Projectile> onReleaseCallback)
         {
             this.color = color;
             this.onHit = onHitCallback;
+            this.onRelease = onReleaseCallback;
 
-            MeshRenderer mr = GetComponent<MeshRenderer>();
-            if (mr != null)
+            if (_renderer != null)
             {
-                mr.material = new Material(material);
-                mr.material.color = visualColor;
+                if (material != null) _renderer.sharedMaterial = material;
+
+                Color c = (colorDefinitions != null && (int)color < colorDefinitions.Length)
+                    ? colorDefinitions[(int)color]
+                    : UnityEngine.Color.white;
+
+                _renderer.material.color = c;
             }
         }
 
         public void Launch(Vector3 targetPosition, float duration)
         {
+            transform.DOKill(true); // Kill and complete any existing tweens before launching
             transform.DOMove(targetPosition, duration)
                 .SetEase(Ease.InQuad)
                 .OnComplete(() =>
                 {
                     onHit?.Invoke();
-                    Destroy(gameObject);
+                    onRelease?.Invoke(this);
                 });
 
             // Subtle rotation while flying

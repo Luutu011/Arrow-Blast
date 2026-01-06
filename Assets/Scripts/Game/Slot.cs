@@ -11,6 +11,8 @@ namespace ArrowBlast.Game
     /// </summary>
     public class Slot : MonoBehaviour
     {
+        private Quaternion targetRotation = Quaternion.identity;
+        private float rotationSpeed = 10f;
         public BlockColor CurrentColor { get; private set; }
         public int AmmoCount { get; private set; }
         public bool IsOccupied { get; private set; }
@@ -30,6 +32,25 @@ namespace ArrowBlast.Game
         public void Initialize()
         {
             ClearSlot();
+            targetRotation = transform.localRotation;
+        }
+
+        private void Update()
+        {
+            transform.localRotation = Quaternion.Slerp(transform.localRotation, targetRotation, Time.deltaTime * rotationSpeed);
+        }
+
+        public void RotateToward(Vector3 worldTarget)
+        {
+            Vector3 direction = worldTarget - transform.position;
+            // Calculate angle on XY plane (assuming default is pointing towards +Y)
+            float angle = Mathf.Atan2(direction.x, direction.y) * Mathf.Rad2Deg;
+            targetRotation = Quaternion.Euler(0, 0, -angle);
+        }
+
+        public void ResetRotation()
+        {
+            targetRotation = Quaternion.identity;
         }
 
         public void FillSlot(BlockColor color, int amount)
@@ -88,6 +109,7 @@ namespace ArrowBlast.Game
 
             if (bgMesh) bgMesh.material.color = emptyColor;
             if (ammoText) ammoText.text = "";
+            ResetRotation();
         }
 
         private void UpdateVisuals()
