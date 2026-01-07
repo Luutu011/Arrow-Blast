@@ -18,7 +18,8 @@ namespace ArrowBlast.Game
 
         [SerializeField] private MeshRenderer meshRenderer;
         [SerializeField] private MeshRenderer innerMeshRenderer;
-        [SerializeField] private Color[] colorDefinitions;
+        [SerializeField] private string colorPropertyName = "_Color";
+        private MaterialPropertyBlock _propBlock;
 
         public void Init(BlockColor color, int x, int y, bool isTwoColor = false, BlockColor secondaryColor = BlockColor.Red)
         {
@@ -137,12 +138,21 @@ namespace ArrowBlast.Game
             transform.localPosition = target;
         }
 
+        private void Awake()
+        {
+            _propBlock = new MaterialPropertyBlock();
+        }
+
         private void UpdateVisuals()
         {
             Color c = GetVisualColor(Color);
             if (meshRenderer != null)
             {
-                meshRenderer.material.color = c;
+                if (_propBlock == null) _propBlock = new MaterialPropertyBlock();
+                meshRenderer.GetPropertyBlock(_propBlock);
+                _propBlock.SetColor("_Color", c);
+                _propBlock.SetColor("_BaseColor", c);
+                meshRenderer.SetPropertyBlock(_propBlock);
             }
 
             if (innerMeshRenderer != null)
@@ -150,7 +160,12 @@ namespace ArrowBlast.Game
                 innerMeshRenderer.gameObject.SetActive(IsTwoColor);
                 if (IsTwoColor)
                 {
-                    innerMeshRenderer.material.color = GetVisualColor(SecondaryColor);
+                    innerMeshRenderer.GetPropertyBlock(_propBlock);
+                    Color sc = GetVisualColor(SecondaryColor);
+                    _propBlock.SetColor("_Color", sc);
+                    _propBlock.SetColor("_BaseColor", sc);
+                    innerMeshRenderer.SetPropertyBlock(_propBlock);
+
                     innerMeshRenderer.transform.localScale = new Vector3(0.65f, 0.65f, 0.65f); // Slightly larger
                     innerMeshRenderer.transform.localPosition = new Vector3(0, 0, -0.2f); // Push forward more noticeably
                 }
@@ -159,9 +174,7 @@ namespace ArrowBlast.Game
 
         private Color GetVisualColor(BlockColor color)
         {
-            return (colorDefinitions != null && (int)color < colorDefinitions.Length)
-                ? colorDefinitions[(int)color]
-                : UnityEngine.Color.white;
+            return GamePalette.GetColor(color);
         }
     }
 }

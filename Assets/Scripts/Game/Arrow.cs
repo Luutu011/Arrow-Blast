@@ -24,7 +24,6 @@ namespace ArrowBlast.Game
         [Header("Materials")]
         [SerializeField] private Material headMaterial;
         [SerializeField] private Material bodyMaterial;
-        [SerializeField] private Color[] colorDefinitions;
         [SerializeField] private Sprite arrowIconSprite;
 
         private GameObject headObject;
@@ -33,6 +32,7 @@ namespace ArrowBlast.Game
 
         private Tween shakeTween;
         private Vector3 originalLocalPos;
+        private MaterialPropertyBlock _propBlock;
 
         public void SetScared(bool isScared)
         {
@@ -89,7 +89,7 @@ namespace ArrowBlast.Game
             // Adjust collider to cover all segments
             FitColliderToSegments(col);
             col.enabled = true;
-            Debug.Log($"[ARROW INIT] Arrow initialized at ({GridX}, {GridY}), Length: {Length}");
+            // Debug.Log($"[ARROW INIT] Arrow initialized at ({GridX}, {GridY}), Length: {Length}");
         }
 
         public int GetAmmoAmount()
@@ -106,22 +106,7 @@ namespace ArrowBlast.Game
 
         private Color GetArrowColor()
         {
-            if (colorDefinitions != null && (int)Color < colorDefinitions.Length)
-            {
-                return colorDefinitions[(int)Color];
-            }
-
-            // Fallback colors if colorDefinitions not set
-            switch (Color)
-            {
-                case BlockColor.Red: return UnityEngine.Color.red;
-                case BlockColor.Blue: return UnityEngine.Color.blue;
-                case BlockColor.Green: return UnityEngine.Color.green;
-                case BlockColor.Yellow: return UnityEngine.Color.yellow;
-                case BlockColor.Purple: return new Color(0.5f, 0f, 0.5f);
-                case BlockColor.Orange: return new Color(1f, 0.5f, 0f);
-                default: return UnityEngine.Color.white;
-            }
+            return GamePalette.GetColor(Color);
         }
 
         public List<Vector2Int> GetOccupiedCells()
@@ -192,8 +177,13 @@ namespace ArrowBlast.Game
             hRc.roundness = 0.15f; // Soft beveled look
             hRc.Generate();
 
-            hMr.material = headMaterial != null ? new Material(headMaterial) : new Material(Shader.Find("Standard"));
-            hMr.material.color = arrowColor;
+            hMr.sharedMaterial = headMaterial != null ? headMaterial : new Material(Shader.Find("Standard"));
+
+            if (_propBlock == null) _propBlock = new MaterialPropertyBlock();
+            hMr.GetPropertyBlock(_propBlock);
+            _propBlock.SetColor("_Color", arrowColor);
+            _propBlock.SetColor("_BaseColor", arrowColor);
+            hMr.SetPropertyBlock(_propBlock);
 
             // Add Sprite Icon on top
             if (arrowIconSprite != null)
@@ -235,8 +225,12 @@ namespace ArrowBlast.Game
                 bRc.roundness = 0.15f;
                 bRc.Generate();
 
-                bMr.material = bodyMaterial != null ? new Material(bodyMaterial) : new Material(Shader.Find("Standard"));
-                bMr.material.color = arrowColor;
+                bMr.sharedMaterial = bodyMaterial != null ? bodyMaterial : new Material(Shader.Find("Standard"));
+                if (_propBlock == null) _propBlock = new MaterialPropertyBlock();
+                bMr.GetPropertyBlock(_propBlock);
+                _propBlock.SetColor("_Color", arrowColor);
+                _propBlock.SetColor("_BaseColor", arrowColor);
+                bMr.SetPropertyBlock(_propBlock);
 
                 bodyParts.Add(bodyPart);
             }
@@ -338,7 +332,7 @@ namespace ArrowBlast.Game
             float headMoveToSlotDuration = 0.4f;
             float bodyMergeDuration = 0.3f;
 
-            Debug.Log($"[ARROW ANIM] Moving to exit position {exitTargetPosition}");
+            // Debug.Log($"[ARROW ANIM] Moving to exit position {exitTargetPosition}");
 
             // Step 1: Move entire arrow to exit position
             sequence.Append(transform.DOMove(exitTargetPosition, moveDuration).SetEase(Ease.OutQuad));
@@ -424,7 +418,7 @@ namespace ArrowBlast.Game
             {
                 int finalHeadAmmo = ammoPerPart + remainder;
                 onAmmoIncrement?.Invoke(finalHeadAmmo);
-                Debug.Log($"[ARROW ANIM] Head added {finalHeadAmmo} ammo (base: {ammoPerPart}, remainder: {remainder})");
+                // Debug.Log($"[ARROW ANIM] Head added {finalHeadAmmo} ammo (base: {ammoPerPart}, remainder: {remainder})");
             });
 
             // Step 7: Finish

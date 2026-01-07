@@ -83,7 +83,7 @@ namespace ArrowBlast.Managers
                 // Increase orthographicSize to fit the width
                 mainCamera.orthographicSize = (maxRequiredWidth / mainCamera.aspect) / 2f;
                 visibleHeight = mainCamera.orthographicSize * 2f;
-                Debug.Log($"Camera size adjusted to {mainCamera.orthographicSize} to fit screen width");
+                // Debug.Log($"Camera size adjusted to {mainCamera.orthographicSize} to fit screen width");
             }
 
             // Calculate positions from top to bottom
@@ -109,22 +109,22 @@ namespace ArrowBlast.Managers
             if (wallContainer != null)
             {
                 wallContainer.position = new Vector3(0, wallY, 0);
-                Debug.Log($"Wall positioned at Y: {wallY}");
+                // Debug.Log($"Wall positioned at Y: {wallY}");
             }
 
             if (slotsContainer != null)
             {
                 slotsContainer.position = new Vector3(0, slotsY, 0);
-                Debug.Log($"Slots positioned at Y: {slotsY}");
+                // Debug.Log($"Slots positioned at Y: {slotsY}");
             }
 
             if (arrowContainer != null)
             {
                 arrowContainer.position = new Vector3(0, arrowY, 0);
-                Debug.Log($"Arrows positioned at Y: {arrowY}");
+                // Debug.Log($"Arrows positioned at Y: {arrowY}");
             }
 
-            Debug.Log($"AutoScaler: Screen {Screen.width}x{Screen.height}, Visible height: {visibleHeight}, Required: {totalRequiredHeight}, Top padding: {topPadding}");
+            // Debug.Log($"AutoScaler: Screen {Screen.width}x{Screen.height}, Visible height: {visibleHeight}, Required: {totalRequiredHeight}, Top padding: {topPadding}");
         }
 
         // Call this when screen orientation or resolution changes

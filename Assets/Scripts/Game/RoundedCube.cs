@@ -6,7 +6,7 @@ namespace ArrowBlast.Game
     public class RoundedCube : MonoBehaviour
     {
         public int xSize = 10, ySize = 10, zSize = 10;
-        public float roundness = 0.2f;
+        public float roundness = 0.15f;
 
         private Mesh mesh;
         private Vector3[] vertices;

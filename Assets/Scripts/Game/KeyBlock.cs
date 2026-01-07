@@ -20,6 +20,12 @@ namespace ArrowBlast.Game
 
         private bool isFalling = false;
         private bool hasUnlocked = false;
+        private MaterialPropertyBlock _propBlock;
+
+        private void Awake()
+        {
+            _propBlock = new MaterialPropertyBlock();
+        }
 
         public void Init(int x, int y, int lockId)
         {
@@ -100,7 +106,11 @@ namespace ArrowBlast.Game
         {
             if (meshRenderer != null)
             {
-                meshRenderer.material.color = keyColor;
+                if (_propBlock == null) _propBlock = new MaterialPropertyBlock();
+                meshRenderer.GetPropertyBlock(_propBlock);
+                _propBlock.SetColor("_Color", keyColor);
+                _propBlock.SetColor("_BaseColor", keyColor);
+                meshRenderer.SetPropertyBlock(_propBlock);
             }
 
             // Ensure collider is present for clicking/interaction if needed

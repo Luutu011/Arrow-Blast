@@ -13,6 +13,7 @@ namespace ArrowBlast.Game
     {
         private Quaternion targetRotation = Quaternion.identity;
         private float rotationSpeed = 10f;
+        private MaterialPropertyBlock _propBlock;
         public BlockColor CurrentColor { get; private set; }
         public int AmmoCount { get; private set; }
         public bool IsOccupied { get; private set; }
@@ -25,9 +26,6 @@ namespace ArrowBlast.Game
 
         [SerializeField] private MeshRenderer bgMesh;
         [SerializeField] private TextMeshPro ammoText;
-        [SerializeField] private Color[] colorDefinitions;
-        [SerializeField] private Color emptyColor = Color.gray;
-        [SerializeField] private Color textColor = Color.black;
 
         public void Initialize()
         {
@@ -107,21 +105,36 @@ namespace ArrowBlast.Game
             IsReserved = false;
             AmmoCount = 0;
 
-            if (bgMesh) bgMesh.material.color = emptyColor;
+            if (bgMesh)
+            {
+                if (_propBlock == null) _propBlock = new MaterialPropertyBlock();
+                bgMesh.GetPropertyBlock(_propBlock);
+                Color c = GamePalette.SlotEmpty;
+                _propBlock.SetColor("_Color", c);
+                _propBlock.SetColor("_BaseColor", c);
+                bgMesh.SetPropertyBlock(_propBlock);
+            }
             if (ammoText) ammoText.text = "";
             ResetRotation();
         }
 
         private void UpdateVisuals()
         {
-            if (bgMesh && (int)CurrentColor < colorDefinitions.Length)
+            if (bgMesh)
             {
-                bgMesh.material.color = colorDefinitions[(int)CurrentColor];
+                if (_propBlock == null) _propBlock = new MaterialPropertyBlock();
+                bgMesh.GetPropertyBlock(_propBlock);
+
+                Color c = GamePalette.GetColor(CurrentColor);
+
+                _propBlock.SetColor("_Color", c);
+                _propBlock.SetColor("_BaseColor", c);
+                bgMesh.SetPropertyBlock(_propBlock);
             }
             if (ammoText)
             {
                 ammoText.text = AmmoCount.ToString();
-                ammoText.color = textColor;
+                ammoText.color = Color.black;
             }
         }
     }

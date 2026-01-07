@@ -135,6 +135,7 @@ MonoBehaviour:
   - {r: 1, g: 0.9, b: 0.2, a: 1}
   - {r: 0.8, g: 0.3, b: 1, a: 1}
   - {r: 1, g: 0.6, b: 0.2, a: 1}
+  colorPropertyName: _Color
 --- !u!114 &1921482690566149060
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -147,10 +148,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69fb7188a4e62c54680ee119ac73c6b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArrowBlast.Game.RoundedCube
-  xSize: 10
-  ySize: 10
-  zSize: 10
-  roundness: 0.2
+  xSize: 5
+  ySize: 5
+  zSize: 5
+  roundness: 0.15
 --- !u!1 &2583101892438495742
 GameObject:
   m_ObjectHideFlags: 0

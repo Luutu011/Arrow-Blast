@@ -30,9 +30,7 @@ namespace ArrowBlast.Managers
         [Header("Settings")]
         [SerializeField] private float cellSize = 0.8f;
         [SerializeField] private float fireRate = 0.5f;
-        [SerializeField] private Material projectileMaterial;
         [SerializeField] private float projectileSpeed = 3f;
-        [SerializeField] private int initialProjectilePoolSize = 20;
 
         // Runtime Data
         private Block[,] wallGrid;
@@ -48,7 +46,7 @@ namespace ArrowBlast.Managers
 
         // Object Pooling
         private Queue<Block> blockPool = new Queue<Block>();
-        private Queue<Projectile> projectilePool = new Queue<Projectile>();
+        [SerializeField] private List<Projectile> projectilePool = new List<Projectile>();
         private List<object>[] columnData;
         private const int ACTIVE_COL_HEIGHT = 12;
         private const int VISIBLE_COL_HEIGHT = 8;
@@ -64,6 +62,12 @@ namespace ArrowBlast.Managers
 
         private void Start()
         {
+            if (Camera.main != null)
+            {
+                Camera.main.clearFlags = CameraClearFlags.SolidColor;
+                Camera.main.backgroundColor = GamePalette.Background;
+            }
+
             InitializeSlots();
             if (slotsContainer != null) slotsContainer.gameObject.SetActive(false); // Hide on start
             if (boosterUIManager != null)
@@ -72,7 +76,6 @@ namespace ArrowBlast.Managers
                 boosterUIManager.SetVisible(false); // Hide boosters on menu
             }
             if (levelManager == null) levelManager = FindObjectOfType<LevelManager>();
-            InitializeProjectilePool();
             // if (levelManager != null) LoadCurrentLevel(); // Removed: Load only from UI
         }
 
@@ -287,38 +290,22 @@ namespace ArrowBlast.Managers
             blockPool.Enqueue(b);
         }
 
-        private void InitializeProjectilePool()
-        {
-            if (projectilePrefab == null) return;
-
-            // Clear existing pool if any (unlikely in Start, but good for safety)
-            while (projectilePool.Count > 0)
-            {
-                Projectile p = projectilePool.Dequeue();
-                if (p != null) Destroy(p.gameObject);
-            }
-
-            for (int i = 0; i < initialProjectilePoolSize; i++)
-            {
-                Projectile p = CreateNewProjectile();
-                p.gameObject.SetActive(false);
-                projectilePool.Enqueue(p);
-            }
-        }
-
         private Projectile CreateNewProjectile()
         {
             Projectile p = Instantiate(projectilePrefab, projectileContainer);
+            projectilePool.Add(p);
             return p;
         }
 
         private Projectile GetProjectileFromPool()
         {
-            if (projectilePool.Count > 0)
+            foreach (var p in projectilePool)
             {
-                Projectile p = projectilePool.Dequeue();
-                p.gameObject.SetActive(true);
-                return p;
+                if (p != null && !p.gameObject.activeSelf)
+                {
+                    p.gameObject.SetActive(true);
+                    return p;
+                }
             }
             return CreateNewProjectile();
         }
@@ -327,7 +314,15 @@ namespace ArrowBlast.Managers
         {
             if (p == null) return;
             p.gameObject.SetActive(false);
-            projectilePool.Enqueue(p);
+            // No need to enqueue/add, it's already in the list
+        }
+
+        private void OnProjectileHit(Projectile p)
+        {
+            if (p != null && p.TargetBlock != null)
+            {
+                StartCoroutine(HandleBlockHit(p.GridX, p.GridY, p.TargetBlock, p.WillDestroy));
+            }
         }
 
         private bool IsValidCell(int x, int y) => x >= 0 && x < arrowCols && y >= 0 && y < arrowRows;
@@ -527,15 +522,16 @@ namespace ArrowBlast.Managers
                             if (willBeDestroyed) wallGrid[x, y] = null;
 
                             Projectile proj = GetProjectileFromPool();
-                            proj.name = $"Projectile_{color}";
+                            // Avoid enum boxing in string conversion
+                            proj.name = "Projectile_" + (int)color;
                             proj.transform.position = slot.transform.position;
                             proj.transform.localScale = Vector3.one * 0.4f;
 
-                            proj.Initialize(color, projectileMaterial, () =>
-                            {
-                                if (b != null) StartCoroutine(HandleBlockHit(targetX, targetY, b, willBeDestroyed));
-                            }, ReturnProjectileToPool);
+                            // Optimized: Passing method groups instead of creating a lambda () => { ... }
+                            // This prevents per-bullet memory allocations.
+                            proj.Initialize(color, b, targetX, targetY, willBeDestroyed, OnProjectileHit, ReturnProjectileToPool);
 
+                            // Slow travel speed even more as requested by USER earlier
                             float distance = Vector3.Distance(slot.transform.position, targetPos);
                             float duration = distance / projectileSpeed;
                             proj.Launch(targetPos, duration);

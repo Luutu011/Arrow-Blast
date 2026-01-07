@@ -23,6 +23,12 @@ namespace ArrowBlast.Game
         [SerializeField] private Color unlockingColor = new Color(0.8f, 0.8f, 0.2f); // Yellow glow
 
         private List<Vector2Int> occupiedCells = new List<Vector2Int>();
+        private MaterialPropertyBlock _propBlock;
+
+        private void Awake()
+        {
+            _propBlock = new MaterialPropertyBlock();
+        }
 
         public void Init(int x, int y, int sizeX, int sizeY, int lockId, float cellSize)
         {
@@ -69,7 +75,11 @@ namespace ArrowBlast.Game
                 float t = elapsed / (duration / 2f);
                 if (meshRenderer != null)
                 {
-                    meshRenderer.material.color = Color.Lerp(startColor, unlockingColor, t);
+                    meshRenderer.GetPropertyBlock(_propBlock);
+                    Color c = Color.Lerp(startColor, unlockingColor, t);
+                    _propBlock.SetColor("_Color", c);
+                    _propBlock.SetColor("_BaseColor", c);
+                    meshRenderer.SetPropertyBlock(_propBlock);
                 }
                 // Slight pulse
                 transform.localScale = Vector3.Lerp(startScale, startScale * 1.1f, Mathf.Sin(t * Mathf.PI));
@@ -85,9 +95,12 @@ namespace ArrowBlast.Game
                 transform.localScale = Vector3.Lerp(startScale, Vector3.zero, t);
                 if (meshRenderer != null)
                 {
-                    Color currentColor = meshRenderer.material.color;
-                    currentColor.a = 1f - t;
-                    meshRenderer.material.color = currentColor;
+                    meshRenderer.GetPropertyBlock(_propBlock);
+                    Color col = unlockingColor;
+                    col.a = 1f - t;
+                    _propBlock.SetColor("_Color", col);
+                    _propBlock.SetColor("_BaseColor", col);
+                    meshRenderer.SetPropertyBlock(_propBlock);
                 }
                 yield return null;
             }
@@ -100,17 +113,12 @@ namespace ArrowBlast.Game
         {
             if (meshRenderer != null)
             {
-                meshRenderer.material.color = IsLocked ? lockedColor : unlockingColor;
-
-                // Enable transparent rendering if needed
-                meshRenderer.material.SetFloat("_Mode", 3);
-                meshRenderer.material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
-                meshRenderer.material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-                meshRenderer.material.SetInt("_ZWrite", 0);
-                meshRenderer.material.DisableKeyword("_ALPHATEST_ON");
-                meshRenderer.material.EnableKeyword("_ALPHABLEND_ON");
-                meshRenderer.material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
-                meshRenderer.material.renderQueue = 3000;
+                if (_propBlock == null) _propBlock = new MaterialPropertyBlock();
+                meshRenderer.GetPropertyBlock(_propBlock);
+                Color c = IsLocked ? lockedColor : unlockingColor;
+                _propBlock.SetColor("_Color", c);
+                _propBlock.SetColor("_BaseColor", c);
+                meshRenderer.SetPropertyBlock(_propBlock);
             }
 
             // Ensure collider is present
