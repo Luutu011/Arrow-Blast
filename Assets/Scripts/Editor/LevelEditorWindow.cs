@@ -231,8 +231,8 @@ namespace ArrowBlast.Editor
             EditorGUILayout.EndHorizontal();
 
             EditorGUILayout.BeginHorizontal();
-            minWallCluster = EditorGUILayout.IntSlider("Min Cluster:", minWallCluster, 1, 9);
-            maxWallCluster = EditorGUILayout.IntSlider("Max Cluster:", maxWallCluster, 1, 9);
+            minWallCluster = EditorGUILayout.IntSlider("Min Cluster:", minWallCluster, 1, 20);
+            maxWallCluster = EditorGUILayout.IntSlider("Max Cluster:", maxWallCluster, 1, 100);
             if (minWallCluster > maxWallCluster) maxWallCluster = minWallCluster;
             EditorGUILayout.EndHorizontal();
 

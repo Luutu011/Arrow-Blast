@@ -24,12 +24,12 @@ MonoBehaviour:
     isTwoColor: 0
     gridX: 0
     gridY: 0
-  - colorIndex: 3
+  - colorIndex: 2
     secondaryColorIndex: 0
     isTwoColor: 0
     gridX: 0
     gridY: 1
-  - colorIndex: 0
+  - colorIndex: 3
     secondaryColorIndex: 0
     isTwoColor: 0
     gridX: 0
@@ -39,42 +39,42 @@ MonoBehaviour:
     isTwoColor: 0
     gridX: 0
     gridY: 3
-  - colorIndex: 0
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 0
-    gridY: 4
-  - colorIndex: 0
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 0
-    gridY: 5
-  - colorIndex: 2
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 0
-    gridY: 6
-  - colorIndex: 4
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 0
-    gridY: 7
   - colorIndex: 1
     secondaryColorIndex: 0
     isTwoColor: 0
     gridX: 0
+    gridY: 4
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 5
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 6
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 7
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
     gridY: 8
-  - colorIndex: 2
+  - colorIndex: 3
     secondaryColorIndex: 0
     isTwoColor: 0
     gridX: 0
     gridY: 9
-  - colorIndex: 0
+  - colorIndex: 2
     secondaryColorIndex: 0
     isTwoColor: 0
     gridX: 1
     gridY: 0
-  - colorIndex: 3
+  - colorIndex: 2
     secondaryColorIndex: 0
     isTwoColor: 0
     gridX: 1
@@ -84,12 +84,12 @@ MonoBehaviour:
     isTwoColor: 0
     gridX: 1
     gridY: 2
-  - colorIndex: 0
+  - colorIndex: 1
     secondaryColorIndex: 0
     isTwoColor: 0
     gridX: 1
     gridY: 3
-  - colorIndex: 1
+  - colorIndex: 3
     secondaryColorIndex: 0
     isTwoColor: 0
     gridX: 1
@@ -99,22 +99,22 @@ MonoBehaviour:
     isTwoColor: 0
     gridX: 1
     gridY: 5
-  - colorIndex: 4
+  - colorIndex: 0
     secondaryColorIndex: 0
     isTwoColor: 0
     gridX: 1
     gridY: 6
-  - colorIndex: 1
+  - colorIndex: 0
     secondaryColorIndex: 0
     isTwoColor: 0
     gridX: 1
     gridY: 7
-  - colorIndex: 4
+  - colorIndex: 0
     secondaryColorIndex: 0
     isTwoColor: 0
     gridX: 1
     gridY: 8
-  - colorIndex: 4
+  - colorIndex: 3
     secondaryColorIndex: 0
     isTwoColor: 0
     gridX: 1
@@ -129,7 +129,7 @@ MonoBehaviour:
     isTwoColor: 0
     gridX: 2
     gridY: 1
-  - colorIndex: 0
+  - colorIndex: 2
     secondaryColorIndex: 0
     isTwoColor: 0
     gridX: 2
@@ -139,22 +139,22 @@ MonoBehaviour:
     isTwoColor: 0
     gridX: 2
     gridY: 3
-  - colorIndex: 1
+  - colorIndex: 3
     secondaryColorIndex: 0
     isTwoColor: 0
     gridX: 2
     gridY: 4
-  - colorIndex: 2
+  - colorIndex: 1
     secondaryColorIndex: 0
     isTwoColor: 0
     gridX: 2
     gridY: 5
-  - colorIndex: 4
+  - colorIndex: 0
     secondaryColorIndex: 0
     isTwoColor: 0
     gridX: 2
     gridY: 6
-  - colorIndex: 1
+  - colorIndex: 0
     secondaryColorIndex: 0
     isTwoColor: 0
     gridX: 2
@@ -169,7 +169,7 @@ MonoBehaviour:
     isTwoColor: 0
     gridX: 2
     gridY: 9
-  - colorIndex: 1
+  - colorIndex: 3
     secondaryColorIndex: 0
     isTwoColor: 0
     gridX: 3
@@ -179,12 +179,12 @@ MonoBehaviour:
     isTwoColor: 0
     gridX: 3
     gridY: 1
-  - colorIndex: 2
+  - colorIndex: 1
     secondaryColorIndex: 0
     isTwoColor: 0
     gridX: 3
     gridY: 2
-  - colorIndex: 1
+  - colorIndex: 4
     secondaryColorIndex: 0
     isTwoColor: 0
     gridX: 3
@@ -199,17 +199,17 @@ MonoBehaviour:
     isTwoColor: 0
     gridX: 3
     gridY: 5
-  - colorIndex: 4
+  - colorIndex: 0
     secondaryColorIndex: 0
     isTwoColor: 0
     gridX: 3
     gridY: 6
-  - colorIndex: 1
+  - colorIndex: 0
     secondaryColorIndex: 0
     isTwoColor: 0
     gridX: 3
     gridY: 7
-  - colorIndex: 4
+  - colorIndex: 0
     secondaryColorIndex: 0
     isTwoColor: 0
     gridX: 3
@@ -219,17 +219,17 @@ MonoBehaviour:
     isTwoColor: 0
     gridX: 3
     gridY: 9
-  - colorIndex: 0
+  - colorIndex: 1
     secondaryColorIndex: 0
     isTwoColor: 0
     gridX: 4
     gridY: 0
-  - colorIndex: 0
+  - colorIndex: 1
     secondaryColorIndex: 0
     isTwoColor: 0
     gridX: 4
     gridY: 1
-  - colorIndex: 0
+  - colorIndex: 1
     secondaryColorIndex: 0
     isTwoColor: 0
     gridX: 4
@@ -239,22 +239,22 @@ MonoBehaviour:
     isTwoColor: 0
     gridX: 4
     gridY: 3
-  - colorIndex: 1
+  - colorIndex: 4
     secondaryColorIndex: 0
     isTwoColor: 0
     gridX: 4
     gridY: 4
-  - colorIndex: 3
+  - colorIndex: 4
     secondaryColorIndex: 0
     isTwoColor: 0
     gridX: 4
     gridY: 5
-  - colorIndex: 1
+  - colorIndex: 4
     secondaryColorIndex: 0
     isTwoColor: 0
     gridX: 4
     gridY: 6
-  - colorIndex: 2
+  - colorIndex: 0
     secondaryColorIndex: 0
     isTwoColor: 0
     gridX: 4
@@ -264,62 +264,62 @@ MonoBehaviour:
     isTwoColor: 0
     gridX: 4
     gridY: 8
-  - colorIndex: 1
+  - colorIndex: 2
     secondaryColorIndex: 0
     isTwoColor: 0
     gridX: 4
     gridY: 9
-  - colorIndex: 0
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 5
-    gridY: 0
-  - colorIndex: 0
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 5
-    gridY: 1
-  - colorIndex: 3
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 5
-    gridY: 2
-  - colorIndex: 2
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 5
-    gridY: 3
-  - colorIndex: 3
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 5
-    gridY: 4
   - colorIndex: 1
     secondaryColorIndex: 0
     isTwoColor: 0
     gridX: 5
-    gridY: 5
+    gridY: 0
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 1
   - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 2
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 3
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 4
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 5
+  - colorIndex: 4
     secondaryColorIndex: 0
     isTwoColor: 0
     gridX: 5
     gridY: 6
-  - colorIndex: 0
+  - colorIndex: 2
     secondaryColorIndex: 0
     isTwoColor: 0
     gridX: 5
     gridY: 7
-  - colorIndex: 0
+  - colorIndex: 2
     secondaryColorIndex: 0
     isTwoColor: 0
     gridX: 5
     gridY: 8
-  - colorIndex: 0
+  - colorIndex: 2
     secondaryColorIndex: 0
     isTwoColor: 0
     gridX: 5
     gridY: 9
-  - colorIndex: 3
+  - colorIndex: 0
     secondaryColorIndex: 0
     isTwoColor: 0
     gridX: 6
@@ -329,17 +329,17 @@ MonoBehaviour:
     isTwoColor: 0
     gridX: 6
     gridY: 1
-  - colorIndex: 1
+  - colorIndex: 0
     secondaryColorIndex: 0
     isTwoColor: 0
     gridX: 6
     gridY: 2
-  - colorIndex: 3
+  - colorIndex: 0
     secondaryColorIndex: 0
     isTwoColor: 0
     gridX: 6
     gridY: 3
-  - colorIndex: 0
+  - colorIndex: 1
     secondaryColorIndex: 0
     isTwoColor: 0
     gridX: 6
@@ -349,62 +349,62 @@ MonoBehaviour:
     isTwoColor: 0
     gridX: 6
     gridY: 5
-  - colorIndex: 2
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 6
-    gridY: 6
-  - colorIndex: 2
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 6
-    gridY: 7
   - colorIndex: 4
     secondaryColorIndex: 0
     isTwoColor: 0
     gridX: 6
+    gridY: 6
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 6
+    gridY: 7
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 6
     gridY: 8
-  - colorIndex: 1
+  - colorIndex: 2
     secondaryColorIndex: 0
     isTwoColor: 0
     gridX: 6
     gridY: 9
-  - colorIndex: 2
+  - colorIndex: 3
     secondaryColorIndex: 0
     isTwoColor: 0
     gridX: 7
     gridY: 0
-  - colorIndex: 1
+  - colorIndex: 0
     secondaryColorIndex: 0
     isTwoColor: 0
     gridX: 7
     gridY: 1
-  - colorIndex: 3
+  - colorIndex: 0
     secondaryColorIndex: 0
     isTwoColor: 0
     gridX: 7
     gridY: 2
-  - colorIndex: 2
+  - colorIndex: 1
     secondaryColorIndex: 0
     isTwoColor: 0
     gridX: 7
     gridY: 3
-  - colorIndex: 0
+  - colorIndex: 1
     secondaryColorIndex: 0
     isTwoColor: 0
     gridX: 7
     gridY: 4
-  - colorIndex: 2
+  - colorIndex: 1
     secondaryColorIndex: 0
     isTwoColor: 0
     gridX: 7
     gridY: 5
-  - colorIndex: 0
+  - colorIndex: 1
     secondaryColorIndex: 0
     isTwoColor: 0
     gridX: 7
     gridY: 6
-  - colorIndex: 3
+  - colorIndex: 2
     secondaryColorIndex: 0
     isTwoColor: 0
     gridX: 7
@@ -414,7 +414,7 @@ MonoBehaviour:
     isTwoColor: 0
     gridX: 7
     gridY: 8
-  - colorIndex: 2
+  - colorIndex: 3
     secondaryColorIndex: 0
     isTwoColor: 0
     gridX: 7

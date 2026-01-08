@@ -5657,10 +5657,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArrowBlast.Managers.LevelGenerator
   levels:
-  - {fileID: 11400000, guid: 29464d66d68b47b41bdf01774643fe7d, type: 2}
-  - {fileID: 11400000, guid: a07b064eaae5bc04680e61dcc92a9651, type: 2}
-  - {fileID: 11400000, guid: 96cd52a85f06b47478aeb5359850c281, type: 2}
-  - {fileID: 11400000, guid: eb5fad2973d70d54ca28557f85170cb4, type: 2}
+  - {fileID: 11400000, guid: 37e342f0f7c5c9e488f4fe0e65f14971, type: 2}
   currentLevelIndex: 0
   loopLevels: 1
 --- !u!114 &2093832438
