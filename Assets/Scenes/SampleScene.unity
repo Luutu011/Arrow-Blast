@@ -5579,14 +5579,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.1, g: 0.1, b: 0.1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: effdaa17d4bef3f42a9ace473489016a, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -5657,10 +5657,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArrowBlast.Managers.LevelGenerator
   levels:
-  - {fileID: 11400000, guid: ef90d6b14ca1cd21886f34a4f1fdade7, type: 2}
   - {fileID: 11400000, guid: 29464d66d68b47b41bdf01774643fe7d, type: 2}
   - {fileID: 11400000, guid: a07b064eaae5bc04680e61dcc92a9651, type: 2}
   - {fileID: 11400000, guid: 96cd52a85f06b47478aeb5359850c281, type: 2}
+  - {fileID: 11400000, guid: eb5fad2973d70d54ca28557f85170cb4, type: 2}
   currentLevelIndex: 0
   loopLevels: 1
 --- !u!114 &2093832438
