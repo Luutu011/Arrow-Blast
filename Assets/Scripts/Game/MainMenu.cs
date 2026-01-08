@@ -20,9 +20,16 @@ namespace ArrowBlast.UI
         [SerializeField] private Button settingsButton;
         [SerializeField] private Button closeSettingsButton;
 
+        [Header("Difficulty Backgrounds")]
+        [SerializeField] private Image backgroundImage;
+        [SerializeField] private Sprite easyBackgroundSprite;
+        [SerializeField] private Sprite mediumBackgroundSprite;
+        [SerializeField] private Sprite hardBackgroundSprite;
+
         [Header("Level Grid")]
         [SerializeField] private RectTransform levelGrid;
         [SerializeField] private Button levelButtonPrefab;
+        [SerializeField] private Sprite lockedLevelSprite;
 
         private LevelManager levelManager;
         private GameManager gameManager;
@@ -47,6 +54,7 @@ namespace ArrowBlast.UI
             if (shopPanel) shopPanel.SetActive(false);
 
             UpdateNavigationVisuals(true);
+            UpdateBackgroundForCurrentLevel();
             PopulateLevelGrid();
         }
 
@@ -74,6 +82,30 @@ namespace ArrowBlast.UI
             if (shopButton) shopButton.interactable = isAtHome;
         }
 
+        private void UpdateBackgroundForCurrentLevel()
+        {
+            if (backgroundImage == null || levelManager == null) return;
+
+            var currentLevel = levelManager.GetCurrentLevel();
+            if (currentLevel == null) return;
+
+            switch (currentLevel.difficulty)
+            {
+                case ArrowBlast.Data.LevelData.Difficulty.Easy:
+                    if (easyBackgroundSprite != null)
+                        backgroundImage.sprite = easyBackgroundSprite;
+                    break;
+                case ArrowBlast.Data.LevelData.Difficulty.Medium:
+                    if (mediumBackgroundSprite != null)
+                        backgroundImage.sprite = mediumBackgroundSprite;
+                    break;
+                case ArrowBlast.Data.LevelData.Difficulty.Hard:
+                    if (hardBackgroundSprite != null)
+                        backgroundImage.sprite = hardBackgroundSprite;
+                    break;
+            }
+        }
+
         private void PopulateLevelGrid()
         {
             // Clear existing
@@ -89,6 +121,7 @@ namespace ArrowBlast.UI
 
             int currentLevel = levelManager.CurrentLevelIndex;
             int totalLevels = levelManager.GetLevelCount();
+            int highestUnlocked = levelManager.GetHighestUnlockedLevel();
 
             float verticalSpacing = 180f;
             float horizontalAmplitude = 80f;
@@ -113,11 +146,36 @@ namespace ArrowBlast.UI
 
                 btn.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = (levelIdx + 1).ToString();
 
+                // Check if level is unlocked
+                bool isUnlocked = levelManager.IsLevelUnlocked(levelIdx);
                 var img = btn.GetComponent<UnityEngine.UI.Image>();
-                img.color = (i == 0) ? new Color(0.2f, 0.8f, 0.2f) : new Color(0.3f, 0.3f, 0.3f);
+
+                if (!isUnlocked)
+                {
+                    // Locked level - use locked sprite if available
+                    if (lockedLevelSprite != null)
+                    {
+                        img.sprite = lockedLevelSprite;
+                    }
+                    img.color = new Color(0.5f, 0.5f, 0.5f, 0.7f);
+                    btn.interactable = false;
+                }
+                else if (i == 0)
+                {
+                    // Current level - green
+                    img.color = new Color(0.2f, 0.8f, 0.2f);
+                }
+                else
+                {
+                    // Unlocked but not current - gray
+                    img.color = new Color(0.3f, 0.3f, 0.3f);
+                }
 
                 int index = levelIdx;
-                btn.onClick.AddListener(() => OnLevelSelected(index));
+                if (isUnlocked)
+                {
+                    btn.onClick.AddListener(() => OnLevelSelected(index));
+                }
 
                 if (firstPosSet)
                 {

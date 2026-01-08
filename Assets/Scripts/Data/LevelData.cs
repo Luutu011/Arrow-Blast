@@ -10,7 +10,7 @@ namespace ArrowBlast.Data
     {
         public enum Difficulty { Easy, Medium, Hard }
 
-        public Difficulty difficulty = Difficulty.Medium;
+        public Difficulty difficulty = Difficulty.Easy;
         public string levelName;
         public int width = 6;       // Wall width
         public int height = 8;      // Wall height

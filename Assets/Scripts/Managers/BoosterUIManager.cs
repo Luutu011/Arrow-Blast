@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 namespace ArrowBlast.Managers
 {
@@ -9,11 +10,22 @@ namespace ArrowBlast.Managers
         [SerializeField] private Button instantExitButton;
         [SerializeField] private Button extraSlotButton;
 
-        private GameManager gameManager;
+        [Header("Inventory Display")]
+        [SerializeField] private TextMeshProUGUI instantExitAmountText;
+        [SerializeField] private TextMeshProUGUI extraSlotAmountText;
 
-        public void Initialize(GameManager manager)
+        [Header("Coin Display")]
+        [SerializeField] private TextMeshProUGUI coinBalanceText;
+
+        private GameManager gameManager;
+        private CoinSystem coinSystem;
+        private BoosterInventory boosterInventory;
+
+        public void Initialize(GameManager manager, CoinSystem coins, BoosterInventory inventory)
         {
             gameManager = manager;
+            coinSystem = coins;
+            boosterInventory = inventory;
 
             if (instantExitButton != null)
             {
@@ -26,6 +38,95 @@ namespace ArrowBlast.Managers
             {
                 extraSlotButton.onClick.RemoveAllListeners();
                 extraSlotButton.onClick.AddListener(() => gameManager.UseExtraSlotBooster());
+            }
+
+            // Subscribe to inventory changes
+            if (boosterInventory != null)
+            {
+                boosterInventory.OnInventoryChanged += OnInventoryChanged;
+            }
+
+            // Subscribe to coin changes
+            if (coinSystem != null)
+            {
+                coinSystem.OnBalanceChanged += OnCoinBalanceChanged;
+            }
+
+            // Initial update
+            UpdateAllDisplays();
+        }
+
+        private void OnDestroy()
+        {
+            // Unsubscribe from events
+            if (boosterInventory != null)
+            {
+                boosterInventory.OnInventoryChanged -= OnInventoryChanged;
+            }
+
+            if (coinSystem != null)
+            {
+                coinSystem.OnBalanceChanged -= OnCoinBalanceChanged;
+            }
+        }
+
+        private void OnInventoryChanged(BoosterType type, int newAmount)
+        {
+            UpdateBoosterDisplay(type, newAmount);
+        }
+
+        private void OnCoinBalanceChanged(int newBalance)
+        {
+            UpdateCoinDisplay(newBalance);
+        }
+
+        private void UpdateAllDisplays()
+        {
+            if (boosterInventory != null)
+            {
+                UpdateBoosterDisplay(BoosterType.InstantExit, boosterInventory.GetAmount(BoosterType.InstantExit));
+                UpdateBoosterDisplay(BoosterType.ExtraSlot, boosterInventory.GetAmount(BoosterType.ExtraSlot));
+            }
+
+            if (coinSystem != null)
+            {
+                UpdateCoinDisplay(coinSystem.GetBalance());
+            }
+        }
+
+        private void UpdateBoosterDisplay(BoosterType type, int amount)
+        {
+            switch (type)
+            {
+                case BoosterType.InstantExit:
+                    if (instantExitAmountText != null)
+                    {
+                        instantExitAmountText.text = amount.ToString();
+                    }
+                    if (instantExitButton != null)
+                    {
+                        instantExitButton.interactable = amount > 0;
+                    }
+                    break;
+
+                case BoosterType.ExtraSlot:
+                    if (extraSlotAmountText != null)
+                    {
+                        extraSlotAmountText.text = amount.ToString();
+                    }
+                    if (extraSlotButton != null)
+                    {
+                        extraSlotButton.interactable = amount > 0;
+                    }
+                    break;
+            }
+        }
+
+        private void UpdateCoinDisplay(int balance)
+        {
+            if (coinBalanceText != null)
+            {
+                coinBalanceText.text = balance.ToString();
             }
         }
 
@@ -44,6 +145,10 @@ namespace ArrowBlast.Managers
         public void SetVisible(bool visible)
         {
             gameObject.SetActive(visible);
+            if (visible)
+            {
+                UpdateAllDisplays();
+            }
         }
     }
 }

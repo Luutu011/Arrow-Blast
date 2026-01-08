@@ -14,6 +14,59 @@ namespace ArrowBlast.Managers
         public int CurrentLevelIndex => currentLevelIndex;
         [SerializeField] private bool loopLevels = true;
 
+        private const string HIGHEST_UNLOCKED_KEY = "HighestUnlockedLevel";
+        private int highestUnlockedLevel = 0;
+
+        private void Awake()
+        {
+            LoadProgress();
+        }
+
+        /// <summary>
+        /// Check if a level is unlocked for play
+        /// </summary>
+        public bool IsLevelUnlocked(int levelIndex)
+        {
+            return levelIndex <= highestUnlockedLevel;
+        }
+
+        /// <summary>
+        /// Get the highest unlocked level index
+        /// </summary>
+        public int GetHighestUnlockedLevel()
+        {
+            return highestUnlockedLevel;
+        }
+
+        /// <summary>
+        /// Unlock the next level (called on level completion)
+        /// </summary>
+        public void UnlockNextLevel()
+        {
+            if (levels == null || levels.Count == 0) return;
+
+            // Unlock the next level if it exists
+            int nextLevel = currentLevelIndex + 1;
+            if (nextLevel < levels.Count && nextLevel > highestUnlockedLevel)
+            {
+                highestUnlockedLevel = nextLevel;
+                SaveProgress();
+                Debug.Log($"[LevelManager] Unlocked level {nextLevel + 1}");
+            }
+        }
+
+        private void LoadProgress()
+        {
+            highestUnlockedLevel = PlayerPrefs.GetInt(HIGHEST_UNLOCKED_KEY, 0);
+            Debug.Log($"[LevelManager] Highest unlocked level: {highestUnlockedLevel}");
+        }
+
+        private void SaveProgress()
+        {
+            PlayerPrefs.SetInt(HIGHEST_UNLOCKED_KEY, highestUnlockedLevel);
+            PlayerPrefs.Save();
+        }
+
         /// <summary>
         /// Returns the current level data.
         /// </summary>

@@ -12,6 +12,8 @@ namespace ArrowBlast.Managers
     {
         [Header("Components")]
         [SerializeField] private LevelManager levelManager;
+        [SerializeField] private CoinSystem coinSystem;
+        [SerializeField] private BoosterInventory boosterInventory;
         [SerializeField] private Transform wallContainer;
         [SerializeField] private Transform slotsContainer;
         [SerializeField] private Transform arrowContainer;
@@ -68,14 +70,18 @@ namespace ArrowBlast.Managers
                 Camera.main.backgroundColor = GamePalette.Background;
             }
 
+            // Auto-find dependencies if not assigned
+            if (levelManager == null) levelManager = FindObjectOfType<LevelManager>();
+            if (coinSystem == null) coinSystem = FindObjectOfType<CoinSystem>();
+            if (boosterInventory == null) boosterInventory = FindObjectOfType<BoosterInventory>();
+
             InitializeSlots();
             if (slotsContainer != null) slotsContainer.gameObject.SetActive(false); // Hide on start
             if (boosterUIManager != null)
             {
-                boosterUIManager.Initialize(this);
+                boosterUIManager.Initialize(this, coinSystem, boosterInventory);
                 boosterUIManager.SetVisible(false); // Hide boosters on menu
             }
-            if (levelManager == null) levelManager = FindObjectOfType<LevelManager>();
             // if (levelManager != null) LoadCurrentLevel(); // Removed: Load only from UI
         }
 
@@ -125,6 +131,20 @@ namespace ArrowBlast.Managers
         public void ToggleInstantExitBooster()
         {
             if (isGameOver) return;
+
+            // Check if we have boosters in inventory
+            if (boosterInventory == null) return;
+
+            // If activating, check and consume from inventory
+            if (!isInstantExitActive)
+            {
+                if (!boosterInventory.UseBooster(BoosterType.InstantExit))
+                {
+                    Debug.LogWarning("[GameManager] No Instant Exit boosters in inventory!");
+                    return;
+                }
+            }
+
             isInstantExitActive = !isInstantExitActive;
             SetArrowsScared(isInstantExitActive);
 
@@ -150,6 +170,16 @@ namespace ArrowBlast.Managers
         public void UseExtraSlotBooster()
         {
             if (isGameOver || extraSlotUsedThisLevel) return;
+
+            // Check if we have boosters in inventory
+            if (boosterInventory == null) return;
+
+            if (!boosterInventory.UseBooster(BoosterType.ExtraSlot))
+            {
+                Debug.LogWarning("[GameManager] No Extra Slot boosters in inventory!");
+                return;
+            }
+
             extraSlotUsedThisLevel = true;
 
             Slot s = Instantiate(slotPrefab, slotsContainer);
@@ -166,6 +196,9 @@ namespace ArrowBlast.Managers
 
             foreach (Transform t in wallContainer) Destroy(t.gameObject);
             foreach (Transform t in arrowContainer) Destroy(t.gameObject);
+            foreach (Transform t in projectileContainer) Destroy(t.gameObject);
+            blockPool.Clear();
+            projectilePool.Clear();
             activeKeys.Clear();
             activeLocks.Clear();
 
@@ -274,11 +307,14 @@ namespace ArrowBlast.Managers
 
         private Block GetBlockFromPool()
         {
-            if (blockPool.Count > 0)
+            while (blockPool.Count > 0)
             {
                 Block b = blockPool.Dequeue();
-                b.gameObject.SetActive(true);
-                return b;
+                if (b != null)
+                {
+                    b.gameObject.SetActive(true);
+                    return b;
+                }
             }
             return Instantiate(blockPrefab, wallContainer);
         }
@@ -690,6 +726,19 @@ namespace ArrowBlast.Managers
         private IEnumerator VictoryRoutine()
         {
             yield return new WaitForSeconds(2.0f);
+
+            // Award coins for completing the level
+            if (coinSystem != null)
+            {
+                coinSystem.AddCoins(10);
+            }
+
+            // Unlock the next level
+            if (levelManager != null)
+            {
+                levelManager.UnlockNextLevel();
+            }
+
             ReturnToLevelSelect();
         }
 
@@ -698,6 +747,9 @@ namespace ArrowBlast.Managers
             // Clear current game state
             foreach (Transform t in wallContainer) Destroy(t.gameObject);
             foreach (Transform t in arrowContainer) Destroy(t.gameObject);
+            foreach (Transform t in projectileContainer) Destroy(t.gameObject);
+            blockPool.Clear();
+            projectilePool.Clear();
             foreach (var s in slots) s.ClearSlot();
 
             if (slotsContainer != null) slotsContainer.gameObject.SetActive(false);
