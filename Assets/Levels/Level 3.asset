@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d145348b0fc1b3498587737ca92b963, type: 3}
   m_Name: Level 3
   m_EditorClassIdentifier: Assembly-CSharp::ArrowBlast.Data.LevelData
+  difficulty: 0
   levelName: 
   width: 10
   height: 25
@@ -1444,3 +1445,5 @@ MonoBehaviour:
     gridY: 4
     segments:
     - {x: 4, y: 4}
+  keys: []
+  locks: []

@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d145348b0fc1b3498587737ca92b963, type: 3}
   m_Name: Level 1
   m_EditorClassIdentifier: Assembly-CSharp::ArrowBlast.Data.LevelData
+  difficulty: 0
   levelName: 
   width: 5
   height: 8
@@ -19,123 +20,203 @@ MonoBehaviour:
   gridCols: 4
   blocks:
   - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
     gridX: 0
     gridY: 0
   - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
     gridX: 0
     gridY: 1
   - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
     gridX: 0
     gridY: 2
   - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
     gridX: 0
     gridY: 3
   - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
     gridX: 0
     gridY: 4
   - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
     gridX: 0
     gridY: 5
   - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
     gridX: 0
     gridY: 6
   - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
     gridX: 0
     gridY: 7
   - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
     gridX: 1
     gridY: 0
   - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
     gridX: 1
     gridY: 1
   - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
     gridX: 1
     gridY: 2
   - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
     gridX: 1
     gridY: 3
   - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
     gridX: 1
     gridY: 4
   - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
     gridX: 1
     gridY: 5
   - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
     gridX: 1
     gridY: 6
   - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
     gridX: 1
     gridY: 7
   - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
     gridX: 2
     gridY: 0
   - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
     gridX: 2
     gridY: 1
   - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
     gridX: 2
     gridY: 2
   - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
     gridX: 2
     gridY: 3
   - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
     gridX: 2
     gridY: 4
   - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
     gridX: 2
     gridY: 5
   - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
     gridX: 2
     gridY: 6
   - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
     gridX: 2
     gridY: 7
   - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
     gridX: 3
     gridY: 0
   - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
     gridX: 3
     gridY: 1
   - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
     gridX: 3
     gridY: 2
   - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
     gridX: 3
     gridY: 3
   - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
     gridX: 3
     gridY: 4
   - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
     gridX: 3
     gridY: 5
   - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
     gridX: 3
     gridY: 6
   - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
     gridX: 3
     gridY: 7
   - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
     gridX: 4
     gridY: 0
   - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
     gridX: 4
     gridY: 1
   - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
     gridX: 4
     gridY: 2
   - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
     gridX: 4
     gridY: 3
   - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
     gridX: 4
     gridY: 4
   - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
     gridX: 4
     gridY: 5
   - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
     gridX: 4
     gridY: 6
   - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
     gridX: 4
     gridY: 7
   arrows:
@@ -167,3 +248,5 @@ MonoBehaviour:
     gridY: 0
     segments:
     - {x: 3, y: 0}
+  keys: []
+  locks: []

@@ -8,6 +8,9 @@ namespace ArrowBlast.Data
     [CreateAssetMenu(fileName = "NewLevel", menuName = "Arrow Blast/Level Data")]
     public class LevelData : ScriptableObject
     {
+        public enum Difficulty { Easy, Medium, Hard }
+
+        public Difficulty difficulty = Difficulty.Medium;
         public string levelName;
         public int width = 6;       // Wall width
         public int height = 8;      // Wall height
