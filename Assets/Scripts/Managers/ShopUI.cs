@@ -18,6 +18,10 @@ namespace ArrowBlast.Managers
         [SerializeField] private TextMeshProUGUI coinBalanceText;
         [SerializeField] private TextMeshProUGUI boosterCostText;
 
+        [Header("Inventory Display")]
+        [SerializeField] private TextMeshProUGUI instantExitInventoryText;
+        [SerializeField] private TextMeshProUGUI extraSlotInventoryText;
+
         [Header("Feedback")]
         [SerializeField] private TextMeshProUGUI feedbackText;
         [SerializeField] private float feedbackDisplayDuration = 2f;
@@ -101,7 +105,7 @@ namespace ArrowBlast.Managers
 
         private void OnInventoryChanged(BoosterType type, int newAmount)
         {
-            // Could add visual feedback here if needed
+            UpdateInventoryDisplay(type, newAmount);
         }
 
         private void UpdateDisplay()
@@ -110,6 +114,13 @@ namespace ArrowBlast.Managers
             {
                 UpdateCoinDisplay(coinSystem.GetBalance());
             }
+
+            if (boosterInventory != null)
+            {
+                UpdateInventoryDisplay(BoosterType.InstantExit, boosterInventory.GetAmount(BoosterType.InstantExit));
+                UpdateInventoryDisplay(BoosterType.ExtraSlot, boosterInventory.GetAmount(BoosterType.ExtraSlot));
+            }
+
             UpdateButtonStates();
             HideFeedback();
         }
@@ -119,6 +130,26 @@ namespace ArrowBlast.Managers
             if (coinBalanceText != null)
             {
                 coinBalanceText.text = $"Coins: {balance}";
+            }
+        }
+
+        private void UpdateInventoryDisplay(BoosterType type, int amount)
+        {
+            switch (type)
+            {
+                case BoosterType.InstantExit:
+                    if (instantExitInventoryText != null)
+                    {
+                        instantExitInventoryText.text = $"Owned: {amount}";
+                    }
+                    break;
+
+                case BoosterType.ExtraSlot:
+                    if (extraSlotInventoryText != null)
+                    {
+                        extraSlotInventoryText.text = $"Owned: {amount}";
+                    }
+                    break;
             }
         }
 

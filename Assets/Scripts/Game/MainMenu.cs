@@ -30,6 +30,16 @@ namespace ArrowBlast.UI
         [SerializeField] private RectTransform levelGrid;
         [SerializeField] private Button levelButtonPrefab;
         [SerializeField] private Sprite lockedLevelSprite;
+        [SerializeField] private Sprite easyLevelSprite;
+        [SerializeField] private Sprite mediumLevelSprite;
+        [SerializeField] private Sprite hardLevelSprite;
+
+        [Header("Road Layout")]
+        [SerializeField] private float verticalSpacing = 280f;
+        [SerializeField] private float horizontalAmplitude = 160f;
+        [SerializeField] private float curveFrequency = 1.0f;
+        [SerializeField] private float yOffset = -550f;
+        [SerializeField] private int RoadDotCount = 10;
 
         private LevelManager levelManager;
         private GameManager gameManager;
@@ -123,9 +133,6 @@ namespace ArrowBlast.UI
             int totalLevels = levelManager.GetLevelCount();
             int highestUnlocked = levelManager.GetHighestUnlockedLevel();
 
-            float verticalSpacing = 180f;
-            float horizontalAmplitude = 80f;
-
             Vector2 lastPos = Vector2.zero;
             bool firstPosSet = false;
 
@@ -139,8 +146,8 @@ namespace ArrowBlast.UI
                 btn.transform.localScale = Vector3.zero;
 
                 RectTransform rt = btn.GetComponent<RectTransform>();
-                float yPos = i * verticalSpacing - 350f;
-                float xPos = Mathf.Sin(i * 1.5f) * horizontalAmplitude;
+                float yPos = i * verticalSpacing + yOffset;
+                float xPos = Mathf.Sin(i * curveFrequency) * horizontalAmplitude;
                 Vector2 currentPos = new Vector2(xPos, yPos);
                 rt.anchoredPosition = currentPos;
 
@@ -160,15 +167,32 @@ namespace ArrowBlast.UI
                     img.color = new Color(0.5f, 0.5f, 0.5f, 0.7f);
                     btn.interactable = false;
                 }
-                else if (i == 0)
-                {
-                    // Current level - green
-                    img.color = new Color(0.2f, 0.8f, 0.2f);
-                }
                 else
                 {
-                    // Unlocked but not current - gray
-                    img.color = new Color(0.3f, 0.3f, 0.3f);
+                    // Set sprite based on difficulty
+                    var levelData = levelManager.GetLevel(levelIdx);
+                    if (levelData != null)
+                    {
+                        img.color = Color.white; // Reset color to show sprite clearly
+                        switch (levelData.difficulty)
+                        {
+                            case ArrowBlast.Data.LevelData.Difficulty.Easy:
+                                if (easyLevelSprite != null) img.sprite = easyLevelSprite;
+                                break;
+                            case ArrowBlast.Data.LevelData.Difficulty.Medium:
+                                if (mediumLevelSprite != null) img.sprite = mediumLevelSprite;
+                                break;
+                            case ArrowBlast.Data.LevelData.Difficulty.Hard:
+                                if (hardLevelSprite != null) img.sprite = hardLevelSprite;
+                                break;
+                        }
+
+                        // Add a border or highlight if it's the current level
+                        if (i == 0)
+                        {
+                            // Optional: brightening it or add effect?
+                        }
+                    }
                 }
 
                 int index = levelIdx;
@@ -193,8 +217,8 @@ namespace ArrowBlast.UI
 
         private void CreateRoadDots(Vector2 start, Vector2 end, int levelOrder)
         {
-            int dotCount = 5;
-            float margin = 60f;
+            int dotCount = RoadDotCount;
+            float margin = 70f;
 
             Vector2 dir = (end - start).normalized;
             float dist = Vector2.Distance(start, end);
@@ -215,12 +239,12 @@ namespace ArrowBlast.UI
                 if (tmp) Destroy(tmp.gameObject);
 
                 RectTransform rt = dotBtn.GetComponent<RectTransform>();
-                rt.sizeDelta = new Vector2(15, 15);
+                rt.sizeDelta = new Vector2(20, 20);
                 rt.anchoredPosition = dotPos;
                 rt.localScale = Vector3.zero;
 
                 var img = dotBtn.GetComponent<UnityEngine.UI.Image>();
-                img.color = new Color(1f, 1f, 1f, 0.5f);
+                img.color = new Color(1f, 1f, 1f, 0.6f);
 
                 rt.DOScale(Vector3.one, 0.3f)
                   .SetDelay((levelOrder - 1) * 0.2f + (j * 0.04f))

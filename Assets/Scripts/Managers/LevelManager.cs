@@ -130,5 +130,11 @@ namespace ArrowBlast.Managers
                 currentLevelIndex = index;
             }
         }
+
+        public LevelData GetLevel(int index)
+        {
+            if (index >= 0 && index < levels.Count) return levels[index];
+            return null;
+        }
     }
 }

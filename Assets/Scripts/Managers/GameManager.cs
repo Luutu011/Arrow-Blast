@@ -403,6 +403,19 @@ namespace ArrowBlast.Managers
 
             if (inputDetected)
             {
+                // Block raycast if clicking on UI
+                if (UnityEngine.EventSystems.EventSystem.current != null)
+                {
+                    if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
+                    {
+                        if (UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject()) return;
+                    }
+                    else if (Touchscreen.current != null && Touchscreen.current.primaryTouch.press.wasPressedThisFrame)
+                    {
+                        if (UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject(Touchscreen.current.primaryTouch.touchId.ReadValue())) return;
+                    }
+                }
+
                 Ray ray = Camera.main.ScreenPointToRay(inputPosition);
                 if (Physics.Raycast(ray, out RaycastHit hit, 1000f))
                 {
@@ -742,8 +755,13 @@ namespace ArrowBlast.Managers
             ReturnToLevelSelect();
         }
 
-        private void ReturnToLevelSelect()
+        public void ReturnToLevelSelect()
         {
+            isGameOver = true;
+            StopAllCoroutines();
+            wallGrid = null;
+            arrowGrid = null;
+
             // Clear current game state
             foreach (Transform t in wallContainer) Destroy(t.gameObject);
             foreach (Transform t in arrowContainer) Destroy(t.gameObject);

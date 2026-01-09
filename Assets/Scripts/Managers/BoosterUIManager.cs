@@ -17,6 +17,14 @@ namespace ArrowBlast.Managers
         [Header("Coin Display")]
         [SerializeField] private TextMeshProUGUI coinBalanceText;
 
+        [Header("Purchase Prompt")]
+        [SerializeField] private GameObject purchasePromptPanel;
+        [SerializeField] private TextMeshProUGUI promptMessageText;
+        [SerializeField] private Button confirmPurchaseButton;
+        [SerializeField] private Button cancelPurchaseButton;
+
+        private BoosterType pendingPurchaseType;
+
         private GameManager gameManager;
         private CoinSystem coinSystem;
         private BoosterInventory boosterInventory;
@@ -30,14 +38,33 @@ namespace ArrowBlast.Managers
             if (instantExitButton != null)
             {
                 instantExitButton.onClick.RemoveAllListeners();
-                instantExitButton.onClick.AddListener(() => gameManager.ToggleInstantExitBooster());
+                instantExitButton.onClick.AddListener(() => OnBoosterButtonClicked(BoosterType.InstantExit));
                 UpdateInstantExitVisual(false); // Reset to normal
             }
 
             if (extraSlotButton != null)
             {
                 extraSlotButton.onClick.RemoveAllListeners();
-                extraSlotButton.onClick.AddListener(() => gameManager.UseExtraSlotBooster());
+                extraSlotButton.onClick.AddListener(() => OnBoosterButtonClicked(BoosterType.ExtraSlot));
+            }
+
+            // Setup purchase prompt buttons
+            if (confirmPurchaseButton != null)
+            {
+                confirmPurchaseButton.onClick.RemoveAllListeners();
+                confirmPurchaseButton.onClick.AddListener(OnConfirmPurchase);
+            }
+
+            if (cancelPurchaseButton != null)
+            {
+                cancelPurchaseButton.onClick.RemoveAllListeners();
+                cancelPurchaseButton.onClick.AddListener(OnCancelPurchase);
+            }
+
+            // Hide prompt on start
+            if (purchasePromptPanel != null)
+            {
+                purchasePromptPanel.SetActive(false);
             }
 
             // Subscribe to inventory changes
@@ -103,20 +130,12 @@ namespace ArrowBlast.Managers
                     {
                         instantExitAmountText.text = amount.ToString();
                     }
-                    if (instantExitButton != null)
-                    {
-                        instantExitButton.interactable = amount > 0;
-                    }
                     break;
 
                 case BoosterType.ExtraSlot:
                     if (extraSlotAmountText != null)
                     {
                         extraSlotAmountText.text = amount.ToString();
-                    }
-                    if (extraSlotButton != null)
-                    {
-                        extraSlotButton.interactable = amount > 0;
                     }
                     break;
             }
@@ -148,6 +167,86 @@ namespace ArrowBlast.Managers
             if (visible)
             {
                 UpdateAllDisplays();
+            }
+        }
+
+        private void OnBoosterButtonClicked(BoosterType type)
+        {
+            if (boosterInventory == null) return;
+
+            // Check if player has the booster
+            if (boosterInventory.GetAmount(type) > 0)
+            {
+                // Use the booster normally
+                if (type == BoosterType.InstantExit)
+                {
+                    gameManager.ToggleInstantExitBooster();
+                }
+                else if (type == BoosterType.ExtraSlot)
+                {
+                    gameManager.UseExtraSlotBooster();
+                }
+            }
+            else
+            {
+                // Show purchase prompt
+                ShowPurchasePrompt(type);
+            }
+        }
+
+        private void ShowPurchasePrompt(BoosterType type)
+        {
+            if (purchasePromptPanel == null) return;
+
+            pendingPurchaseType = type;
+
+            ShopManager shopManager = FindObjectOfType<ShopManager>();
+            int cost = shopManager != null ? shopManager.GetBoosterCost() : 50;
+            int currentCoins = coinSystem != null ? coinSystem.GetBalance() : 0;
+            bool canAfford = currentCoins >= cost;
+
+            if (promptMessageText != null)
+            {
+                promptMessageText.text = $"You don't have {type}!\nBuy for {cost} coins?";
+            }
+
+            if (confirmPurchaseButton != null)
+            {
+                confirmPurchaseButton.interactable = canAfford;
+            }
+
+            purchasePromptPanel.SetActive(true);
+        }
+
+        private void OnConfirmPurchase()
+        {
+            ShopManager shopManager = FindObjectOfType<ShopManager>();
+            if (shopManager != null)
+            {
+                if (shopManager.PurchaseBooster(pendingPurchaseType))
+                {
+                    // Successfully purchased, close prompt
+                    if (purchasePromptPanel != null)
+                    {
+                        purchasePromptPanel.SetActive(false);
+                    }
+                }
+                else
+                {
+                    // Not enough coins
+                    if (promptMessageText != null)
+                    {
+                        promptMessageText.text = "Not enough coins!";
+                    }
+                }
+            }
+        }
+
+        private void OnCancelPurchase()
+        {
+            if (purchasePromptPanel != null)
+            {
+                purchasePromptPanel.SetActive(false);
             }
         }
     }
