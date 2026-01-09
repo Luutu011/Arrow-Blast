@@ -26,8 +26,8 @@ namespace ArrowBlast.Editor
         private int selectedLockId = 0; // For key/lock pairing
         private int selectedLockSizeX = 2; // Lock width
         private int selectedLockSizeY = 1; // Lock height
-        private int minWallCluster = 2; // Minimum same color adjacent
-        private int maxWallCluster = 5; // Maximum same color adjacent
+        private int minWallCluster = 10; // Minimum same color adjacent
+        private int maxWallCluster = 20; // Maximum same color adjacent
 
         // Interaction State
         private enum RandomMode { Normal, Hard, Mixed }
