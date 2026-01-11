@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using ArrowBlast.Managers;
+using ArrowBlast.Interfaces;
 using System.Collections.Generic;
 using DG.Tweening;
 using System.Collections;
@@ -46,13 +47,30 @@ namespace ArrowBlast.UI
         [SerializeField] private float yOffset = -550f;
         [SerializeField] private int RoadDotCount = 10;
 
-        private LevelManager levelManager;
-        private GameManager gameManager;
+        private ILevelProgressService levelManager;
+        private IGameManager gameManager;
+        private ISettingsService settingsManager;
+        private IAudioService audioManager;
+        private IBoosterInventory boosterInventory;
+
+        // Called by VContainer
+        public void Initialize(
+            ILevelProgressService levelProgress,
+            IGameManager game,
+            ISettingsService settings,
+            IAudioService audio,
+            IBoosterInventory inventory)
+        {
+            levelManager = levelProgress;
+            gameManager = game;
+            settingsManager = settings;
+            audioManager = audio;
+            boosterInventory = inventory;
+        }
 
         private void Start()
         {
-            levelManager = FindObjectOfType<LevelManager>();
-            gameManager = FindObjectOfType<GameManager>();
+            // Removed FindObjectOfType calls as dependencies are injected
 
             // Assign Navigation Listeners
             if (homeButton) homeButton.onClick.AddListener(ShowLevelPanel);
@@ -72,27 +90,27 @@ namespace ArrowBlast.UI
 
         private void InitializeSettingsToggles()
         {
-            if (SettingsManager.Instance == null) return;
+            if (settingsManager == null) return;
 
             if (sfxToggle)
             {
                 sfxToggle.onValueChanged.RemoveAllListeners();
-                sfxToggle.SetIsOnWithoutNotify(SettingsManager.Instance.SfxEnabled);
-                sfxToggle.onValueChanged.AddListener(SettingsManager.Instance.SetSfx);
+                sfxToggle.SetIsOnWithoutNotify(settingsManager.SfxEnabled);
+                sfxToggle.onValueChanged.AddListener(settingsManager.SetSfx);
             }
 
             if (musicToggle)
             {
                 musicToggle.onValueChanged.RemoveAllListeners();
-                musicToggle.SetIsOnWithoutNotify(SettingsManager.Instance.MusicEnabled);
-                musicToggle.onValueChanged.AddListener(SettingsManager.Instance.SetMusic);
+                musicToggle.SetIsOnWithoutNotify(settingsManager.MusicEnabled);
+                musicToggle.onValueChanged.AddListener(settingsManager.SetMusic);
             }
 
             if (hapticToggle)
             {
                 hapticToggle.onValueChanged.RemoveAllListeners();
-                hapticToggle.SetIsOnWithoutNotify(SettingsManager.Instance.HapticEnabled);
-                hapticToggle.onValueChanged.AddListener(SettingsManager.Instance.SetHaptic);
+                hapticToggle.SetIsOnWithoutNotify(settingsManager.HapticEnabled);
+                hapticToggle.onValueChanged.AddListener(settingsManager.SetHaptic);
             }
         }
 

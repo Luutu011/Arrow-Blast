@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using ArrowBlast.Interfaces;
 
 namespace ArrowBlast.Managers
 {
@@ -31,16 +32,22 @@ namespace ArrowBlast.Managers
         [SerializeField] private TextMeshProUGUI feedbackText;
         [SerializeField] private float feedbackDisplayDuration = 2f;
 
-        private ShopManager shopManager;
-        private CoinSystem coinSystem;
-        private BoosterInventory boosterInventory;
+        private IShopService shopManager;
+        private ICoinService coinSystem;
+        private IBoosterInventory boosterInventory;
+        private IIAPService iapService;
+
+        public void Initialize(IShopService shop, ICoinService coins, IBoosterInventory inventory, IIAPService iap)
+        {
+            shopManager = shop;
+            coinSystem = coins;
+            boosterInventory = inventory;
+            iapService = iap;
+        }
 
         private void Awake()
         {
-            // Auto-find dependencies
-            shopManager = FindObjectOfType<ShopManager>();
-            coinSystem = FindObjectOfType<CoinSystem>();
-            boosterInventory = FindObjectOfType<BoosterInventory>();
+            // Initialization handled by VContainer
         }
 
         private void OnEnable()
@@ -73,19 +80,19 @@ namespace ArrowBlast.Managers
             if (buyRemoveAdsButton != null)
             {
                 buyRemoveAdsButton.onClick.RemoveAllListeners();
-                buyRemoveAdsButton.onClick.AddListener(() => IAPManager.Instance.BuyRemoveAds());
+                buyRemoveAdsButton.onClick.AddListener(() => { if (iapService != null) iapService.BuyRemoveAds(); });
             }
 
             if (buy100CoinsButton != null)
             {
                 buy100CoinsButton.onClick.RemoveAllListeners();
-                buy100CoinsButton.onClick.AddListener(() => IAPManager.Instance.BuyCoins100());
+                buy100CoinsButton.onClick.AddListener(() => { if (iapService != null) iapService.BuyCoins100(); });
             }
 
             if (buy500CoinsButton != null)
             {
                 buy500CoinsButton.onClick.RemoveAllListeners();
-                buy500CoinsButton.onClick.AddListener(() => IAPManager.Instance.BuyCoins500());
+                buy500CoinsButton.onClick.AddListener(() => { if (iapService != null) iapService.BuyCoins500(); });
             }
 
             // Display booster cost

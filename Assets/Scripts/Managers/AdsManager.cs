@@ -1,11 +1,10 @@
 using UnityEngine;
 using System;
 using Unity.Services.LevelPlay;
+using ArrowBlast.Interfaces;
 
-public class AdsManager : MonoBehaviour
+public class AdsManager : MonoBehaviour, IAdsService
 {
-    public static AdsManager Instance { get; private set; }
-
     // TODO: REPLACE WITH YOUR APP KEY
     [Tooltip("Put your IronSource App Key here")]
     [SerializeField] private string appKey = "YOUR_APP_KEY_HERE";
@@ -28,18 +27,17 @@ public class AdsManager : MonoBehaviour
     private const string NO_ADS_KEY = "NoAdsPurchased";
     private bool noAdsPurchased = false;
 
+    private ILivesService _livesService;
+
+    // Called by VContainer
+    public void Initialize(ILivesService livesService)
+    {
+        _livesService = livesService;
+    }
+
     private void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-            noAdsPurchased = PlayerPrefs.GetInt(NO_ADS_KEY, 0) == 1;
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+        noAdsPurchased = PlayerPrefs.GetInt(NO_ADS_KEY, 0) == 1;
     }
 
     private void Start()
@@ -378,12 +376,19 @@ public class AdsManager : MonoBehaviour
     }
 
     private Action onRewardedCallback;
+    private Action onRewardedFailedCallback;
 
-    public void ShowRewardedAd(Action onRewarded = null)
+    public bool IsRewardedAdReady()
     {
-        onRewardedCallback = onRewarded;
+        return rewardedAd != null && rewardedAd.IsAdReady();
+    }
 
-        if (rewardedAd != null && rewardedAd.IsAdReady())
+    public void ShowRewardedAd(Action onSuccess, Action onFailed = null)
+    {
+        onRewardedCallback = onSuccess;
+        onRewardedFailedCallback = onFailed;
+
+        if (IsRewardedAdReady())
         {
             rewardedAd.ShowAd();
         }
@@ -391,6 +396,8 @@ public class AdsManager : MonoBehaviour
         {
             Debug.Log("Rewarded Ad is not ready yet.");
             onRewardedCallback = null;
+            onRewardedFailedCallback?.Invoke();
+            onRewardedFailedCallback = null;
             LoadRewardedAd();
         }
     }
@@ -416,6 +423,8 @@ public class AdsManager : MonoBehaviour
     {
         Debug.LogError("Rewarded Ad Display Failed: " + error);
         onRewardedCallback = null;
+        onRewardedFailedCallback?.Invoke();
+        onRewardedFailedCallback = null;
         LoadRewardedAd();
     }
 
@@ -435,9 +444,9 @@ public class AdsManager : MonoBehaviour
         Debug.Log($"Rewarded Ad Rewarded: {adInfo}");
 
         // Give heart to player
-        if (LivesManager.Instance != null)
+        if (_livesService != null)
         {
-            LivesManager.Instance.AddHeart(1);
+            _livesService.AddHeart(1);
         }
 
         onRewardedCallback?.Invoke();

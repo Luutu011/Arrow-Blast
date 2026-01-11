@@ -1,23 +1,23 @@
 using UnityEngine;
+using ArrowBlast.Interfaces;
 
 namespace ArrowBlast.Managers
 {
     /// <summary>
     /// Handles booster purchases from the shop
     /// </summary>
-    public class ShopManager : MonoBehaviour
+    public class ShopManager : MonoBehaviour, IShopService
     {
         private const int BOOSTER_COST = 50;
 
-        [Header("Dependencies")]
-        [SerializeField] private CoinSystem coinSystem;
-        [SerializeField] private BoosterInventory boosterInventory;
+        private ICoinService _coinService;
+        private IBoosterInventory _boosterInventory;
 
-        private void Awake()
+        // Called by VContainer
+        public void Initialize(ICoinService coinService, IBoosterInventory boosterInventory)
         {
-            // Auto-find if not assigned
-            if (coinSystem == null) coinSystem = FindObjectOfType<CoinSystem>();
-            if (boosterInventory == null) boosterInventory = FindObjectOfType<BoosterInventory>();
+            _coinService = coinService;
+            _boosterInventory = boosterInventory;
         }
 
         /// <summary>
@@ -25,23 +25,23 @@ namespace ArrowBlast.Managers
         /// </summary>
         public bool PurchaseBooster(BoosterType type)
         {
-            if (coinSystem == null || boosterInventory == null)
+            if (_coinService == null || _boosterInventory == null)
             {
                 Debug.LogError("[ShopManager] Missing dependencies!");
                 return false;
             }
 
             // Check if player has enough coins
-            if (coinSystem.GetBalance() < BOOSTER_COST)
+            if (_coinService.GetBalance() < BOOSTER_COST)
             {
-                Debug.LogWarning($"[ShopManager] Cannot purchase {type}. Need {BOOSTER_COST} coins, have {coinSystem.GetBalance()}");
+                Debug.LogWarning($"[ShopManager] Cannot purchase {type}. Need {BOOSTER_COST} coins, have {_coinService.GetBalance()}");
                 return false;
             }
 
             // Attempt to spend coins
-            if (coinSystem.SpendCoins(BOOSTER_COST))
+            if (_coinService.SpendCoins(BOOSTER_COST))
             {
-                boosterInventory.AddBooster(type);
+                _boosterInventory.AddBooster(type);
                 Debug.Log($"[ShopManager] Purchased {type} for {BOOSTER_COST} coins");
                 return true;
             }
@@ -62,8 +62,8 @@ namespace ArrowBlast.Managers
         /// </summary>
         public bool CanAfford()
         {
-            if (coinSystem == null) return false;
-            return coinSystem.GetBalance() >= BOOSTER_COST;
+            if (_coinService == null) return false;
+            return _coinService.GetBalance() >= BOOSTER_COST;
         }
     }
 }

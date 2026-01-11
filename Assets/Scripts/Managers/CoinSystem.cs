@@ -1,12 +1,13 @@
 using UnityEngine;
 using System;
+using ArrowBlast.Interfaces;
 
 namespace ArrowBlast.Managers
 {
     /// <summary>
     /// Manages the player's coin balance with persistence
     /// </summary>
-    public class CoinSystem : MonoBehaviour
+    public class CoinSystem : MonoBehaviour, ICoinService
     {
         private const string COIN_KEY = "PlayerCoins";
         private int currentBalance;

@@ -1,24 +1,12 @@
 using UnityEngine;
 using UnityEngine.UI;
-using System.Collections.Generic;
+using ArrowBlast.Interfaces;
+using ArrowBlast.Managers;
 
 namespace ArrowBlast.Managers
 {
-    public class TutorialManager : MonoBehaviour
+    public class TutorialManager : MonoBehaviour, ITutorialService
     {
-        public static TutorialManager Instance
-        {
-            get
-            {
-                if (_instance == null)
-                {
-                    _instance = FindObjectOfType<TutorialManager>();
-                }
-                return _instance;
-            }
-        }
-        private static TutorialManager _instance;
-
         [Header("Tutorial UI")]
         [SerializeField] private GameObject tutorialPanel;
         [SerializeField] private Image tutorialImage;
@@ -30,18 +18,12 @@ namespace ArrowBlast.Managers
         [SerializeField] private Sprite extraSlotTutorialSprite;
 
         private const string TUTORIAL_PREFIX = "TutorialSeen_";
+        private IBoosterInventory _boosterInventory;
 
-        private void Awake()
+        // Called by VContainer
+        public void Initialize(IBoosterInventory boosterInventory)
         {
-            if (_instance == null)
-            {
-                _instance = this;
-            }
-            else if (_instance != this)
-            {
-                Destroy(gameObject);
-                return;
-            }
+            _boosterInventory = boosterInventory;
 
             if (tutorialPanel != null)
                 tutorialPanel.SetActive(false);
@@ -96,10 +78,10 @@ namespace ArrowBlast.Managers
             }
 
             // Gift boosters on first unlock
-            if (BoosterInventory.Instance != null)
+            if (_boosterInventory != null)
             {
-                if (key == "InstantExit") BoosterInventory.Instance.AddBooster(BoosterType.InstantExit, 2);
-                if (key == "ExtraSlot") BoosterInventory.Instance.AddBooster(BoosterType.ExtraSlot, 2);
+                if (key == "InstantExit") _boosterInventory.AddBooster(BoosterType.InstantExit, 2);
+                if (key == "ExtraSlot") _boosterInventory.AddBooster(BoosterType.ExtraSlot, 2);
             }
 
             if (tutorialImage != null)

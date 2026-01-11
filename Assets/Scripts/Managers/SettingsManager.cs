@@ -1,11 +1,10 @@
 using UnityEngine;
+using ArrowBlast.Interfaces;
 
 namespace ArrowBlast.Managers
 {
-    public class SettingsManager : MonoBehaviour
+    public class SettingsManager : MonoBehaviour, ISettingsService
     {
-        public static SettingsManager Instance { get; private set; }
-
         private const string SFX_KEY = "Settings_Sfx";
         private const string MUSIC_KEY = "Settings_Music";
         private const string HAPTIC_KEY = "Settings_Haptic";
@@ -16,16 +15,7 @@ namespace ArrowBlast.Managers
 
         private void Awake()
         {
-            if (Instance == null)
-            {
-                Instance = this;
-                DontDestroyOnLoad(gameObject);
-                LoadSettings();
-            }
-            else
-            {
-                Destroy(gameObject);
-            }
+            LoadSettings();
         }
 
         private void LoadSettings()
@@ -40,7 +30,6 @@ namespace ArrowBlast.Managers
             SfxEnabled = enabled;
             PlayerPrefs.SetInt(SFX_KEY, enabled ? 1 : 0);
             PlayerPrefs.Save();
-            AudioManager.Instance.UpdateSettings();
         }
 
         public void SetMusic(bool enabled)
@@ -48,7 +37,6 @@ namespace ArrowBlast.Managers
             MusicEnabled = enabled;
             PlayerPrefs.SetInt(MUSIC_KEY, enabled ? 1 : 0);
             PlayerPrefs.Save();
-            AudioManager.Instance.UpdateSettings();
         }
 
         public void SetHaptic(bool enabled)

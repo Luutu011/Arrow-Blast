@@ -663,8 +663,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6299f14cb49f61902abd9187aff198c4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArrowBlast.Managers.ShopManager
-  coinSystem: {fileID: 2093832441}
-  boosterInventory: {fileID: 2093832440}
 --- !u!114 &122522023
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1661,6 +1659,59 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
+--- !u!1 &420364743
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 420364745}
+  - component: {fileID: 420364744}
+  m_Layer: 0
+  m_Name: ' GamePlayLifetimeScope  '
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &420364744
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 420364743}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 802bcd3f290ef03668d8a51dc24e4454, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowBlast.Infrastructure.GamePlayLifetimeScope
+  parentReference:
+    TypeName: ArrowBlast.Infrastructure.ProjectLifetimeScope
+  autoRun: 1
+  autoInjectGameObjects: []
+  mainMenu: {fileID: 1233828080}
+  shopUI: {fileID: 122522021}
+  gameManager: {fileID: 2093832438}
+  boosterUIManager: {fileID: 1264146274}
+  gameEndUIManager: {fileID: 1114179470}
+--- !u!4 &420364745
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 420364743}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1.03347, y: 7.09321, z: 0.9}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &426954306
 GameObject:
   m_ObjectHideFlags: 0
@@ -3257,6 +3308,54 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: -272}
   m_SizeDelta: {x: 800, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &729615680
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 729615682}
+  - component: {fileID: 729615681}
+  m_Layer: 0
+  m_Name: ' ProjectLifetimeScope'
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &729615681
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 729615680}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fbf392f854ca411ec8d7f1e6f1a54e96, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowBlast.Infrastructure.ProjectLifetimeScope
+  parentReference:
+    TypeName: 
+  autoRun: 1
+  autoInjectGameObjects: []
+--- !u!4 &729615682
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 729615680}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1.03347, y: 7.09321, z: 0.9}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &747911380
 GameObject:
   m_ObjectHideFlags: 0
@@ -9759,9 +9858,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 65072a081817e5e43860e3168f265fd8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArrowBlast.Managers.GameManager
-  levelManager: {fileID: 2093832437}
-  coinSystem: {fileID: 2093832441}
-  boosterInventory: {fileID: 2093832440}
   wallContainer: {fileID: 700366138}
   slotsContainer: {fileID: 1128602142}
   arrowContainer: {fileID: 147405615}
@@ -11058,3 +11154,5 @@ SceneRoots:
   - {fileID: 36357644}
   - {fileID: 1233828084}
   - {fileID: 1114179469}
+  - {fileID: 420364745}
+  - {fileID: 729615682}

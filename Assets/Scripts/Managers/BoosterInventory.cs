@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using ArrowBlast.Interfaces;
 
 namespace ArrowBlast.Managers
 {
@@ -12,10 +13,8 @@ namespace ArrowBlast.Managers
     /// <summary>
     /// Manages the player's booster inventory with persistence
     /// </summary>
-    public class BoosterInventory : MonoBehaviour
+    public class BoosterInventory : MonoBehaviour, IBoosterInventory
     {
-        public static BoosterInventory Instance { get; private set; }
-
         private const string INSTANT_EXIT_KEY = "Booster_InstantExit";
         private const string EXTRA_SLOT_KEY = "Booster_ExtraSlot";
 
@@ -26,7 +25,6 @@ namespace ArrowBlast.Managers
 
         private void Awake()
         {
-            if (Instance == null) Instance = this;
             LoadInventory();
         }
 

@@ -1,10 +1,9 @@
 using UnityEngine;
 using System;
+using ArrowBlast.Interfaces;
 
-public class LivesManager : MonoBehaviour
+public class LivesManager : MonoBehaviour, ILivesService
 {
-    public static LivesManager Instance;
-
     private const int MAX_HEARTS = 5;
     private const int REGEN_SECONDS = 600; // 10 minutes
     private const string HEARTS_KEY = "PlayerHearts";
@@ -16,16 +15,7 @@ public class LivesManager : MonoBehaviour
 
     void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-            LoadHearts();
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+        LoadHearts();
     }
 
     void Update()
@@ -33,7 +23,7 @@ public class LivesManager : MonoBehaviour
         if (currentHearts < MAX_HEARTS)
         {
             regenTimer += Time.deltaTime;
-            
+
             if (regenTimer >= REGEN_SECONDS)
             {
                 AddHeart(1);
@@ -47,7 +37,7 @@ public class LivesManager : MonoBehaviour
     void LoadHearts()
     {
         currentHearts = PlayerPrefs.GetInt(HEARTS_KEY, MAX_HEARTS);
-        
+
         string lastRegenStr = PlayerPrefs.GetString(LAST_REGEN_KEY, "");
         if (string.IsNullOrEmpty(lastRegenStr))
         {
@@ -57,20 +47,20 @@ public class LivesManager : MonoBehaviour
         else
         {
             lastRegenTime = DateTime.Parse(lastRegenStr);
-            
+
             // Calculate hearts regenerated while offline
             double elapsedSeconds = (DateTime.Now - lastRegenTime).TotalSeconds;
             int heartsToAdd = Mathf.FloorToInt((float)elapsedSeconds / REGEN_SECONDS);
-            
+
             if (heartsToAdd > 0 && currentHearts < MAX_HEARTS)
             {
                 AddHeart(heartsToAdd);
             }
-            
+
             // Set timer to remainder
             regenTimer = (float)(elapsedSeconds % REGEN_SECONDS);
         }
-        
+
         SaveHearts();
     }
 
@@ -98,14 +88,14 @@ public class LivesManager : MonoBehaviour
     public void AddHeart(int count)
     {
         currentHearts = Mathf.Min(currentHearts + count, MAX_HEARTS);
-        
+
         // Reset timer when hearts are full
         if (currentHearts >= MAX_HEARTS)
         {
             regenTimer = 0f;
             lastRegenTime = DateTime.Now;
         }
-        
+
         SaveHearts();
     }
 

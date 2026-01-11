@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using ArrowBlast.Interfaces;
 
 [System.Serializable]
 public class Sound
@@ -7,62 +8,42 @@ public class Sound
     public string name;
     public AudioClip clip;
 }
+
 namespace ArrowBlast.Managers
 {
-    public class AudioManager : MonoBehaviour
+    public class AudioManager : MonoBehaviour, IAudioService
     {
-        private static AudioManager _instance;
-        public static AudioManager Instance
-        {
-            get
-            {
-                if (_instance == null)
-                {
-                    _instance = FindObjectOfType<AudioManager>();
-                    if (_instance == null)
-                    {
-                        GameObject go = new GameObject("AudioManager");
-                        _instance = go.AddComponent<AudioManager>();
-                    }
-                }
-                return _instance;
-            }
-        }
-
-        private void Awake()
-        {
-            if (_instance != null && _instance != this)
-            {
-                Destroy(gameObject);
-                return;
-            }
-            _instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-
         public Sound[] musicSounds, sfxSounds;
         public AudioSource musicSource, sfxSource;
 
-        private void Start()
+        [Header("SFX Settings")]
+        [SerializeField] private float sfxCooldown = 0.05f;
+        private System.Collections.Generic.Dictionary<string, float> lastPlayTime = new System.Collections.Generic.Dictionary<string, float>();
+
+        private ISettingsService _settings;
+
+        // Called by VContainer after instantiation
+        public void Initialize(ISettingsService settings)
         {
+            _settings = settings;
             UpdateSettings();
             PlayMusic("Backgound");
         }
 
         public void UpdateSettings()
         {
-            if (SettingsManager.Instance == null) return;
+            if (_settings == null) return;
 
             if (musicSource != null)
-                musicSource.mute = !SettingsManager.Instance.MusicEnabled;
+                musicSource.mute = !_settings.MusicEnabled;
 
             if (sfxSource != null)
-                sfxSource.mute = !SettingsManager.Instance.SfxEnabled;
+                sfxSource.mute = !_settings.SfxEnabled;
         }
 
         public void PlayMusic(string name)
         {
-            if (SettingsManager.Instance != null && !SettingsManager.Instance.MusicEnabled) return;
+            if (_settings != null && !_settings.MusicEnabled) return;
 
             Sound s = Array.Find(musicSounds, x => x.name == name);
             if (s == null)
@@ -76,13 +57,9 @@ namespace ArrowBlast.Managers
             }
         }
 
-        [Header("SFX Settings")]
-        [SerializeField] private float sfxCooldown = 0.05f; // Minimum time between same SFX
-        private System.Collections.Generic.Dictionary<string, float> lastPlayTime = new System.Collections.Generic.Dictionary<string, float>();
-
         public void PlaySfx(string name)
         {
-            if (SettingsManager.Instance != null && !SettingsManager.Instance.SfxEnabled) return;
+            if (_settings != null && !_settings.SfxEnabled) return;
 
             if (lastPlayTime.TryGetValue(name, out float lastTime))
             {
@@ -103,10 +80,10 @@ namespace ArrowBlast.Managers
 
         public void TriggerHaptic()
         {
-            if (SettingsManager.Instance != null && SettingsManager.Instance.HapticEnabled)
+            if (_settings != null && _settings.HapticEnabled)
             {
 #if UNITY_ANDROID || UNITY_IOS
-            Handheld.Vibrate(); // Default Unity vibration
+                Handheld.Vibrate();
 #endif
             }
         }

@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using ArrowBlast.Managers;
+using ArrowBlast.Interfaces;
 using DG.Tweening;
 using System;
 
@@ -8,8 +9,6 @@ namespace ArrowBlast.UI
 {
     public class GameEndUIManager : MonoBehaviour
     {
-        public static GameEndUIManager Instance { get; private set; }
-
         [Header("Win Panel")]
         [SerializeField] private GameObject winPanel;
         [SerializeField] private Button winDoubleCoinsButton;
@@ -22,25 +21,38 @@ namespace ArrowBlast.UI
         [SerializeField] private Button loseRestartWithExtraButton;
         [SerializeField] private Button loseHomeButton;
 
-        private GameManager gameManager;
-        private CoinSystem coinSystem;
+        private IGameManager gameManager;
+        private ICoinService coinSystem;
+        private IAdsService adsManager;
         private int lastEarnedCoins;
 
-        private void Awake()
+        // Called by VContainer
+        public void Initialize(IGameManager manager, ICoinService coins, IAdsService ads)
         {
-            if (Instance == null) Instance = this;
-            else Destroy(gameObject);
-        }
+            gameManager = manager;
+            coinSystem = coins;
+            adsManager = ads;
 
-        private void Start()
-        {
-            gameManager = FindObjectOfType<GameManager>();
-            coinSystem = FindObjectOfType<CoinSystem>();
-
-            if (winDoubleCoinsButton) winDoubleCoinsButton.onClick.AddListener(OnWinDoubleCoinsClicked);
-            if (winHomeButton) winHomeButton.onClick.AddListener(OnHomeClicked);
-            if (loseRestartWithExtraButton) loseRestartWithExtraButton.onClick.AddListener(OnLoseRestartWithExtraClicked);
-            if (loseHomeButton) loseHomeButton.onClick.AddListener(OnHomeClicked);
+            if (winDoubleCoinsButton) 
+            {
+                winDoubleCoinsButton.onClick.RemoveAllListeners();
+                winDoubleCoinsButton.onClick.AddListener(OnWinDoubleCoinsClicked);
+            }
+            if (winHomeButton) 
+            {
+                winHomeButton.onClick.RemoveAllListeners();
+                winHomeButton.onClick.AddListener(OnHomeClicked);
+            }
+            if (loseRestartWithExtraButton) 
+            {
+                loseRestartWithExtraButton.onClick.RemoveAllListeners();
+                loseRestartWithExtraButton.onClick.AddListener(OnLoseRestartWithExtraClicked);
+            }
+            if (loseHomeButton) 
+            {
+                loseHomeButton.onClick.RemoveAllListeners();
+                loseHomeButton.onClick.AddListener(OnHomeClicked);
+            }
 
             winPanel.SetActive(false);
             losePanel.SetActive(false);
@@ -67,7 +79,9 @@ namespace ArrowBlast.UI
 
         private void OnWinDoubleCoinsClicked()
         {
-            AdsManager.Instance.ShowRewardedAd(() =>
+            if (adsManager == null) return;
+            
+            adsManager.ShowRewardedAd(() =>
             {
                 if (coinSystem != null)
                 {
@@ -80,7 +94,9 @@ namespace ArrowBlast.UI
 
         private void OnLoseRestartWithExtraClicked()
         {
-            AdsManager.Instance.ShowRewardedAd(() =>
+            if (adsManager == null) return;
+
+            adsManager.ShowRewardedAd(() =>
             {
                 losePanel.SetActive(false);
                 if (gameManager != null)

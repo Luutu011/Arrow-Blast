@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.Purchasing;
 using System;
+using ArrowBlast.Interfaces;
 
 namespace ArrowBlast.Managers
 {
@@ -8,10 +9,8 @@ namespace ArrowBlast.Managers
     /// Handles In-App Purchases using Unity IAP.
     /// Supports Consumables (Coins) and Non-Consumables (Remove Ads).
     /// </summary>
-    public class IAPManager : MonoBehaviour, IStoreListener
+    public class IAPManager : MonoBehaviour, IStoreListener, IIAPService
     {
-        public static IAPManager Instance { get; private set; }
-
         private static IStoreController m_StoreController;
         private static IExtensionProvider m_StoreExtensionProvider;
 
@@ -20,18 +19,19 @@ namespace ArrowBlast.Managers
         public string productAddCoins100 = "com.arrowblast.coins100";
         public string productAddCoins500 = "com.arrowblast.coins500";
 
+        private ICoinService _coinService;
+        private IAdsService _adsService;
+
+        // Called by VContainer
+        public void Initialize(ICoinService coins, IAdsService ads)
+        {
+            _coinService = coins;
+            _adsService = ads;
+        }
+
         private void Awake()
         {
-            if (Instance == null)
-            {
-                Instance = this;
-                DontDestroyOnLoad(gameObject);
-                InitializePurchasing();
-            }
-            else
-            {
-                Destroy(gameObject);
-            }
+            InitializePurchasing();
         }
 
         public void InitializePurchasing()
@@ -143,18 +143,17 @@ namespace ArrowBlast.Managers
 
         private void OnPurchaseRemoveAds()
         {
-            if (AdsManager.Instance != null)
+            if (_adsService != null)
             {
-                AdsManager.Instance.DisableAdsPermanently();
+                _adsService.DisableAdsPermanently();
             }
         }
 
         private void OnPurchaseCoins(int amount)
         {
-            CoinSystem coinSystem = FindObjectOfType<CoinSystem>();
-            if (coinSystem != null)
+            if (_coinService != null)
             {
-                coinSystem.AddCoins(amount);
+                _coinService.AddCoins(amount);
             }
         }
     }

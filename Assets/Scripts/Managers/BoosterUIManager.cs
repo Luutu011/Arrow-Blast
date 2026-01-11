@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using ArrowBlast.Interfaces;
 
 namespace ArrowBlast.Managers
 {
@@ -25,15 +26,24 @@ namespace ArrowBlast.Managers
 
         private BoosterType pendingPurchaseType;
 
-        private GameManager gameManager;
-        private CoinSystem coinSystem;
-        private BoosterInventory boosterInventory;
+        private IGameManager gameManager;
+        private ICoinService coinSystem;
+        private IBoosterInventory boosterInventory;
+        private IShopService shopManager;
+        private ILevelProgressService levelManager;
 
-        public void Initialize(GameManager manager, CoinSystem coins, BoosterInventory inventory)
+        public void Initialize(
+            IGameManager manager,
+            ICoinService coins,
+            IBoosterInventory inventory,
+            IShopService shop,
+            ILevelProgressService level)
         {
             gameManager = manager;
             coinSystem = coins;
             boosterInventory = inventory;
+            shopManager = shop;
+            levelManager = level;
 
             if (instantExitButton != null)
             {
@@ -174,7 +184,6 @@ namespace ArrowBlast.Managers
 
         private void UpdateBoosterUnlockStatus()
         {
-            LevelManager levelManager = FindObjectOfType<LevelManager>();
             if (levelManager == null) return;
 
             int currentLevel = levelManager.CurrentLevelIndex; // 0-based
@@ -243,7 +252,6 @@ namespace ArrowBlast.Managers
 
             pendingPurchaseType = type;
 
-            ShopManager shopManager = FindObjectOfType<ShopManager>();
             int cost = shopManager != null ? shopManager.GetBoosterCost() : 50;
             int currentCoins = coinSystem != null ? coinSystem.GetBalance() : 0;
             bool canAfford = currentCoins >= cost;
@@ -263,7 +271,6 @@ namespace ArrowBlast.Managers
 
         private void OnConfirmPurchase()
         {
-            ShopManager shopManager = FindObjectOfType<ShopManager>();
             if (shopManager != null)
             {
                 if (shopManager.PurchaseBooster(pendingPurchaseType))

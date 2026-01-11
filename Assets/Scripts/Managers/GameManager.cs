@@ -5,15 +5,13 @@ using UnityEngine.InputSystem;
 using ArrowBlast.Core;
 using ArrowBlast.Data;
 using ArrowBlast.Game;
+using ArrowBlast.Interfaces;
 
 namespace ArrowBlast.Managers
 {
-    public class GameManager : MonoBehaviour
+    public class GameManager : MonoBehaviour, IGameManager
     {
         [Header("Components")]
-        [SerializeField] private LevelManager levelManager;
-        [SerializeField] private CoinSystem coinSystem;
-        [SerializeField] private BoosterInventory boosterInventory;
         [SerializeField] private Transform wallContainer;
         [SerializeField] private Transform slotsContainer;
         [SerializeField] private Transform arrowContainer;
@@ -33,6 +31,13 @@ namespace ArrowBlast.Managers
         [SerializeField] private float cellSize = 0.8f;
         [SerializeField] private float fireRate = 0.5f;
         [SerializeField] private float projectileSpeed = 3f;
+
+        // Injected Services
+        private IAudioService _audioService;
+        private ILevelProgressService _levelProgressService;
+        private ICoinService _coinService;
+        private IBoosterInventory _boosterInventory;
+        private ITutorialService _tutorialService;
 
         // Runtime Data
         private Block[,] wallGrid;
@@ -58,6 +63,21 @@ namespace ArrowBlast.Managers
         private bool extraSlotUsedThisLevel;
         private int extraSlotsToLoad = 0;
 
+        // Called by VContainer
+        public void Initialize(
+            IAudioService audio,
+            ILevelProgressService levelProgress,
+            ICoinService coins,
+            IBoosterInventory boosters,
+            ITutorialService tutorial)
+        {
+            _audioService = audio;
+            _levelProgressService = levelProgress;
+            _coinService = coins;
+            _boosterInventory = boosters;
+            _tutorialService = tutorial;
+        }
+
         public void RestartLevel()
         {
             LoadCurrentLevel();
@@ -71,25 +91,19 @@ namespace ArrowBlast.Managers
                 Camera.main.backgroundColor = GamePalette.Background;
             }
 
-            // Auto-find dependencies if not assigned
-            if (levelManager == null) levelManager = FindObjectOfType<LevelManager>();
-            if (coinSystem == null) coinSystem = FindObjectOfType<CoinSystem>();
-            if (boosterInventory == null) boosterInventory = FindObjectOfType<BoosterInventory>();
-
             InitializeSlots();
             if (slotsContainer != null) slotsContainer.gameObject.SetActive(false); // Hide on start
+
             if (boosterUIManager != null)
             {
-                boosterUIManager.Initialize(this, coinSystem, boosterInventory);
                 boosterUIManager.SetVisible(false); // Hide boosters on menu
             }
-            // if (levelManager != null) LoadCurrentLevel(); // Removed: Load only from UI
         }
 
         private void LoadCurrentLevel()
         {
-            if (levelManager == null) return;
-            LevelData data = levelManager.GetCurrentLevel();
+            if (_levelProgressService == null) return;
+            LevelData data = _levelProgressService.GetCurrentLevel();
             if (data != null)
             {
                 isGameOver = false;
@@ -105,7 +119,7 @@ namespace ArrowBlast.Managers
         private void LoadNextLevel()
         {
             foreach (var s in slots) s.ClearSlot();
-            if (levelManager.AdvanceLevel()) LoadCurrentLevel();
+            if (_levelProgressService.AdvanceLevel()) LoadCurrentLevel();
             else LoadCurrentLevel(); // Loop
         }
 
@@ -139,12 +153,12 @@ namespace ArrowBlast.Managers
             if (isGameOver) return;
 
             // Check if we have boosters in inventory
-            if (boosterInventory == null) return;
+            if (_boosterInventory == null) return;
 
             // If activating, check and consume from inventory
             if (!isInstantExitActive)
             {
-                if (!boosterInventory.UseBooster(BoosterType.InstantExit))
+                if (!_boosterInventory.UseBooster(BoosterType.InstantExit))
                 {
                     Debug.LogWarning("[GameManager] No Instant Exit boosters in inventory!");
                     return;
@@ -156,8 +170,6 @@ namespace ArrowBlast.Managers
 
             if (boosterUIManager != null)
                 boosterUIManager.UpdateInstantExitVisual(isInstantExitActive);
-
-            //Debug.Log($"Booster: Instant Exit {(isInstantExitActive ? "Active" : "Deactivated")}!");
         }
 
         private void SetArrowsScared(bool scared)
@@ -178,9 +190,9 @@ namespace ArrowBlast.Managers
             if (isGameOver || extraSlotUsedThisLevel) return;
 
             // Check if we have boosters in inventory
-            if (boosterInventory == null) return;
+            if (_boosterInventory == null) return;
 
-            if (!boosterInventory.UseBooster(BoosterType.ExtraSlot))
+            if (!_boosterInventory.UseBooster(BoosterType.ExtraSlot))
             {
                 Debug.LogWarning("[GameManager] No Extra Slot boosters in inventory!");
                 return;
@@ -256,9 +268,9 @@ namespace ArrowBlast.Managers
                 activeLocks.Add(l);
             }
 
-            if (TutorialManager.Instance != null && levelManager != null)
+            if (_tutorialService != null && _levelProgressService != null)
             {
-                TutorialManager.Instance.CheckTutorials(levelManager.CurrentLevelIndex);
+                _tutorialService.CheckTutorials(_levelProgressService.CurrentLevelIndex);
             }
         }
 
@@ -465,7 +477,7 @@ namespace ArrowBlast.Managers
             }
 
             targetSlot.SetReserved(true);
-            AudioManager.Instance.PlaySfx("ArrowEscape_Sfx");
+            if (_audioService != null) _audioService.PlaySfx("ArrowEscape_Sfx");
             var occupied = arrow.GetOccupiedCells();
             foreach (var c in occupied)
                 if (IsValidCell(c.x, c.y) && arrowGrid[c.x, c.y] == arrow) arrowGrid[c.x, c.y] = null;
@@ -603,7 +615,7 @@ namespace ArrowBlast.Managers
                             float duration = distance / projectileSpeed;
                             proj.Launch(targetPos, duration);
 
-                            AudioManager.Instance.PlaySfx("Shooting_Sfx");
+                            if (_audioService != null) _audioService.PlaySfx("Shooting_Sfx");
                             return true;
                         }
                         break;
@@ -615,7 +627,7 @@ namespace ArrowBlast.Managers
 
         private IEnumerator HandleBlockHit(int x, int y, Block b, bool willBeDestroyed)
         {
-            AudioManager.Instance.TriggerHaptic();
+            if (_audioService != null) _audioService.TriggerHaptic();
             if (willBeDestroyed)
             {
                 yield return b.AnimateDeath();
@@ -717,7 +729,7 @@ namespace ArrowBlast.Managers
             {
                 //Debug.Log("🎉 VICTORY! All blocks destroyed!");
                 isGameOver = true;
-                AudioManager.Instance.PlaySfx("Win_Sfx");
+                if (_audioService != null) _audioService.PlaySfx("Win_Sfx");
                 StartCoroutine(VictoryRoutine());
                 return;
             }
@@ -740,8 +752,9 @@ namespace ArrowBlast.Managers
                     {
                         //Debug.Log("💀 GAME OVER: All Slots Full, No Matching Blocks!");
                         isGameOver = true;
-                        AudioManager.Instance.PlaySfx("Lose_Sfx");
-                        ArrowBlast.UI.GameEndUIManager.Instance.ShowLosePanel();
+                        if (_audioService != null) _audioService.PlaySfx("Lose_Sfx");
+                        ArrowBlast.UI.GameEndUIManager ui = FindObjectOfType<ArrowBlast.UI.GameEndUIManager>();
+                        if (ui != null) ui.ShowLosePanel();
                         return;
                     }
                 }
@@ -757,8 +770,9 @@ namespace ArrowBlast.Managers
             {
                 //Debug.Log("💀 GAME OVER: Out of Ammo!");
                 isGameOver = true;
-                AudioManager.Instance.PlaySfx("Lose_Sfx");
-                ArrowBlast.UI.GameEndUIManager.Instance.ShowLosePanel();
+                if (_audioService != null) _audioService.PlaySfx("Lose_Sfx");
+                ArrowBlast.UI.GameEndUIManager ui = FindObjectOfType<ArrowBlast.UI.GameEndUIManager>();
+                if (ui != null) ui.ShowLosePanel();
             }
         }
 
@@ -767,20 +781,21 @@ namespace ArrowBlast.Managers
             yield return new WaitForSeconds(2.0f);
 
             // Award coins for completing the level
-            if (coinSystem != null)
+            if (_coinService != null)
             {
-                coinSystem.AddCoins(10);
+                _coinService.AddCoins(10);
             }
 
             // Unlock the next level
-            if (levelManager != null)
+            if (_levelProgressService != null)
             {
-                levelManager.UnlockNextLevel();
+                _levelProgressService.UnlockNextLevel();
             }
 
-            if (ArrowBlast.UI.GameEndUIManager.Instance != null)
+            ArrowBlast.UI.GameEndUIManager ui = FindObjectOfType<ArrowBlast.UI.GameEndUIManager>();
+            if (ui != null)
             {
-                ArrowBlast.UI.GameEndUIManager.Instance.ShowWinPanel(10);
+                ui.ShowWinPanel(10);
             }
             else
             {

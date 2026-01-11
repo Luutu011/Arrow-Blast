@@ -1,10 +1,11 @@
 using UnityEngine;
 using System.Collections.Generic;
 using ArrowBlast.Data;
+using ArrowBlast.Interfaces;
 
 namespace ArrowBlast.Managers
 {
-    public class LevelManager : MonoBehaviour
+    public class LevelManager : MonoBehaviour, ILevelProgressService
     {
         [Header("Level Configuration")]
         [SerializeField] private List<LevelData> levels = new List<LevelData>();
