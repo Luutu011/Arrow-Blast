@@ -3341,6 +3341,16 @@ MonoBehaviour:
     TypeName: 
   autoRun: 1
   autoInjectGameObjects: []
+  settingsManager: {fileID: 2093832445}
+  audioManager: {fileID: 2093832444}
+  coinSystem: {fileID: 2093832441}
+  boosterInventory: {fileID: 2093832440}
+  levelManager: {fileID: 2093832437}
+  shopManager: {fileID: 122522022}
+  tutorialManager: {fileID: 2093832446}
+  adsManager: {fileID: 2093832442}
+  livesManager: {fileID: 2093832447}
+  iapManager: {fileID: 2093832443}
 --- !u!4 &729615682
 Transform:
   m_ObjectHideFlags: 0
@@ -9791,6 +9801,7 @@ GameObject:
   - component: {fileID: 2093832444}
   - component: {fileID: 2093832445}
   - component: {fileID: 2093832446}
+  - component: {fileID: 2093832447}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -10025,6 +10036,18 @@ MonoBehaviour:
   welcomeTutorialSprite: {fileID: 21300000, guid: 96f29f0ef7a6f2249a6fe4f075f3241d, type: 3}
   instantExitTutorialSprite: {fileID: 21300000, guid: d1df513296b6f9cbe9a8bdfd842d5922, type: 3}
   extraSlotTutorialSprite: {fileID: 21300000, guid: 21e34eea48cc769ec802feaeb48a4666, type: 3}
+--- !u!114 &2093832447
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2093832435}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1fa69c14b48f74874bd4d6b5c167d1a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LivesManager
 --- !u!1 &2134106415
 GameObject:
   m_ObjectHideFlags: 0

@@ -29,7 +29,6 @@ public class LivesManager : MonoBehaviour, ILivesService
                 AddHeart(1);
                 regenTimer = 0f;
                 lastRegenTime = DateTime.Now;
-                SaveHearts();
             }
         }
     }

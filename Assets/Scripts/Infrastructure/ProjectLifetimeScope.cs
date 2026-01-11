@@ -12,133 +12,95 @@ namespace ArrowBlast.Infrastructure
     /// </summary>
     public class ProjectLifetimeScope : LifetimeScope
     {
+        [Header("Manager References")]
+        [SerializeField] private SettingsManager settingsManager;
+        [SerializeField] private AudioManager audioManager;
+        [SerializeField] private CoinSystem coinSystem;
+        [SerializeField] private BoosterInventory boosterInventory;
+        [SerializeField] private LevelManager levelManager;
+        [SerializeField] private ShopManager shopManager;
+        [SerializeField] private TutorialManager tutorialManager;
+        [SerializeField] private AdsManager adsManager;
+        [SerializeField] private LivesManager livesManager;
+        [SerializeField] private IAPManager iapManager;
+
         protected override void Configure(IContainerBuilder builder)
         {
-            // Settings Service (no dependencies)
+            // Settings Service
             builder.Register<ISettingsService>(resolver =>
             {
-                var settingsManager = FindObjectOfType<SettingsManager>();
-                if (settingsManager == null)
-                {
-                    var go = new UnityEngine.GameObject("SettingsManager");
-                    settingsManager = go.AddComponent<SettingsManager>();
-                }
+                if (settingsManager == null) settingsManager = FindObjectOfType<SettingsManager>();
                 return settingsManager;
             }, Lifetime.Singleton);
 
-            // Audio Service (depends on Settings)
+            // Audio Service
             builder.Register<IAudioService>(resolver =>
             {
-                var audioManager = FindObjectOfType<AudioManager>();
-                if (audioManager == null)
-                {
-                    var go = new UnityEngine.GameObject("AudioManager");
-                    audioManager = go.AddComponent<AudioManager>();
-                }
-                // Inject settings via method
-                audioManager.Initialize(resolver.Resolve<ISettingsService>());
+                if (audioManager == null) audioManager = FindObjectOfType<AudioManager>();
+                if (audioManager != null) audioManager.Initialize(resolver.Resolve<ISettingsService>());
                 return audioManager;
             }, Lifetime.Singleton);
 
-            // Coin Service (no dependencies)
+            // Coin Service
             builder.Register<ICoinService>(resolver =>
             {
-                var coinSystem = FindObjectOfType<CoinSystem>();
-                if (coinSystem == null)
-                {
-                    var go = new UnityEngine.GameObject("CoinSystem");
-                    coinSystem = go.AddComponent<CoinSystem>();
-                }
+                if (coinSystem == null) coinSystem = FindObjectOfType<CoinSystem>();
                 return coinSystem;
             }, Lifetime.Singleton);
 
-            // Booster Inventory (no dependencies)
+            // Booster Inventory
             builder.Register<IBoosterInventory>(resolver =>
             {
-                var boosterInventory = FindObjectOfType<BoosterInventory>();
-                if (boosterInventory == null)
-                {
-                    var go = new UnityEngine.GameObject("BoosterInventory");
-                    boosterInventory = go.AddComponent<BoosterInventory>();
-                }
+                if (boosterInventory == null) boosterInventory = FindObjectOfType<BoosterInventory>();
                 return boosterInventory;
             }, Lifetime.Singleton);
 
-            // Level Progress Service (no dependencies)
+            // Level Progress Service
             builder.Register<ILevelProgressService>(resolver =>
             {
-                var levelManager = FindObjectOfType<LevelManager>();
-                if (levelManager == null)
-                {
-                    var go = new UnityEngine.GameObject("LevelManager");
-                    levelManager = go.AddComponent<LevelManager>();
-                }
+                if (levelManager == null) levelManager = FindObjectOfType<LevelManager>();
                 return levelManager;
             }, Lifetime.Singleton);
 
-            // Shop Service (depends on Coins and Boosters)
+            // Shop Service
             builder.Register<IShopService>(resolver =>
             {
-                var shopManager = FindObjectOfType<ShopManager>();
-                if (shopManager == null)
-                {
-                    var go = new UnityEngine.GameObject("ShopManager");
-                    shopManager = go.AddComponent<ShopManager>();
-                }
-                shopManager.Initialize(
+                if (shopManager == null) shopManager = FindObjectOfType<ShopManager>();
+                if (shopManager != null) shopManager.Initialize(
                     resolver.Resolve<ICoinService>(),
                     resolver.Resolve<IBoosterInventory>()
                 );
                 return shopManager;
             }, Lifetime.Singleton);
 
-            // Tutorial Service (depends on Boosters)
+            // Tutorial Service
             builder.Register<ITutorialService>(resolver =>
             {
-                var tutorialManager = FindObjectOfType<TutorialManager>();
-                if (tutorialManager == null)
-                {
-                    var go = new UnityEngine.GameObject("TutorialManager");
-                    tutorialManager = go.AddComponent<TutorialManager>();
-                }
-                tutorialManager.Initialize(resolver.Resolve<IBoosterInventory>());
+                if (tutorialManager == null) tutorialManager = FindObjectOfType<TutorialManager>();
+                if (tutorialManager != null) tutorialManager.Initialize(resolver.Resolve<IBoosterInventory>());
                 return tutorialManager;
             }, Lifetime.Singleton);
 
-            // Ads Service (no dependencies - but may have internal Unity Services dependencies)
+            // Ads Service
             builder.Register<IAdsService>(resolver =>
             {
-                var adsManager = FindObjectOfType<AdsManager>();
-                if (adsManager != null)
-                {
-                    adsManager.Initialize(resolver.Resolve<ILivesService>());
-                    return adsManager;
-                }
-                return null; // Ads are optional
+                if (adsManager == null) adsManager = FindObjectOfType<AdsManager>();
+                if (adsManager != null) adsManager.Initialize(resolver.Resolve<ILivesService>());
+                return adsManager;
             }, Lifetime.Singleton);
 
-            // Lives Service (no dependencies)
+            // Lives Service
             builder.Register<ILivesService>(resolver =>
             {
-                var livesManager = FindObjectOfType<LivesManager>();
-                if (livesManager == null)
-                {
-                    var go = new UnityEngine.GameObject("LivesManager");
-                    livesManager = go.AddComponent<LivesManager>();
-                }
+                if (livesManager == null) livesManager = FindObjectOfType<LivesManager>();
                 return livesManager;
             }, Lifetime.Singleton);
 
-            // IAP Service (depends on Coins and Ads)
+            // IAP Service
             builder.Register<IIAPService>(resolver =>
             {
-                var iapManager = FindObjectOfType<IAPManager>();
-                if (iapManager == null)
-                {
-                    var go = new UnityEngine.GameObject("IAPManager");
-                    iapManager = go.AddComponent<IAPManager>();
-                }
-                iapManager.Initialize(
+                if (iapManager == null) iapManager = FindObjectOfType<IAPManager>();
+                if (iapManager != null) iapManager.Initialize(
                     resolver.Resolve<ICoinService>(),
                     resolver.Resolve<IAdsService>()
                 );
