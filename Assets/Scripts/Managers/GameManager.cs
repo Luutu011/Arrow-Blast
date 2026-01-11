@@ -56,6 +56,7 @@ namespace ArrowBlast.Managers
         // Booster State
         private bool isInstantExitActive;
         private bool extraSlotUsedThisLevel;
+        private int extraSlotsToLoad = 0;
 
         public void RestartLevel()
         {
@@ -94,6 +95,9 @@ namespace ArrowBlast.Managers
                 isGameOver = false;
                 extraSlotUsedThisLevel = false;
                 isInstantExitActive = false;
+                // Keep extraSlotsToLoad if it was set by a special restart, 
+                // but reset it if loading normally from menu? 
+                // Actually, ReturnToLevelSelect should reset it.
                 BuildLevel(data);
             }
         }
@@ -109,12 +113,14 @@ namespace ArrowBlast.Managers
         {
             slots.Clear();
             foreach (Transform child in slotsContainer) Destroy(child.gameObject);
-            for (int i = 0; i < 5; i++)
+            int count = 5 + extraSlotsToLoad;
+            for (int i = 0; i < count; i++)
             {
                 Slot s = Instantiate(slotPrefab, slotsContainer);
                 s.Initialize();
                 slots.Add(s);
             }
+            extraSlotsToLoad = 0; // Reset after use
             UpdateSlotPositions();
         }
 
@@ -189,6 +195,12 @@ namespace ArrowBlast.Managers
             //Debug.Log("Booster: Extra Slot Added!");
         }
 
+        public void RestartWithExtraSlot()
+        {
+            extraSlotsToLoad = 1;
+            LoadCurrentLevel();
+        }
+
         private void BuildLevel(LevelData data)
         {
             if (slotsContainer != null) slotsContainer.gameObject.SetActive(true); // Show when level starts
@@ -242,6 +254,11 @@ namespace ArrowBlast.Managers
 
                 l.Init(ld.gridX, ld.gridY, ld.sizeX, ld.sizeY, ld.lockId, cellSize);
                 activeLocks.Add(l);
+            }
+
+            if (TutorialManager.Instance != null && levelManager != null)
+            {
+                TutorialManager.Instance.CheckTutorials(levelManager.CurrentLevelIndex);
             }
         }
 
@@ -448,6 +465,7 @@ namespace ArrowBlast.Managers
             }
 
             targetSlot.SetReserved(true);
+            AudioManager.Instance.PlaySfx("ArrowEscape_Sfx");
             var occupied = arrow.GetOccupiedCells();
             foreach (var c in occupied)
                 if (IsValidCell(c.x, c.y) && arrowGrid[c.x, c.y] == arrow) arrowGrid[c.x, c.y] = null;
@@ -584,6 +602,8 @@ namespace ArrowBlast.Managers
                             float distance = Vector3.Distance(slot.transform.position, targetPos);
                             float duration = distance / projectileSpeed;
                             proj.Launch(targetPos, duration);
+
+                            AudioManager.Instance.PlaySfx("Shooting_Sfx");
                             return true;
                         }
                         break;
@@ -595,6 +615,7 @@ namespace ArrowBlast.Managers
 
         private IEnumerator HandleBlockHit(int x, int y, Block b, bool willBeDestroyed)
         {
+            AudioManager.Instance.TriggerHaptic();
             if (willBeDestroyed)
             {
                 yield return b.AnimateDeath();
@@ -696,6 +717,7 @@ namespace ArrowBlast.Managers
             {
                 //Debug.Log("🎉 VICTORY! All blocks destroyed!");
                 isGameOver = true;
+                AudioManager.Instance.PlaySfx("Win_Sfx");
                 StartCoroutine(VictoryRoutine());
                 return;
             }
@@ -718,6 +740,8 @@ namespace ArrowBlast.Managers
                     {
                         //Debug.Log("💀 GAME OVER: All Slots Full, No Matching Blocks!");
                         isGameOver = true;
+                        AudioManager.Instance.PlaySfx("Lose_Sfx");
+                        ArrowBlast.UI.GameEndUIManager.Instance.ShowLosePanel();
                         return;
                     }
                 }
@@ -733,6 +757,8 @@ namespace ArrowBlast.Managers
             {
                 //Debug.Log("💀 GAME OVER: Out of Ammo!");
                 isGameOver = true;
+                AudioManager.Instance.PlaySfx("Lose_Sfx");
+                ArrowBlast.UI.GameEndUIManager.Instance.ShowLosePanel();
             }
         }
 
@@ -752,7 +778,14 @@ namespace ArrowBlast.Managers
                 levelManager.UnlockNextLevel();
             }
 
-            ReturnToLevelSelect();
+            if (ArrowBlast.UI.GameEndUIManager.Instance != null)
+            {
+                ArrowBlast.UI.GameEndUIManager.Instance.ShowWinPanel(10);
+            }
+            else
+            {
+                ReturnToLevelSelect();
+            }
         }
 
         public void ReturnToLevelSelect()
@@ -773,6 +806,7 @@ namespace ArrowBlast.Managers
             if (slotsContainer != null) slotsContainer.gameObject.SetActive(false);
             if (boosterUIManager != null) boosterUIManager.SetVisible(false);
 
+            extraSlotsToLoad = 0;
             if (mainMenu != null)
             {
                 mainMenu.gameObject.SetActive(true);

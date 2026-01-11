@@ -1,0 +1,13 @@
+{
+    "asset": "01c052a62b783637daa032f7a2140eac",
+    "fileName": "019ba8f5-0efd-742b-9e0f-f5e6fbc2f51d.wav",
+    "prompt": "Wrong! type of sfx, negative",
+    "negativePrompt": "",
+    "model": "5de0686a-fb27-40e5-9df0-28ae810d70ca",
+    "modelName": "ElevenLabs Sound Effects V2",
+    "customSeed": -1,
+    "w3CTraceId": "ec5377fa04b6b3fff635fdcb3f90bb77",
+    "duration": 1.0,
+    "autoTrim": true,
+    "hasReference": false
+}

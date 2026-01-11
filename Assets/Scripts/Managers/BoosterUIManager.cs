@@ -80,6 +80,7 @@ namespace ArrowBlast.Managers
             }
 
             // Initial update
+            UpdateBoosterUnlockStatus();
             UpdateAllDisplays();
         }
 
@@ -166,7 +167,49 @@ namespace ArrowBlast.Managers
             gameObject.SetActive(visible);
             if (visible)
             {
+                UpdateBoosterUnlockStatus();
                 UpdateAllDisplays();
+            }
+        }
+
+        private void UpdateBoosterUnlockStatus()
+        {
+            LevelManager levelManager = FindObjectOfType<LevelManager>();
+            if (levelManager == null) return;
+
+            int currentLevel = levelManager.CurrentLevelIndex; // 0-based
+
+            // InstantExit unlock after level 5 (Level 6+)
+            bool instantExitUnlocked = currentLevel >= 5;
+            UpdateBoosterButtonState(instantExitButton, instantExitUnlocked);
+
+            // ExtraSlot unlock after level 10 (Level 11+)
+            bool extraSlotUnlocked = currentLevel >= 10;
+            UpdateBoosterButtonState(extraSlotButton, extraSlotUnlocked);
+        }
+
+        private void UpdateBoosterButtonState(Button button, bool unlocked)
+        {
+            if (button == null) return;
+
+            button.interactable = unlocked;
+
+            // Grey out effect: Adjust alpha or color of the button image/icon
+            Image img = button.GetComponent<Image>();
+            if (img != null)
+            {
+                Color c = img.color;
+                c.a = unlocked ? 1.0f : 0.4f; // Semi-transparent when locked
+                img.color = c;
+            }
+
+            // Also grey out the icon if it's a child
+            foreach (Image childImg in button.GetComponentsInChildren<Image>())
+            {
+                if (childImg == img) continue;
+                Color c = childImg.color;
+                c.a = unlocked ? 1.0f : 0.4f;
+                childImg.color = c;
             }
         }
 

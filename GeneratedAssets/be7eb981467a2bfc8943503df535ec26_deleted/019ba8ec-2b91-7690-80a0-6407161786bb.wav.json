@@ -1,0 +1,13 @@
+{
+    "asset": "be7eb981467a2bfc8943503df535ec26",
+    "fileName": "019ba8ec-2b91-7690-80a0-6407161786bb.wav",
+    "prompt": "a winning sound effect, prefer a short small honk with a up raising tone, ",
+    "negativePrompt": "",
+    "model": "5de0686a-fb27-40e5-9df0-28ae810d70ca",
+    "modelName": "ElevenLabs Sound Effects V2",
+    "customSeed": -1,
+    "w3CTraceId": "73d5ce9a8ba969d465b09f901b179fd2",
+    "duration": 1.0,
+    "autoTrim": true,
+    "hasReference": false
+}

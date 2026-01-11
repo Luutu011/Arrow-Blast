@@ -14,6 +14,8 @@ namespace ArrowBlast.Managers
     /// </summary>
     public class BoosterInventory : MonoBehaviour
     {
+        public static BoosterInventory Instance { get; private set; }
+
         private const string INSTANT_EXIT_KEY = "Booster_InstantExit";
         private const string EXTRA_SLOT_KEY = "Booster_ExtraSlot";
 
@@ -24,6 +26,7 @@ namespace ArrowBlast.Managers
 
         private void Awake()
         {
+            if (Instance == null) Instance = this;
             LoadInventory();
         }
 

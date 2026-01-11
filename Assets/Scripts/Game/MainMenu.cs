@@ -20,6 +20,11 @@ namespace ArrowBlast.UI
         [SerializeField] private Button settingsButton;
         [SerializeField] private Button closeSettingsButton;
 
+        [Header("Settings Toggles")]
+        [SerializeField] private Toggle sfxToggle;
+        [SerializeField] private Toggle musicToggle;
+        [SerializeField] private Toggle hapticToggle;
+
         [Header("Difficulty Backgrounds")]
         [SerializeField] private Image backgroundImage;
         [SerializeField] private Sprite easyBackgroundSprite;
@@ -55,7 +60,40 @@ namespace ArrowBlast.UI
             if (settingsButton) settingsButton.onClick.AddListener(ShowSettingsPanel);
             if (closeSettingsButton) closeSettingsButton.onClick.AddListener(HideSettingsPanel);
 
+            InitializeSettingsToggles();
+
             ShowLevelPanel();
+        }
+
+        private void OnEnable()
+        {
+            InitializeSettingsToggles();
+        }
+
+        private void InitializeSettingsToggles()
+        {
+            if (SettingsManager.Instance == null) return;
+
+            if (sfxToggle)
+            {
+                sfxToggle.onValueChanged.RemoveAllListeners();
+                sfxToggle.SetIsOnWithoutNotify(SettingsManager.Instance.SfxEnabled);
+                sfxToggle.onValueChanged.AddListener(SettingsManager.Instance.SetSfx);
+            }
+
+            if (musicToggle)
+            {
+                musicToggle.onValueChanged.RemoveAllListeners();
+                musicToggle.SetIsOnWithoutNotify(SettingsManager.Instance.MusicEnabled);
+                musicToggle.onValueChanged.AddListener(SettingsManager.Instance.SetMusic);
+            }
+
+            if (hapticToggle)
+            {
+                hapticToggle.onValueChanged.RemoveAllListeners();
+                hapticToggle.SetIsOnWithoutNotify(SettingsManager.Instance.HapticEnabled);
+                hapticToggle.onValueChanged.AddListener(SettingsManager.Instance.SetHaptic);
+            }
         }
 
         public void ShowLevelPanel()
@@ -129,7 +167,7 @@ namespace ArrowBlast.UI
             var glg = levelGrid.GetComponent<UnityEngine.UI.GridLayoutGroup>();
             if (glg) glg.enabled = false;
 
-            int currentLevel = levelManager.CurrentLevelIndex;
+            int currentLevel = levelManager.GetHighestUnlockedLevel();
             int totalLevels = levelManager.GetLevelCount();
             int highestUnlocked = levelManager.GetHighestUnlockedLevel();
 

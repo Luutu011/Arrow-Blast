@@ -14,6 +14,11 @@ namespace ArrowBlast.Managers
         [SerializeField] private Button buyInstantExitButton;
         [SerializeField] private Button buyExtraSlotButton;
 
+        [Header("IAP Buttons")]
+        [SerializeField] private Button buyRemoveAdsButton;
+        [SerializeField] private Button buy100CoinsButton;
+        [SerializeField] private Button buy500CoinsButton;
+
         [Header("Display")]
         [SerializeField] private TextMeshProUGUI coinBalanceText;
         [SerializeField] private TextMeshProUGUI boosterCostText;
@@ -62,6 +67,25 @@ namespace ArrowBlast.Managers
             {
                 buyExtraSlotButton.onClick.RemoveAllListeners();
                 buyExtraSlotButton.onClick.AddListener(() => OnPurchaseBooster(BoosterType.ExtraSlot));
+            }
+
+            // Setup IAP buttons
+            if (buyRemoveAdsButton != null)
+            {
+                buyRemoveAdsButton.onClick.RemoveAllListeners();
+                buyRemoveAdsButton.onClick.AddListener(() => IAPManager.Instance.BuyRemoveAds());
+            }
+
+            if (buy100CoinsButton != null)
+            {
+                buy100CoinsButton.onClick.RemoveAllListeners();
+                buy100CoinsButton.onClick.AddListener(() => IAPManager.Instance.BuyCoins100());
+            }
+
+            if (buy500CoinsButton != null)
+            {
+                buy500CoinsButton.onClick.RemoveAllListeners();
+                buy500CoinsButton.onClick.AddListener(() => IAPManager.Instance.BuyCoins500());
             }
 
             // Display booster cost
