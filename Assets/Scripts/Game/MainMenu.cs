@@ -35,7 +35,6 @@ namespace ArrowBlast.UI
         [Header("Level Grid")]
         [SerializeField] private RectTransform levelGrid;
         [SerializeField] private Button levelButtonPrefab;
-        [SerializeField] private Sprite lockedLevelSprite;
         [SerializeField] private Sprite easyLevelSprite;
         [SerializeField] private Sprite mediumLevelSprite;
         [SerializeField] private Sprite hardLevelSprite;
@@ -52,6 +51,7 @@ namespace ArrowBlast.UI
         private ISettingsService settingsManager;
         private IAudioService audioManager;
         private IBoosterInventory boosterInventory;
+        private PanelSelection currentSelection;
 
         // Called by VContainer
         public void Initialize(
@@ -116,20 +116,27 @@ namespace ArrowBlast.UI
 
         public void ShowLevelPanel()
         {
-            levelPanel.SetActive(true);
-            if (shopPanel) shopPanel.SetActive(false);
+            // Only return if we are already in the Home state AND the grid is actually populated
+            if (currentSelection == PanelSelection.Home && levelPanel != null && levelPanel.activeSelf && levelGrid.childCount > 0) return;
 
-            UpdateNavigationVisuals(true);
+            if (levelPanel) levelPanel.SetActive(true);
+            if (shopPanel) shopPanel.SetActive(false);
+            if (settingsPanel) settingsPanel.SetActive(false);
+
+            UpdateNavigationVisuals(PanelSelection.Home);
             UpdateBackgroundForCurrentLevel();
             PopulateLevelGrid();
         }
 
         public void ShowShopPanel()
         {
-            levelPanel.SetActive(false);
-            if (shopPanel) shopPanel.SetActive(true);
+            if (currentSelection == PanelSelection.Shop && shopPanel != null && shopPanel.activeSelf) return;
 
-            UpdateNavigationVisuals(false);
+            if (levelPanel) levelPanel.SetActive(false);
+            if (shopPanel) shopPanel.SetActive(true);
+            if (settingsPanel) settingsPanel.SetActive(false);
+
+            UpdateNavigationVisuals(PanelSelection.Shop);
         }
 
         public void ShowSettingsPanel()
@@ -142,17 +149,42 @@ namespace ArrowBlast.UI
             if (settingsPanel) settingsPanel.SetActive(false);
         }
 
-        private void UpdateNavigationVisuals(bool isAtHome)
+        private enum PanelSelection { Home, Shop, Settings }
+
+        private void UpdateNavigationVisuals(PanelSelection selected)
         {
-            if (homeButton) homeButton.interactable = !isAtHome;
-            if (shopButton) shopButton.interactable = isAtHome;
+            currentSelection = selected;
+            SetButtonState(homeButton, selected == PanelSelection.Home);
+            SetButtonState(shopButton, selected == PanelSelection.Shop);
+            SetButtonState(settingsButton, selected == PanelSelection.Settings);
+        }
+
+        private void SetButtonState(Button btn, bool isActive)
+        {
+            if (btn == null) return;
+
+            // Use Image color alpha to highlight active state without disabling the button
+            // Disabling the button (interactable=false) often triggers a "faded" disabled color in Unity
+            var img = btn.GetComponent<Image>();
+            if (img != null)
+            {
+                Color c = Color.white; // Keep at full white brightness
+                c.a = isActive ? 1.0f : 0.6f; // Use transparency for inactive buttons
+                img.color = c;
+            }
+
+            // Note: We keep interactable = true so it doesn't look gray/faded, 
+            // but we check the current state in ShowPanel methods to avoid redundant clicks.
         }
 
         private void UpdateBackgroundForCurrentLevel()
         {
             if (backgroundImage == null || levelManager == null) return;
 
-            var currentLevel = levelManager.GetCurrentLevel();
+            // Use the highest unlocked level to determine the menu background
+            int progressionIndex = levelManager.GetHighestUnlockedLevel();
+            var currentLevel = levelManager.GetLevel(progressionIndex);
+
             if (currentLevel == null) return;
 
             switch (currentLevel.difficulty)
@@ -207,54 +239,40 @@ namespace ArrowBlast.UI
                 Vector2 currentPos = new Vector2(xPos, yPos);
                 rt.anchoredPosition = currentPos;
 
-                btn.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = (levelIdx + 1).ToString();
+                var textComp = btn.GetComponentInChildren<TMPro.TextMeshProUGUI>();
+                if (textComp != null) textComp.text = (levelIdx + 1).ToString();
 
-                // Check if level is unlocked
-                bool isUnlocked = levelManager.IsLevelUnlocked(levelIdx);
                 var img = btn.GetComponent<UnityEngine.UI.Image>();
+                bool isUnlocked = levelManager.IsLevelUnlocked(levelIdx);
 
-                if (!isUnlocked)
+                // Set sprite based on difficulty regardless of unlock status
+                var levelData = levelManager.GetLevel(levelIdx);
+                if (levelData != null && img != null)
                 {
-                    // Locked level - use locked sprite if available
-                    if (lockedLevelSprite != null)
+                    // Locked icons shouldn't be TOO grey, just a bit desaturated/transparent
+                    img.color = isUnlocked ? Color.white : new Color(0.8f, 0.8f, 0.8f, 0.85f);
+                    switch (levelData.difficulty)
                     {
-                        img.sprite = lockedLevelSprite;
+                        case ArrowBlast.Data.LevelData.Difficulty.Easy:
+                            if (easyLevelSprite != null) img.sprite = easyLevelSprite;
+                            break;
+                        case ArrowBlast.Data.LevelData.Difficulty.Medium:
+                            if (mediumLevelSprite != null) img.sprite = mediumLevelSprite;
+                            break;
+                        case ArrowBlast.Data.LevelData.Difficulty.Hard:
+                            if (hardLevelSprite != null) img.sprite = hardLevelSprite;
+                            break;
                     }
-                    img.color = new Color(0.5f, 0.5f, 0.5f, 0.7f);
-                    btn.interactable = false;
+                }
+
+                if (isUnlocked)
+                {
+                    int index = levelIdx;
+                    btn.onClick.AddListener(() => OnLevelSelected(index));
                 }
                 else
                 {
-                    // Set sprite based on difficulty
-                    var levelData = levelManager.GetLevel(levelIdx);
-                    if (levelData != null)
-                    {
-                        img.color = Color.white; // Reset color to show sprite clearly
-                        switch (levelData.difficulty)
-                        {
-                            case ArrowBlast.Data.LevelData.Difficulty.Easy:
-                                if (easyLevelSprite != null) img.sprite = easyLevelSprite;
-                                break;
-                            case ArrowBlast.Data.LevelData.Difficulty.Medium:
-                                if (mediumLevelSprite != null) img.sprite = mediumLevelSprite;
-                                break;
-                            case ArrowBlast.Data.LevelData.Difficulty.Hard:
-                                if (hardLevelSprite != null) img.sprite = hardLevelSprite;
-                                break;
-                        }
-
-                        // Add a border or highlight if it's the current level
-                        if (i == 0)
-                        {
-                            // Optional: brightening it or add effect?
-                        }
-                    }
-                }
-
-                int index = levelIdx;
-                if (isUnlocked)
-                {
-                    btn.onClick.AddListener(() => OnLevelSelected(index));
+                    btn.interactable = false;
                 }
 
                 if (firstPosSet)

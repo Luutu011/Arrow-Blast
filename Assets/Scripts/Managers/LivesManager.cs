@@ -36,7 +36,6 @@ public class LivesManager : MonoBehaviour, ILivesService
     void LoadHearts()
     {
         currentHearts = PlayerPrefs.GetInt(HEARTS_KEY, MAX_HEARTS);
-
         string lastRegenStr = PlayerPrefs.GetString(LAST_REGEN_KEY, "");
         if (string.IsNullOrEmpty(lastRegenStr))
         {
@@ -46,7 +45,6 @@ public class LivesManager : MonoBehaviour, ILivesService
         else
         {
             lastRegenTime = DateTime.Parse(lastRegenStr);
-
             // Calculate hearts regenerated while offline
             double elapsedSeconds = (DateTime.Now - lastRegenTime).TotalSeconds;
             int heartsToAdd = Mathf.FloorToInt((float)elapsedSeconds / REGEN_SECONDS);
@@ -87,14 +85,12 @@ public class LivesManager : MonoBehaviour, ILivesService
     public void AddHeart(int count)
     {
         currentHearts = Mathf.Min(currentHearts + count, MAX_HEARTS);
-
         // Reset timer when hearts are full
         if (currentHearts >= MAX_HEARTS)
         {
             regenTimer = 0f;
             lastRegenTime = DateTime.Now;
         }
-
         SaveHearts();
     }
 
