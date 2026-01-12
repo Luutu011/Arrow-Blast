@@ -33,13 +33,12 @@ public class LivesManager : MonoBehaviour
         if (currentHearts < MAX_HEARTS)
         {
             regenTimer += Time.deltaTime;
-            
+
             if (regenTimer >= REGEN_SECONDS)
             {
                 AddHeart(1);
                 regenTimer = 0f;
                 lastRegenTime = DateTime.Now;
-                SaveHearts();
             }
         }
     }
@@ -48,7 +47,7 @@ public class LivesManager : MonoBehaviour
     {
         currentHearts = PlayerPrefs.GetInt(HEARTS_KEY, MAX_HEARTS);
         
-        string lastRegenStr = PlayerPrefs.GetString(LAST_REGEN_KEY, "");
+string lastRegenStr = PlayerPrefs.GetString(LAST_REGEN_KEY, "");
         if (string.IsNullOrEmpty(lastRegenStr))
         {
             lastRegenTime = DateTime.Now;
@@ -58,20 +57,20 @@ public class LivesManager : MonoBehaviour
         {
             lastRegenTime = DateTime.Parse(lastRegenStr);
             
-            // Calculate hearts regenerated while offline
+// Calculate hearts regenerated while offline
             double elapsedSeconds = (DateTime.Now - lastRegenTime).TotalSeconds;
             int heartsToAdd = Mathf.FloorToInt((float)elapsedSeconds / REGEN_SECONDS);
             
-            if (heartsToAdd > 0 && currentHearts < MAX_HEARTS)
+if (heartsToAdd > 0 && currentHearts < MAX_HEARTS)
             {
                 AddHeart(heartsToAdd);
             }
             
-            // Set timer to remainder
+// Set timer to remainder
             regenTimer = (float)(elapsedSeconds % REGEN_SECONDS);
         }
         
-        SaveHearts();
+SaveHearts();
     }
 
     void SaveHearts()
@@ -99,14 +98,14 @@ public class LivesManager : MonoBehaviour
     {
         currentHearts = Mathf.Min(currentHearts + count, MAX_HEARTS);
         
-        // Reset timer when hearts are full
+// Reset timer when hearts are full
         if (currentHearts >= MAX_HEARTS)
         {
             regenTimer = 0f;
             lastRegenTime = DateTime.Now;
         }
         
-        SaveHearts();
+SaveHearts();
     }
 
     public int GetCurrentHearts()

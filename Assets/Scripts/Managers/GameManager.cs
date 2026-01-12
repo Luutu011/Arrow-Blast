@@ -20,6 +20,7 @@ namespace ArrowBlast.Managers
         [SerializeField] private Transform projectileContainer;
         [SerializeField] private BoosterUIManager boosterUIManager;
         [SerializeField] private ArrowBlast.UI.MainMenu mainMenu;
+        [SerializeField] private GameObject loadingPanel;
 
         [Header("Prefabs")]
         [SerializeField] private Block blockPrefab;
@@ -45,6 +46,7 @@ namespace ArrowBlast.Managers
 
         private float shootTimer;
         private bool isGameOver;
+        private Coroutine buildRoutine;
 
         // Object Pooling
         private Queue<Block> blockPool = new Queue<Block>();
@@ -77,11 +79,13 @@ namespace ArrowBlast.Managers
             if (boosterInventory == null) boosterInventory = FindObjectOfType<BoosterInventory>();
 
             InitializeSlots();
-            if (slotsContainer != null) slotsContainer.gameObject.SetActive(false); // Hide on start
+            if (slotsContainer != null) slotsContainer.gameObject.SetActive(false);
+            if (loadingPanel != null) loadingPanel.SetActive(false);
+
             if (boosterUIManager != null)
             {
                 boosterUIManager.Initialize(this, coinSystem, boosterInventory);
-                boosterUIManager.SetVisible(false); // Hide boosters on menu
+                boosterUIManager.SetVisible(false);
             }
             // if (levelManager != null) LoadCurrentLevel(); // Removed: Load only from UI
         }
@@ -95,10 +99,9 @@ namespace ArrowBlast.Managers
                 isGameOver = false;
                 extraSlotUsedThisLevel = false;
                 isInstantExitActive = false;
-                // Keep extraSlotsToLoad if it was set by a special restart, 
-                // but reset it if loading normally from menu? 
-                // Actually, ReturnToLevelSelect should reset it.
-                BuildLevel(data);
+
+                if (buildRoutine != null) StopCoroutine(buildRoutine);
+                buildRoutine = StartCoroutine(BuildLevelRoutine(data));
             }
         }
 
@@ -203,16 +206,35 @@ namespace ArrowBlast.Managers
 
         private void BuildLevel(LevelData data)
         {
-            if (slotsContainer != null) slotsContainer.gameObject.SetActive(true); // Show when level starts
-            if (boosterUIManager != null) boosterUIManager.SetVisible(true); // Show boosters when level starts
+            if (buildRoutine != null) StopCoroutine(buildRoutine);
+            buildRoutine = StartCoroutine(BuildLevelRoutine(data));
+        }
 
-            foreach (Transform t in wallContainer) Destroy(t.gameObject);
+        private IEnumerator BuildLevelRoutine(LevelData data)
+        {
+            if (loadingPanel != null) loadingPanel.SetActive(true);
+
+            yield return null;
+
+            if (slotsContainer != null) slotsContainer.gameObject.SetActive(true);
+            if (boosterUIManager != null) boosterUIManager.SetVisible(true);
+
+            // Return active blocks to pool instead of destroying
+            foreach (Transform t in wallContainer)
+            {
+                var b = t.GetComponent<Block>();
+                if (b != null && t.gameObject.activeSelf) ReturnBlockToPool(b);
+                else if (t.gameObject.activeSelf) Destroy(t.gameObject);
+            }
+
             foreach (Transform t in arrowContainer) Destroy(t.gameObject);
-            foreach (Transform t in projectileContainer) Destroy(t.gameObject);
-            blockPool.Clear();
-            projectilePool.Clear();
+            foreach (var p in projectilePool) if (p != null) p.gameObject.SetActive(false);
+
             activeKeys.Clear();
             activeLocks.Clear();
+            InitializeSlots();
+
+            yield return null;
 
             AutoScaler scaler = GetComponent<AutoScaler>();
             if (scaler != null) scaler.UpdateSettings(data.width, VISIBLE_COL_HEIGHT, data.gridCols, data.gridRows, cellSize);
@@ -221,18 +243,20 @@ namespace ArrowBlast.Managers
             wallHeight = ACTIVE_COL_HEIGHT;
             wallGrid = new Block[wallWidth, wallHeight];
 
-            InitializeColumnData(data); // Pre-sort all blocks and keys
+            InitializeColumnData(data);
+            yield return null;
 
             for (int x = 0; x < wallWidth; x++)
             {
-                RefillColumn(x); // Fills up to 12 rows (8 visible + 4 buffer)
+                RefillColumn(x);
+                yield return null;
             }
-
 
             arrowRows = data.gridRows;
             arrowCols = data.gridCols;
             arrowGrid = new Arrow[arrowCols, arrowRows];
 
+            int count = 0;
             foreach (var ad in data.arrows)
             {
                 Arrow a = Instantiate(arrowPrefab, arrowContainer);
@@ -241,17 +265,18 @@ namespace ArrowBlast.Managers
                 var occupied = a.GetOccupiedCells();
                 foreach (var c in occupied)
                     if (IsValidCell(c.x, c.y)) arrowGrid[c.x, c.y] = a;
+
+                count++;
+                if (count % 2 == 0) yield return null;
             }
 
             foreach (var ld in data.locks)
             {
                 LockObstacle l = Instantiate(lockObstaclePrefab, arrowContainer);
-                // Correct multi-cell centering
                 Vector3 basePos = GetArrowWorldPosition(ld.gridX, ld.gridY);
                 float offsetX = (ld.sizeX - 1) * 0.5f * cellSize;
                 float offsetY = (ld.sizeY - 1) * 0.5f * cellSize;
                 l.transform.localPosition = basePos + new Vector3(offsetX, offsetY, -0.49f);
-
                 l.Init(ld.gridX, ld.gridY, ld.sizeX, ld.sizeY, ld.lockId, cellSize);
                 activeLocks.Add(l);
             }
@@ -260,6 +285,10 @@ namespace ArrowBlast.Managers
             {
                 TutorialManager.Instance.CheckTutorials(levelManager.CurrentLevelIndex);
             }
+
+            yield return new WaitForSeconds(0.1f);
+            if (loadingPanel != null) loadingPanel.SetActive(false);
+            buildRoutine = null;
         }
 
         private void InitializeColumnData(LevelData data)
@@ -396,7 +425,7 @@ namespace ArrowBlast.Managers
 
         private void Update()
         {
-            if (isGameOver) return;
+            if (isGameOver || buildRoutine != null) return;
             HandleInput();
             HandleShooting();
             CheckWinCondition();

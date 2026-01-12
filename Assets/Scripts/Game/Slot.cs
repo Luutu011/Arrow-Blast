@@ -35,7 +35,14 @@ namespace ArrowBlast.Game
 
         private void Update()
         {
-            transform.localRotation = Quaternion.Slerp(transform.localRotation, targetRotation, Time.deltaTime * rotationSpeed);
+            if (Quaternion.Angle(transform.localRotation, targetRotation) > 0.01f)
+            {
+                transform.localRotation = Quaternion.Slerp(transform.localRotation, targetRotation, Time.deltaTime * rotationSpeed);
+            }
+            else
+            {
+                transform.localRotation = targetRotation;
+            }
         }
 
         public void RotateToward(Vector3 worldTarget)
