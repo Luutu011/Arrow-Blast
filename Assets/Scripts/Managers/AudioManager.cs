@@ -79,25 +79,31 @@ namespace ArrowBlast.Managers
         [Header("SFX Settings")]
         [SerializeField] private float sfxCooldown = 0.05f; // Minimum time between same SFX
         private System.Collections.Generic.Dictionary<string, float> lastPlayTime = new System.Collections.Generic.Dictionary<string, float>();
+        private System.Collections.Generic.Dictionary<string, AudioClip> sfxCache;
 
         public void PlaySfx(string name)
         {
             if (SettingsManager.Instance != null && !SettingsManager.Instance.SfxEnabled) return;
+
+            if (sfxCache == null)
+            {
+                sfxCache = new System.Collections.Generic.Dictionary<string, AudioClip>();
+                foreach (var s in sfxSounds) if (s != null) sfxCache[s.name] = s.clip;
+            }
 
             if (lastPlayTime.TryGetValue(name, out float lastTime))
             {
                 if (Time.time - lastTime < sfxCooldown) return;
             }
 
-            Sound s = Array.Find(sfxSounds, x => x.name == name);
-            if (s == null)
+            if (sfxCache.TryGetValue(name, out AudioClip clip))
             {
-                Debug.Log("Sound Not Found: " + name);
+                sfxSource.PlayOneShot(clip);
+                lastPlayTime[name] = Time.time;
             }
             else
             {
-                sfxSource.PlayOneShot(s.clip);
-                lastPlayTime[name] = Time.time;
+                Debug.LogWarning("Sound Not Found: " + name);
             }
         }
 

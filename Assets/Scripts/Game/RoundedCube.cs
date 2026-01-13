@@ -5,9 +5,10 @@ namespace ArrowBlast.Game
     [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
     public class RoundedCube : MonoBehaviour
     {
-        public int xSize = 10, ySize = 10, zSize = 10;
+        public int xSize = 4, ySize = 4, zSize = 4;
         public float roundness = 0.15f;
 
+        private static System.Collections.Generic.Dictionary<string, Mesh> _meshPool = new System.Collections.Generic.Dictionary<string, Mesh>();
         private Mesh mesh;
         private Vector3[] vertices;
         private Vector3[] normals;
@@ -19,10 +20,23 @@ namespace ArrowBlast.Game
 
         public void Generate()
         {
-            GetComponent<MeshFilter>().mesh = mesh = new Mesh();
-            mesh.name = "Rounded Cube";
-            CreateVertices();
-            CreateTriangles();
+            string key = $"{xSize}_{ySize}_{zSize}_{roundness}";
+
+            if (_meshPool.ContainsKey(key))
+            {
+                mesh = _meshPool[key];
+                GetComponent<MeshFilter>().sharedMesh = mesh;
+            }
+            else
+            {
+                mesh = new Mesh();
+                mesh.name = $"SharedRoundedCube_{key}";
+                CreateVertices();
+                CreateTriangles();
+                
+_meshPool[key] = mesh;
+                GetComponent<MeshFilter>().sharedMesh = mesh;
+            }
         }
 
         private void CreateVertices()

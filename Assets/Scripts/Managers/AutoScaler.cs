@@ -53,12 +53,10 @@ namespace ArrowBlast.Managers
             if (mainCamera == null) mainCamera = Camera.main;
             if (mainCamera == null) return;
 
-            // Get visible height in world units (for orthographic camera)
+            // Get visible height in world units (for orthographic camera) based on height requirements ONLY
             float visibleHeight = mainCamera.orthographicSize * 2f;
 
             // Calculate total required height for all sections
-            // We only want to reserve space for 8 rows of the wall in the "main" view.
-            // Blocks above this will be off-camera (hidden) and fall down later.
             float visibleWallRows = Mathf.Min(8, wallHeight);
             float wallSectionHeight = visibleWallRows * cellSize;
             float slotSectionHeight = 1.5f; // Slots are roughly 1.5 units tall
@@ -72,59 +70,82 @@ namespace ArrowBlast.Managers
                 visibleHeight = mainCamera.orthographicSize * 2f;
             }
 
-            // Horizontal fit check
-            float requiredWallWidth = wallWidth * cellSize + 1.5f; // +1.5 margin
-            float requiredArrowWidth = arrowWidth * cellSize + 1.5f;
-            float maxRequiredWidth = Mathf.Max(requiredWallWidth, requiredArrowWidth);
+            // Recalculate aspect/width after potential height adjustment
+            float visibleWidth = visibleHeight * mainCamera.aspect;
+            float safeWidth = visibleWidth - 1.0f; // Leave 0.5f margin on each side
 
-            float currentVisibleWidth = visibleHeight * mainCamera.aspect;
-            if (maxRequiredWidth > currentVisibleWidth)
+            // --- Apply Scaling for Width Fit ---
+
+            // 1. Wall Scale
+            float requiredWallWidth = wallWidth * cellSize;
+            float wallScale = 1.0f;
+            if (requiredWallWidth > safeWidth)
             {
-                // Increase orthographicSize to fit the width
-                mainCamera.orthographicSize = (maxRequiredWidth / mainCamera.aspect) / 2f;
-                visibleHeight = mainCamera.orthographicSize * 2f;
-                // Debug.Log($"Camera size adjusted to {mainCamera.orthographicSize} to fit screen width");
+                wallScale = safeWidth / requiredWallWidth;
             }
 
+            // 2. Arrow Scale
+            float requiredArrowWidth = arrowWidth * cellSize;
+            float arrowScale = 1.0f;
+            if (requiredArrowWidth > safeWidth)
+            {
+                arrowScale = safeWidth / requiredArrowWidth;
+            }
+
+            // 3. Slot Scale (Match Wall Scale usually, or max of both to fit? 
+            // Slots usually align with Wall columns. So use wallScale.)
+            float slotScale = wallScale;
+
+
+            // --- Apply Positions & Scales ---
+
             // Calculate positions from top to bottom
-            // Add 10% top padding to avoid front camera/notch
             float topPadding = visibleHeight * 0.1f;
-            float topY = (visibleHeight / 2f) - topPadding - 1f; // Start from top with padding and margin
+            float topY = (visibleHeight / 2f) - topPadding - 1f;
 
-            // Wall at top (Bottom-anchored logic: container is at bottom of wall section, blocks grow up)
-            // So we place container such that TOP of blocks aligns with topY
-            // Blocks go from 0 to wallSectionHeight. So containerY = topY - wallSectionHeight.
-            float wallY = topY - wallSectionHeight;
+            // Wall at top
+            // Scale affects visual height, but blocks are children. 
+            // Note: wallContainer position is usually the BOTTOM or CENTER of the wall?
+            // "wallContainer.position = new Vector3(0, wallY, 0);" and earlier comments: 
+            // "container is at bottom of wall section... blocks go from 0 to wallSectionHeight... containerY = topY - wallSectionHeight"
+            // If we scale the container, the effective height shrinks too: wallSectionHeight * wallScale.
 
-            // Slots in middle
-            // Slots should be below wall container.
-            // Wall container is at the bottom of the wall blocks.
-            // So slots should be below that by padding.
-            float slotsY = wallY - padding - (slotSectionHeight / 2f);
+            float scaledWallHeight = wallSectionHeight * wallScale;
+            float wallY = topY - scaledWallHeight;
 
-            // Arrows at bottom
-            float arrowY = slotsY - (slotSectionHeight / 2f) - padding - (arrowSectionHeight / 2f);
+            float scaledSlotHeight = slotSectionHeight * slotScale;
+            float slotsY = wallY - padding - (scaledSlotHeight / 2f); // Center slots in their reserved band
 
-            // Apply positions
+            float scaledArrowHeight = arrowSectionHeight * arrowScale;
+            // Place arrows: slotsY is center of slots.
+            // Arrow top should be below slots bottom? Or padding?
+            // "slotsY - (slotSectionHeight / 2f) - padding - (arrowSectionHeight / 2f)" was old logic (centering arrows in their band).
+            // Let's stick to placing top of arrows below slots.
+            // Arrow container pivot? Assuming it's centered Y? 
+            // The old logic `arrowY = slotsY - ... - (arrowSectionHeight/2f)` implies arrowContainer pivot is center Y.
+            // Let's preserve that logic but use scaled heights.
+            float arrowY = slotsY - (scaledSlotHeight / 2f) - padding - (scaledArrowHeight / 2f);
+
+
             if (wallContainer != null)
             {
+                wallContainer.localScale = Vector3.one * wallScale;
                 wallContainer.position = new Vector3(0, wallY, 0);
-                // Debug.Log($"Wall positioned at Y: {wallY}");
             }
 
             if (slotsContainer != null)
             {
+                slotsContainer.localScale = Vector3.one * slotScale;
                 slotsContainer.position = new Vector3(0, slotsY, 0);
-                // Debug.Log($"Slots positioned at Y: {slotsY}");
             }
 
             if (arrowContainer != null)
             {
+                arrowContainer.localScale = Vector3.one * arrowScale;
                 arrowContainer.position = new Vector3(0, arrowY, 0);
-                // Debug.Log($"Arrows positioned at Y: {arrowY}");
             }
 
-            // Debug.Log($"AutoScaler: Screen {Screen.width}x{Screen.height}, Visible height: {visibleHeight}, Required: {totalRequiredHeight}, Top padding: {topPadding}");
+            // Debug.Log($"AutoScaler: Wall Scale {wallScale:F2}, Arrow Scale {arrowScale:F2}");
         }
 
         // Call this when screen orientation or resolution changes

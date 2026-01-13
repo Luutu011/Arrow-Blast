@@ -333,7 +333,6 @@ namespace ArrowBlast.Managers
                 {
                     Block b = GetBlockFromPool();
                     b.Init((BlockColor)bd.colorIndex, x, currentItems, bd.isTwoColor, (BlockColor)bd.secondaryColorIndex);
-                    // Start from above the visible area
                     b.transform.localPosition = GetWallWorldPosition(x, ACTIVE_COL_HEIGHT);
                     wallGrid[x, currentItems] = b;
                     b.UpdateGridPosition(x, currentItems, GetWallWorldPosition(x, currentItems));
@@ -428,7 +427,6 @@ namespace ArrowBlast.Managers
             if (isGameOver || buildRoutine != null) return;
             HandleInput();
             HandleShooting();
-            CheckWinCondition();
         }
 
         private void HandleInput()
@@ -618,16 +616,12 @@ namespace ArrowBlast.Managers
                             if (willBeDestroyed) wallGrid[x, y] = null;
 
                             Projectile proj = GetProjectileFromPool();
-                            // Avoid enum boxing in string conversion
                             proj.name = "Projectile_" + (int)color;
                             proj.transform.position = slot.transform.position;
                             proj.transform.localScale = Vector3.one * 0.4f;
 
-                            // Optimized: Passing method groups instead of creating a lambda () => { ... }
-                            // This prevents per-bullet memory allocations.
                             proj.Initialize(color, b, targetX, targetY, willBeDestroyed, OnProjectileHit, ReturnProjectileToPool);
 
-                            // Slow travel speed even more as requested by USER earlier
                             float distance = Vector3.Distance(slot.transform.position, targetPos);
                             float duration = distance / projectileSpeed;
                             proj.Launch(targetPos, duration);
@@ -824,12 +818,26 @@ namespace ArrowBlast.Managers
             wallGrid = null;
             arrowGrid = null;
 
-            // Clear current game state
-            foreach (Transform t in wallContainer) Destroy(t.gameObject);
+            foreach (Transform t in wallContainer)
+            {
+                var b = t.GetComponent<Block>();
+                if (b != null && t.gameObject.activeSelf)
+                {
+                    ReturnBlockToPool(b);
+                }
+                else if (t.gameObject.activeSelf)
+                {
+                    Destroy(t.gameObject);
+                }
+            }
+
             foreach (Transform t in arrowContainer) Destroy(t.gameObject);
-            foreach (Transform t in projectileContainer) Destroy(t.gameObject);
-            blockPool.Clear();
-            projectilePool.Clear();
+
+            foreach (var p in projectilePool)
+            {
+                if (p != null) p.gameObject.SetActive(false);
+            }
+
             foreach (var s in slots) s.ClearSlot();
 
             if (slotsContainer != null) slotsContainer.gameObject.SetActive(false);

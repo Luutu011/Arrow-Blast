@@ -20,6 +20,7 @@ namespace ArrowBlast.Managers
             {
                 Instance = this;
                 DontDestroyOnLoad(gameObject);
+                Application.targetFrameRate = 30;
                 LoadSettings();
             }
             else
