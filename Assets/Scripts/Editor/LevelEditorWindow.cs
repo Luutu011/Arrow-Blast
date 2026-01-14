@@ -277,7 +277,7 @@ namespace ArrowBlast.Editor
                     Color drawColor = Color.gray;
                     if (key != null)
                     {
-                        drawColor = new Color(1f, 0.84f, 0f); // Gold for Key
+                        drawColor = GetColorFromEnum(selectedColor);
                     }
                     else if (block != null)
                     {
@@ -1460,7 +1460,7 @@ namespace ArrowBlast.Editor
             float startX = 20f;
             float startY = GUILayoutUtility.GetRect(0, cellSize * currentLevelData.height + 20).y + 10;
             Rect bgRect = new Rect(startX, startY, currentLevelData.width * cellSize, currentLevelData.height * cellSize);
-            EditorGUI.DrawRect(bgRect, new Color(0.2f, 0.2f, 0.2f));
+            EditorGUI.DrawRect(bgRect, new Color(0.2f, 0.2f, 0.2f, 0.5f));
 
             for (int y = currentLevelData.height - 1; y >= 0; y--)
             {
@@ -1485,7 +1485,7 @@ namespace ArrowBlast.Editor
                         Event.current.Use();
                     }
 
-                    EditorGUI.DrawRect(cellRect, key != null ? new Color(1f, 0.84f, 0f) : new Color(0.3f, 0.3f, 0.3f));
+                    EditorGUI.DrawRect(cellRect, key != null ? GetColorFromEnum(selectedColor) : new Color(0.3f, 0.3f, 0.3f));
                     if (key != null) GUI.Label(cellRect, key.lockId.ToString(), new GUIStyle(EditorStyles.miniBoldLabel) { alignment = TextAnchor.MiddleCenter });
                 }
             }
