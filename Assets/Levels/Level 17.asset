@@ -1826,7 +1826,7 @@ MonoBehaviour:
     segments:
     - {x: 2, y: 0}
   - colorIndex: 4
-    direction: 1
+    direction: 0
     length: 1
     gridX: 2
     gridY: 1
