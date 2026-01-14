@@ -32,8 +32,8 @@ namespace ArrowBlast.Managers
 
         [Header("Settings")]
         [SerializeField] private float cellSize = 0.8f;
-        [SerializeField] private float fireRate = 0.5f;
-        [SerializeField] private float projectileSpeed = 3f;
+        [SerializeField] private float fireRate = 0.65f;
+        [SerializeField] private float projectileSpeed = 2.5f;
 
         // Runtime Data
         private Block[,] wallGrid;
@@ -59,6 +59,7 @@ namespace ArrowBlast.Managers
         private bool isInstantExitActive;
         private bool extraSlotUsedThisLevel;
         private int extraSlotsToLoad = 0;
+        private Camera mainCamera;
 
         public void RestartLevel()
         {
@@ -67,10 +68,11 @@ namespace ArrowBlast.Managers
 
         private void Start()
         {
-            if (Camera.main != null)
+            mainCamera = Camera.main;
+            if (mainCamera != null)
             {
-                Camera.main.clearFlags = CameraClearFlags.SolidColor;
-                Camera.main.backgroundColor = GamePalette.Background;
+                mainCamera.clearFlags = CameraClearFlags.SolidColor;
+                mainCamera.backgroundColor = GamePalette.Background;
             }
 
             // Auto-find dependencies if not assigned
@@ -322,7 +324,11 @@ namespace ArrowBlast.Managers
             {
                 if (wallGrid[x, k] != null) currentItems++;
             }
-            currentItems += activeKeys.FindAll(k => k.GridX == x).Count;
+
+            for (int i = 0; i < activeKeys.Count; i++)
+            {
+                if (activeKeys[i].GridX == x) currentItems++;
+            }
 
             while (currentItems < ACTIVE_COL_HEIGHT && columnData[x].Count > 0)
             {
@@ -460,7 +466,7 @@ namespace ArrowBlast.Managers
                     }
                 }
 
-                Ray ray = Camera.main.ScreenPointToRay(inputPosition);
+                Ray ray = mainCamera.ScreenPointToRay(inputPosition);
                 if (Physics.Raycast(ray, out RaycastHit hit, 1000f))
                 {
                     Arrow arrow = hit.collider.GetComponent<Arrow>();
@@ -601,7 +607,7 @@ namespace ArrowBlast.Managers
                 for (int y = 0; y < wallHeight; y++)
                 {
                     Block b = wallGrid[x, y];
-                    if (b != null && !b.IsTargeted) // Only target non-targeted blocks
+                    if (b != null && !b.IsTargeted && b.AnimationProgress >= 0.5f) // Only target non-targeted blocks that have partially settled
                     {
                         if (b.Color == color)
                         {
@@ -616,7 +622,6 @@ namespace ArrowBlast.Managers
                             if (willBeDestroyed) wallGrid[x, y] = null;
 
                             Projectile proj = GetProjectileFromPool();
-                            proj.name = "Projectile_" + (int)color;
                             proj.transform.position = slot.transform.position;
                             proj.transform.localScale = Vector3.one * 0.4f;
 

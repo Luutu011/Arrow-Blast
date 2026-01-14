@@ -98,6 +98,7 @@ namespace ArrowBlast.UI
 
         public void ShowLevelPanel()
         {
+            AudioManager.Instance.TriggerHaptic(Solo.MOST_IN_ONE.MOST_HapticFeedback.HapticTypes.SoftImpact);
             // Only return if we are already in the Home state AND the grid is actually populated
             if (currentSelection == PanelSelection.Home && levelPanel != null && levelPanel.activeSelf && levelGrid.childCount > 0) return;
 
@@ -112,6 +113,7 @@ namespace ArrowBlast.UI
 
         public void ShowShopPanel()
         {
+            AudioManager.Instance.TriggerHaptic(Solo.MOST_IN_ONE.MOST_HapticFeedback.HapticTypes.SoftImpact);
             if (currentSelection == PanelSelection.Shop && shopPanel != null && shopPanel.activeSelf) return;
 
             if (levelPanel) levelPanel.SetActive(false);
@@ -123,11 +125,13 @@ namespace ArrowBlast.UI
 
         public void ShowSettingsPanel()
         {
+            AudioManager.Instance.TriggerHaptic(Solo.MOST_IN_ONE.MOST_HapticFeedback.HapticTypes.SoftImpact);
             if (settingsPanel) settingsPanel.SetActive(true);
         }
 
         public void HideSettingsPanel()
         {
+            AudioManager.Instance.TriggerHaptic(Solo.MOST_IN_ONE.MOST_HapticFeedback.HapticTypes.SoftImpact);
             if (settingsPanel) settingsPanel.SetActive(false);
         }
 
@@ -310,6 +314,7 @@ namespace ArrowBlast.UI
 
         private void OnLevelSelected(int index)
         {
+            AudioManager.Instance.TriggerHaptic(Solo.MOST_IN_ONE.MOST_HapticFeedback.HapticTypes.SoftImpact);
             if (levelManager != null && gameManager != null)
             {
                 levelManager.SetLevelIndex(index);
@@ -322,6 +327,7 @@ namespace ArrowBlast.UI
 
         public void ExitGame()
         {
+            AudioManager.Instance.TriggerHaptic(Solo.MOST_IN_ONE.MOST_HapticFeedback.HapticTypes.SoftImpact);
             Debug.Log("Exiting Game...");
             Application.Quit();
         }

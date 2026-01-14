@@ -215,6 +215,7 @@ namespace ArrowBlast.Managers
 
         private void OnBoosterButtonClicked(BoosterType type)
         {
+            AudioManager.Instance.TriggerHaptic(Solo.MOST_IN_ONE.MOST_HapticFeedback.HapticTypes.SoftImpact);
             if (boosterInventory == null) return;
 
             // Check if player has the booster
@@ -263,6 +264,7 @@ namespace ArrowBlast.Managers
 
         private void OnConfirmPurchase()
         {
+            AudioManager.Instance.TriggerHaptic(Solo.MOST_IN_ONE.MOST_HapticFeedback.HapticTypes.SoftImpact);
             ShopManager shopManager = FindObjectOfType<ShopManager>();
             if (shopManager != null)
             {
@@ -287,6 +289,7 @@ namespace ArrowBlast.Managers
 
         private void OnCancelPurchase()
         {
+            AudioManager.Instance.TriggerHaptic(Solo.MOST_IN_ONE.MOST_HapticFeedback.HapticTypes.SoftImpact);
             if (purchasePromptPanel != null)
             {
                 purchasePromptPanel.SetActive(false);

@@ -113,6 +113,7 @@ namespace ArrowBlast.Managers
 
         public void HideTutorial()
         {
+            AudioManager.Instance.TriggerHaptic(Solo.MOST_IN_ONE.MOST_HapticFeedback.HapticTypes.SoftImpact);
             if (tutorialPanel != null)
                 tutorialPanel.SetActive(false);
         }

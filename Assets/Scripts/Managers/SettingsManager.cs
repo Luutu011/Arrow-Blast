@@ -1,4 +1,5 @@
 using UnityEngine;
+using Solo.MOST_IN_ONE;
 
 namespace ArrowBlast.Managers
 {
@@ -34,10 +35,12 @@ namespace ArrowBlast.Managers
             SfxEnabled = PlayerPrefs.GetInt(SFX_KEY, 1) == 1;
             MusicEnabled = PlayerPrefs.GetInt(MUSIC_KEY, 1) == 1;
             HapticEnabled = PlayerPrefs.GetInt(HAPTIC_KEY, 1) == 1;
+            MOST_HapticFeedback.HapticsEnabled = HapticEnabled;
         }
 
         public void SetSfx(bool enabled)
         {
+            AudioManager.Instance.TriggerHaptic(MOST_HapticFeedback.HapticTypes.SoftImpact);
             SfxEnabled = enabled;
             PlayerPrefs.SetInt(SFX_KEY, enabled ? 1 : 0);
             PlayerPrefs.Save();
@@ -46,6 +49,7 @@ namespace ArrowBlast.Managers
 
         public void SetMusic(bool enabled)
         {
+            AudioManager.Instance.TriggerHaptic(MOST_HapticFeedback.HapticTypes.SoftImpact);
             MusicEnabled = enabled;
             PlayerPrefs.SetInt(MUSIC_KEY, enabled ? 1 : 0);
             PlayerPrefs.Save();
@@ -54,9 +58,11 @@ namespace ArrowBlast.Managers
 
         public void SetHaptic(bool enabled)
         {
+            AudioManager.Instance.TriggerHaptic(MOST_HapticFeedback.HapticTypes.SoftImpact);
             HapticEnabled = enabled;
             PlayerPrefs.SetInt(HAPTIC_KEY, enabled ? 1 : 0);
             PlayerPrefs.Save();
+            MOST_HapticFeedback.HapticsEnabled = enabled;
         }
     }
 }

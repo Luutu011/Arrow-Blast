@@ -12,30 +12,47 @@ namespace ArrowBlast.Game
         private Mesh mesh;
         private Vector3[] vertices;
         private Vector3[] normals;
+        private MeshFilter _meshFilter;
 
         private void Awake()
         {
+            _meshFilter = GetComponent<MeshFilter>();
             Generate();
+        }
+
+        private void OnEnable()
+        {
+            if (_meshFilter == null) _meshFilter = GetComponent<MeshFilter>();
+
+            // For pooled objects, ensure mesh is assigned and valid
+            if (_meshFilter.sharedMesh == null)
+            {
+                Generate();
+            }
         }
 
         public void Generate()
         {
             string key = $"{xSize}_{ySize}_{zSize}_{roundness}";
 
-            if (_meshPool.ContainsKey(key))
+            if (_meshFilter == null) _meshFilter = GetComponent<MeshFilter>();
+
+            // Check if mesh exists and is valid (not destroyed by scene unload)
+            if (_meshPool.TryGetValue(key, out Mesh pooledMesh) && pooledMesh != null)
             {
-                mesh = _meshPool[key];
-                GetComponent<MeshFilter>().sharedMesh = mesh;
+                mesh = pooledMesh;
+                _meshFilter.sharedMesh = mesh;
             }
             else
             {
                 mesh = new Mesh();
                 mesh.name = $"SharedRoundedCube_{key}";
+                mesh.hideFlags = HideFlags.DontSaveInEditor | HideFlags.DontSaveInBuild; // Help preventing leaks
                 CreateVertices();
                 CreateTriangles();
-                
-_meshPool[key] = mesh;
-                GetComponent<MeshFilter>().sharedMesh = mesh;
+
+                _meshPool[key] = mesh;
+                _meshFilter.sharedMesh = mesh;
             }
         }
 

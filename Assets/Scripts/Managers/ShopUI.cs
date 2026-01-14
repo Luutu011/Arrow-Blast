@@ -69,23 +69,31 @@ namespace ArrowBlast.Managers
                 buyExtraSlotButton.onClick.AddListener(() => OnPurchaseBooster(BoosterType.ExtraSlot));
             }
 
-            // Setup IAP buttons
             if (buyRemoveAdsButton != null)
             {
                 buyRemoveAdsButton.onClick.RemoveAllListeners();
-                buyRemoveAdsButton.onClick.AddListener(() => IAPManager.Instance.BuyRemoveAds());
+                buyRemoveAdsButton.onClick.AddListener(() => {
+                    AudioManager.Instance.TriggerHaptic(Solo.MOST_IN_ONE.MOST_HapticFeedback.HapticTypes.SoftImpact);
+                    IAPManager.Instance.BuyRemoveAds();
+                });
             }
 
             if (buy100CoinsButton != null)
             {
                 buy100CoinsButton.onClick.RemoveAllListeners();
-                buy100CoinsButton.onClick.AddListener(() => IAPManager.Instance.BuyCoins100());
+                buy100CoinsButton.onClick.AddListener(() => {
+                    AudioManager.Instance.TriggerHaptic(Solo.MOST_IN_ONE.MOST_HapticFeedback.HapticTypes.SoftImpact);
+                    IAPManager.Instance.BuyCoins100();
+                });
             }
 
             if (buy500CoinsButton != null)
             {
                 buy500CoinsButton.onClick.RemoveAllListeners();
-                buy500CoinsButton.onClick.AddListener(() => IAPManager.Instance.BuyCoins500());
+                buy500CoinsButton.onClick.AddListener(() => {
+                    AudioManager.Instance.TriggerHaptic(Solo.MOST_IN_ONE.MOST_HapticFeedback.HapticTypes.SoftImpact);
+                    IAPManager.Instance.BuyCoins500();
+                });
             }
 
             // Display booster cost
@@ -196,6 +204,7 @@ namespace ArrowBlast.Managers
 
         private void OnPurchaseBooster(BoosterType type)
         {
+            AudioManager.Instance.TriggerHaptic(Solo.MOST_IN_ONE.MOST_HapticFeedback.HapticTypes.SoftImpact);
             if (shopManager == null)
             {
                 ShowFeedback("Shop unavailable!", false);

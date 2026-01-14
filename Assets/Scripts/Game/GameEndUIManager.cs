@@ -50,7 +50,7 @@ namespace ArrowBlast.UI
         {
             lastEarnedCoins = earnedCoins;
             if (winCoinText) winCoinText.text = "+" + earnedCoins;
-            
+
             winPanel.SetActive(true);
             winPanel.transform.localScale = Vector3.zero;
             winPanel.transform.DOScale(Vector3.one, 0.5f).SetEase(Ease.OutBack);
@@ -67,6 +67,7 @@ namespace ArrowBlast.UI
 
         private void OnWinDoubleCoinsClicked()
         {
+            AudioManager.Instance.TriggerHaptic(Solo.MOST_IN_ONE.MOST_HapticFeedback.HapticTypes.SoftImpact);
             AdsManager.Instance.ShowRewardedAd(() =>
             {
                 if (coinSystem != null)
@@ -80,6 +81,7 @@ namespace ArrowBlast.UI
 
         private void OnLoseRestartWithExtraClicked()
         {
+            AudioManager.Instance.TriggerHaptic(Solo.MOST_IN_ONE.MOST_HapticFeedback.HapticTypes.SoftImpact);
             AdsManager.Instance.ShowRewardedAd(() =>
             {
                 losePanel.SetActive(false);
@@ -92,6 +94,7 @@ namespace ArrowBlast.UI
 
         private void OnHomeClicked()
         {
+            AudioManager.Instance.TriggerHaptic(Solo.MOST_IN_ONE.MOST_HapticFeedback.HapticTypes.SoftImpact);
             winPanel.SetActive(false);
             losePanel.SetActive(false);
             if (gameManager != null)

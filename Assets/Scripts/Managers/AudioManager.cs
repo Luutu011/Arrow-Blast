@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using Solo.MOST_IN_ONE;
 
 [System.Serializable]
 public class Sound
@@ -77,7 +78,7 @@ namespace ArrowBlast.Managers
         }
 
         [Header("SFX Settings")]
-        [SerializeField] private float sfxCooldown = 0.05f; // Minimum time between same SFX
+        [SerializeField] private float sfxCooldown = 0.05f;
         private System.Collections.Generic.Dictionary<string, float> lastPlayTime = new System.Collections.Generic.Dictionary<string, float>();
         private System.Collections.Generic.Dictionary<string, AudioClip> sfxCache;
 
@@ -107,13 +108,13 @@ namespace ArrowBlast.Managers
             }
         }
 
-        public void TriggerHaptic()
+        private const float HAPTIC_COOLDOWN = 0.05f;
+
+        public void TriggerHaptic(MOST_HapticFeedback.HapticTypes type = MOST_HapticFeedback.HapticTypes.LightImpact)
         {
             if (SettingsManager.Instance != null && SettingsManager.Instance.HapticEnabled)
             {
-#if UNITY_ANDROID || UNITY_IOS
-            Handheld.Vibrate(); // Default Unity vibration
-#endif
+                MOST_HapticFeedback.GenerateWithCooldown(type, HAPTIC_COOLDOWN);
             }
         }
     }

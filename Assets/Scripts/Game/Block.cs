@@ -109,12 +109,15 @@ namespace ArrowBlast.Game
             UpdateVisuals();
         }
 
+        public float AnimationProgress { get; private set; } = 1f;
+
         public void UpdateGridPosition(int x, int y, Vector3 targetWorldPosition)
         {
             GridX = x;
             GridY = y;
 
             // 2D-style fall animation - only changes Y position
+            StopAllCoroutines(); // Ensure no overlapping fall animations
             StartCoroutine(AnimateToPosition(targetWorldPosition, 0.3f));
         }
 
@@ -122,11 +125,13 @@ namespace ArrowBlast.Game
         {
             Vector3 start = transform.localPosition;
             float elapsed = 0;
+            AnimationProgress = 0;
 
             while (elapsed < duration)
             {
                 elapsed += Time.deltaTime;
-                float t = Mathf.Clamp01(elapsed / duration);
+                AnimationProgress = Mathf.Clamp01(elapsed / duration);
+                float t = AnimationProgress;
 
                 // Ease out for bounce effect
                 t = 1f - Mathf.Pow(1f - t, 3f);
@@ -136,6 +141,7 @@ namespace ArrowBlast.Game
             }
 
             transform.localPosition = target;
+            AnimationProgress = 1f;
         }
 
         private void Awake()
