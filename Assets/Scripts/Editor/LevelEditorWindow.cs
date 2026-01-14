@@ -275,11 +275,9 @@ namespace ArrowBlast.Editor
                     KeyData key = currentLevelData.keys.Find(k => k.gridX == x && k.gridY == y);
                     
                     Color drawColor = Color.gray;
-                    if (key != null)
-                    {
-                        drawColor = GetColorFromEnum(selectedColor);
-                    }
-                    else if (block != null)
+                    // Draw block color if present. Keys no longer change block color;
+                    // keys will be drawn with a yellow border (keeps label K:lockId).
+                    if (block != null)
                     {
                         drawColor = GetColorFromEnum((BlockColor)block.colorIndex);
                     }
@@ -300,11 +298,7 @@ namespace ArrowBlast.Editor
                         {
                             if (isKeyMode)
                             {
-                                // Remove block if exists
-                                var existingBlock = currentLevelData.blocks.Find(b => b.gridX == x && b.gridY == y);
-                                if (existingBlock != null) currentLevelData.blocks.Remove(existingBlock);
-                                
-                                // Add/Update Key
+                                // Add/Update Key without removing any existing block color
                                 if (key == null) currentLevelData.keys.Add(new KeyData { gridX = x, gridY = y, lockId = selectedLockId });
                                 else key.lockId = selectedLockId;
                             }
@@ -339,8 +333,14 @@ namespace ArrowBlast.Editor
                     }
 
                     EditorGUI.DrawRect(cellRect, drawColor);
+
                     if (key != null)
                     {
+                        // Draw a yellow border around the cell to indicate a key (consistent with locks in Arrow editor)
+                        Rect borderRect = new Rect(cellRect.x - 1, cellRect.y - 1, cellRect.width + 2, cellRect.height + 2);
+                        Handles.color = Color.yellow;
+                        Handles.DrawSolidRectangleWithOutline(borderRect, new Color(1f, 1f, 0f, 0f), Color.yellow);
+
                         GUI.Label(cellRect, $"K:{key.lockId}", new GUIStyle(EditorStyles.miniBoldLabel) { alignment = TextAnchor.MiddleCenter });
                     }
                     else if (block != null && block.isTwoColor)
