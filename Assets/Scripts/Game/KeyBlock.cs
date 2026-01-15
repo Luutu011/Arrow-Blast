@@ -1,140 +1,48 @@
 using UnityEngine;
-using System.Collections.Generic;
 using ArrowBlast.Core;
 
 namespace ArrowBlast.Game
 {
     /// <summary>
-    /// Key Block that appears in the top grid (arrow grid)
-    /// Falls down when blocks beneath it are removed
-    /// Unlocks associated LockObstacle when it reaches the bottom grid
+    /// Key Block is a special block that unlocks a LockObstacle when destroyed.
+    /// It behaves like a normal block but holds a LockId.
     /// </summary>
-    public class KeyBlock : MonoBehaviour
+    public class KeyBlock : Block
     {
-        public int GridX { get; private set; }
-        public int GridY { get; private set; }
-        public int LockId { get; private set; } // ID to match with LockObstacle
+        public int LockId { get; private set; }
 
-        [SerializeField] private MeshRenderer meshRenderer;
-        [SerializeField] private Color keyColor = new Color(1f, 0.84f, 0f); // Gold color
-
-        private bool isFalling = false;
-        private bool hasUnlocked = false;
-        private MaterialPropertyBlock _propBlock;
-
-        private void Awake()
+        public void Init(BlockColor color, int x, int y, int lockId, bool isTwoColor = false, BlockColor secondaryColor = BlockColor.Red)
         {
-            _propBlock = new MaterialPropertyBlock();
-        }
-
-        public void Init(int x, int y, int lockId)
-        {
-            GridX = x;
-            GridY = y;
             LockId = lockId;
-            transform.localScale = Vector3.one;
-            UpdateVisuals();
+            base.Init(color, x, y, isTwoColor, secondaryColor);
         }
 
-        public void UpdateGridPosition(int x, int y, Vector3 targetWorldPosition)
+        protected override void UpdateVisuals()
         {
-            GridX = x;
-            GridY = y;
-
-            // Animate fall to new position
-            if (!isFalling)
-            {
-                StartCoroutine(AnimateToPosition(targetWorldPosition, 0.3f));
-            }
+            base.UpdateVisuals();
         }
 
-        private System.Collections.IEnumerator AnimateToPosition(Vector3 target, float duration)
+        public System.Collections.IEnumerator AnimateFlyToTarget(Vector3 targetPos, float duration)
         {
-            isFalling = true;
-            Vector3 start = transform.localPosition;
+            Vector3 startPos = transform.position;
+            Vector3 startScale = transform.localScale;
             float elapsed = 0;
 
             while (elapsed < duration)
             {
                 elapsed += Time.deltaTime;
-                float t = Mathf.Clamp01(elapsed / duration);
+                float t = elapsed / duration;
 
-                // Ease out for bounce effect
-                t = 1f - Mathf.Pow(1f - t, 3f);
+                // Ease In Cubic for "taking off" feel or just smooth lerp
+                float smoothT = t * t * (3f - 2f * t);
 
-                transform.localPosition = Vector3.Lerp(start, target, t);
+                transform.position = Vector3.Lerp(startPos, targetPos, smoothT);
+                transform.localScale = Vector3.Lerp(startScale, startScale * 1.2f, Mathf.Sin(t * Mathf.PI));
+
                 yield return null;
             }
 
-            transform.localPosition = target;
-            isFalling = false;
-        }
-
-        public System.Collections.IEnumerator AnimateUnlock()
-        {
-            if (hasUnlocked) yield break;
-            hasUnlocked = true;
-
-            float elapsed = 0;
-            float duration = 0.4f;
-            Vector3 startScale = transform.localScale;
-            Vector3 targetScale = Vector3.one * 1.5f;
-
-            // Pulse effect
-            while (elapsed < duration / 2f)
-            {
-                elapsed += Time.deltaTime;
-                float t = elapsed / (duration / 2f);
-                transform.localScale = Vector3.Lerp(startScale, targetScale, t);
-                yield return null;
-            }
-
-            // Shrink and disappear
-            elapsed = 0;
-            while (elapsed < duration / 2f)
-            {
-                elapsed += Time.deltaTime;
-                float t = elapsed / (duration / 2f);
-                transform.localScale = Vector3.Lerp(targetScale, Vector3.zero, t);
-                yield return null;
-            }
-
-            transform.localScale = Vector3.zero;
-        }
-
-        private void UpdateVisuals()
-        {
-            if (meshRenderer != null)
-            {
-                if (_propBlock == null) _propBlock = new MaterialPropertyBlock();
-                meshRenderer.GetPropertyBlock(_propBlock);
-                _propBlock.SetColor("_Color", keyColor);
-                _propBlock.SetColor("_BaseColor", keyColor);
-                meshRenderer.SetPropertyBlock(_propBlock);
-            }
-
-            // Ensure collider is present for clicking/interaction if needed
-            BoxCollider col = GetComponent<BoxCollider>();
-            if (col == null)
-            {
-                col = gameObject.AddComponent<BoxCollider>();
-            }
-            col.enabled = true;
-        }
-
-        public bool CanFall(int arrowRows, System.Func<int, int, bool> isArrowGridCellOccupied)
-        {
-            // Key can fall if the cell below it in the arrow grid is empty
-            // or if it's at the bottom of the arrow grid
-            if (GridY <= 0) return false; // Already at bottom
-
-            int cellBelow = GridY - 1;
-            return !isArrowGridCellOccupied(GridX, cellBelow);
-        }
-
-        public bool HasReachedBottom(int bottomY)
-        {
-            return GridY <= bottomY;
+            transform.position = targetPos;
         }
     }
 }

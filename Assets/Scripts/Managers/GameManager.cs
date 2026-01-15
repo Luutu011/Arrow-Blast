@@ -39,7 +39,6 @@ namespace ArrowBlast.Managers
         private Block[,] wallGrid;
         private Arrow[,] arrowGrid;
         private List<Slot> slots = new List<Slot>();
-        private List<KeyBlock> activeKeys = new List<KeyBlock>();
         private List<LockObstacle> activeLocks = new List<LockObstacle>();
         private int wallWidth, wallHeight;
         private int arrowRows, arrowCols;
@@ -50,6 +49,7 @@ namespace ArrowBlast.Managers
 
         // Object Pooling
         private Queue<Block> blockPool = new Queue<Block>();
+        private Queue<KeyBlock> keyBlockPool = new Queue<KeyBlock>();
         [SerializeField] private List<Projectile> projectilePool = new List<Projectile>();
         private List<object>[] columnData;
         private const int ACTIVE_COL_HEIGHT = 12;
@@ -232,7 +232,6 @@ namespace ArrowBlast.Managers
             foreach (Transform t in arrowContainer) Destroy(t.gameObject);
             foreach (var p in projectilePool) if (p != null) p.gameObject.SetActive(false);
 
-            activeKeys.Clear();
             activeLocks.Clear();
             InitializeSlots();
 
@@ -300,20 +299,21 @@ namespace ArrowBlast.Managers
 
             List<object> all = new List<object>();
             foreach (var b in data.blocks) all.Add(b);
-            foreach (var k in data.keys) all.Add(k);
 
             // Sort by gridY so lowest fall in first
             all.Sort((a, b) =>
             {
-                int ya = (a is BlockData ba) ? ba.gridY : ((KeyData)a).gridY;
-                int yb = (b is BlockData bb) ? bb.gridY : ((KeyData)b).gridY;
+                int ya = (a is BlockData ba) ? ba.gridY : 0;
+                int yb = (b is BlockData bb) ? bb.gridY : 0;
                 return ya.CompareTo(yb);
             });
 
             foreach (var item in all)
             {
-                int x = (item is BlockData ba) ? ba.gridX : ((KeyData)item).gridX;
-                if (x >= 0 && x < wallWidth) columnData[x].Add(item);
+                if (item is BlockData bd)
+                {
+                    if (bd.gridX >= 0 && bd.gridX < wallWidth) columnData[bd.gridX].Add(bd);
+                }
             }
         }
 
@@ -325,33 +325,26 @@ namespace ArrowBlast.Managers
                 if (wallGrid[x, k] != null) currentItems++;
             }
 
-            for (int i = 0; i < activeKeys.Count; i++)
-            {
-                if (activeKeys[i].GridX == x) currentItems++;
-            }
-
             while (currentItems < ACTIVE_COL_HEIGHT && columnData[x].Count > 0)
             {
-                object itemData = columnData[x][0];
+                BlockData bd = (BlockData)columnData[x][0];
                 columnData[x].RemoveAt(0);
 
-                if (itemData is BlockData bd)
+                Block b;
+                if (bd.lockId >= 0)
                 {
-                    Block b = GetBlockFromPool();
+                    b = GetKeyBlockFromPool();
+                    ((KeyBlock)b).Init((BlockColor)bd.colorIndex, x, currentItems, bd.lockId, bd.isTwoColor, (BlockColor)bd.secondaryColorIndex);
+                }
+                else
+                {
+                    b = GetBlockFromPool();
                     b.Init((BlockColor)bd.colorIndex, x, currentItems, bd.isTwoColor, (BlockColor)bd.secondaryColorIndex);
-                    b.transform.localPosition = GetWallWorldPosition(x, ACTIVE_COL_HEIGHT);
-                    wallGrid[x, currentItems] = b;
-                    b.UpdateGridPosition(x, currentItems, GetWallWorldPosition(x, currentItems));
                 }
-                else if (itemData is KeyData kd)
-                {
-                    KeyBlock k = Instantiate(keyBlockPrefab, wallContainer);
-                    k.Init(x, currentItems, kd.lockId);
-                    k.transform.localPosition = GetWallWorldPosition(x, ACTIVE_COL_HEIGHT);
-                    activeKeys.Add(k);
-                    k.UpdateGridPosition(x, currentItems, GetWallWorldPosition(x, currentItems));
-                    if (currentItems == 0) StartCoroutine(DelayedUnlock(k, x));
-                }
+
+                b.transform.localPosition = GetWallWorldPosition(x, ACTIVE_COL_HEIGHT);
+                wallGrid[x, currentItems] = b;
+                b.UpdateGridPosition(x, currentItems, GetWallWorldPosition(x, currentItems));
                 currentItems++;
             }
         }
@@ -370,11 +363,26 @@ namespace ArrowBlast.Managers
             return Instantiate(blockPrefab, wallContainer);
         }
 
+        private Block GetKeyBlockFromPool()
+        {
+            while (keyBlockPool.Count > 0)
+            {
+                KeyBlock k = keyBlockPool.Dequeue();
+                if (k != null)
+                {
+                    k.gameObject.SetActive(true);
+                    return k;
+                }
+            }
+            return Instantiate(keyBlockPrefab, wallContainer);
+        }
+
         private void ReturnBlockToPool(Block b)
         {
             if (b == null) return;
             b.gameObject.SetActive(false);
-            blockPool.Enqueue(b);
+            if (b is KeyBlock kb) keyBlockPool.Enqueue(kb);
+            else blockPool.Enqueue(b);
         }
 
         private Projectile CreateNewProjectile()
@@ -646,6 +654,15 @@ namespace ArrowBlast.Managers
             AudioManager.Instance.TriggerHaptic();
             if (willBeDestroyed)
             {
+                if (b is KeyBlock kb)
+                {
+                    LockObstacle targetLock = activeLocks.Find(l => l.LockId == kb.LockId && l.IsLocked);
+                    if (targetLock != null)
+                    {
+                        yield return kb.AnimateFlyToTarget(targetLock.transform.position, 0.4f);
+                        targetLock.Unlock();
+                    }
+                }
                 yield return b.AnimateDeath();
                 ReturnBlockToPool(b);
                 FinalizeBlockDestruction(x, y, null);
@@ -660,65 +677,28 @@ namespace ArrowBlast.Managers
 
         private void FinalizeBlockDestruction(int x, int y, Block targetBlock)
         {
-            // Robust Column Collapse: Repack all stationary blocks AND keys to the bottom
-            List<Component> columnItems = new List<Component>();
+            // Column Collapse: Repack all stationary blocks to the bottom
+            List<Block> columnBlocks = new List<Block>();
             for (int k = 0; k < wallHeight; k++)
             {
                 if (wallGrid[x, k] != null)
                 {
-                    columnItems.Add(wallGrid[x, k]);
+                    columnBlocks.Add(wallGrid[x, k]);
                     wallGrid[x, k] = null;
-                }
-
-                KeyBlock key = activeKeys.Find(kb => kb.GridX == x && kb.GridY == k);
-                if (key != null)
-                {
-                    columnItems.Add(key);
                 }
             }
 
-            for (int k = 0; k < columnItems.Count; k++)
+            for (int k = 0; k < columnBlocks.Count; k++)
             {
-                Component item = columnItems[k];
-                if (item is Block b)
-                {
-                    wallGrid[x, k] = b;
-                    b.UpdateGridPosition(x, k, GetWallWorldPosition(x, k));
-                }
-                else if (item is KeyBlock key)
-                {
-                    key.UpdateGridPosition(x, k, GetWallWorldPosition(x, k));
-                    if (k == 0) StartCoroutine(DelayedUnlock(key, x));
-                }
+                Block b = columnBlocks[k];
+                wallGrid[x, k] = b;
+                b.UpdateGridPosition(x, k, GetWallWorldPosition(x, k));
             }
 
             RefillColumn(x); // Fill the gap at the top
             CheckWinCondition();
         }
 
-        private IEnumerator DelayedUnlock(KeyBlock key, int x)
-        {
-            yield return new WaitForEndOfFrame();
-            TryUnlock(key, x);
-        }
-
-        private void TryUnlock(KeyBlock key, int x)
-        {
-            LockObstacle targetLock = activeLocks.Find(l => l.LockId == key.LockId && l.IsLocked);
-            if (targetLock != null)
-            {
-                targetLock.Unlock();
-                StartCoroutine(ExecuteUnlockSequence(key, x));
-            }
-        }
-
-        private IEnumerator ExecuteUnlockSequence(KeyBlock key, int x)
-        {
-            yield return key.AnimateUnlock();
-            activeKeys.Remove(key);
-            Destroy(key.gameObject);
-            FinalizeBlockDestruction(x, -1, null); // Trigger another collapse/refill
-        }
 
         private Color GetBlockColorVisual(BlockColor color)
         {

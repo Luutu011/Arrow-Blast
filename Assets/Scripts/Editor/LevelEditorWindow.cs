@@ -91,14 +91,6 @@ namespace ArrowBlast.Editor
             {
                 DrawArrowEditor();
             }
-            else if (selectedTab == 2)
-            {
-                DrawKeyEditor();
-            }
-            else if (selectedTab == 3)
-            {
-                DrawLockEditor();
-            }
 
             // 5. Global Actions
             GUILayout.Space(20);
@@ -225,7 +217,6 @@ namespace ArrowBlast.Editor
             {
                 Undo.RecordObject(currentLevelData, "Clear Wall");
                 currentLevelData.blocks.Clear();
-                currentLevelData.keys.Clear();
                 EditorUtility.SetDirty(currentLevelData);
             }
             EditorGUILayout.EndHorizontal();
@@ -272,7 +263,6 @@ namespace ArrowBlast.Editor
                     Rect cellRect = new Rect(startX + x * cellSize + 2, startY + (currentLevelData.height - 1 - y) * cellSize + 2, cellSize - 4, cellSize - 4);
                     
                     BlockData block = currentLevelData.blocks.Find(b => b.gridX == x && b.gridY == y);
-                    KeyData key = currentLevelData.keys.Find(k => k.gridX == x && k.gridY == y);
                     
                     Color drawColor = Color.gray;
                     // Draw block color if present. Keys no longer change block color;
@@ -298,25 +288,30 @@ namespace ArrowBlast.Editor
                         {
                             if (isKeyMode)
                             {
-                                // Add/Update Key without removing any existing block color
-                                if (key == null) currentLevelData.keys.Add(new KeyData { gridX = x, gridY = y, lockId = selectedLockId });
-                                else key.lockId = selectedLockId;
+                                if (block == null)
+                                {
+                                    block = new BlockData { gridX = x, gridY = y, colorIndex = (int)selectedColor, isTwoColor = false, lockId = selectedLockId };
+                                    currentLevelData.blocks.Add(block);
+                                }
+                                else
+                                {
+                                    block.lockId = selectedLockId;
+                                }
                             }
                             else
                             {
-                                // Remove key if exists
-                                var existingKey = currentLevelData.keys.Find(k => k.gridX == x && k.gridY == y);
-                                if (existingKey != null) currentLevelData.keys.Remove(existingKey);
-
                                 if (block == null)
                                 {
-                                    currentLevelData.blocks.Add(new BlockData { gridX = x, gridY = y, colorIndex = (int)selectedColor, isTwoColor = false });
+                                    currentLevelData.blocks.Add(new BlockData { gridX = x, gridY = y, colorIndex = (int)selectedColor, isTwoColor = false, lockId = -1 });
                                 }
                                 else if (block.colorIndex != (int)selectedColor)
                                 {
                                     block.isTwoColor = true;
                                     block.secondaryColorIndex = block.colorIndex;
                                     block.colorIndex = (int)selectedColor;
+                                    block.lockId = -1; // Reset key if re-painting color? Or keep it? User might want to change color of a key block.
+                                    // Let's keep it if we are just changing color, but if not in key mode, maybe we don't want to touch lockId.
+                                    // Actually, if not in key mode, painting a color should probably clear the key.
                                 }
                             }
                             GUI.changed = true;
@@ -324,7 +319,6 @@ namespace ArrowBlast.Editor
                         else if (Event.current.button == 1) // RMB
                         {
                             if (block != null) currentLevelData.blocks.Remove(block);
-                            if (key != null) currentLevelData.keys.Remove(key);
                             GUI.changed = true;
                         }
                         
@@ -334,14 +328,14 @@ namespace ArrowBlast.Editor
 
                     EditorGUI.DrawRect(cellRect, drawColor);
 
-                    if (key != null)
+                    if (block != null && block.lockId >= 0)
                     {
                         // Draw a yellow border around the cell to indicate a key (consistent with locks in Arrow editor)
                         Rect borderRect = new Rect(cellRect.x - 1, cellRect.y - 1, cellRect.width + 2, cellRect.height + 2);
                         Handles.color = Color.yellow;
                         Handles.DrawSolidRectangleWithOutline(borderRect, new Color(1f, 1f, 0f, 0f), Color.yellow);
 
-                        GUI.Label(cellRect, $"K:{key.lockId}", new GUIStyle(EditorStyles.miniBoldLabel) { alignment = TextAnchor.MiddleCenter });
+                        GUI.Label(cellRect, $"K:{block.lockId}", new GUIStyle(EditorStyles.miniBoldLabel) { alignment = TextAnchor.MiddleCenter });
                     }
                     else if (block != null && block.isTwoColor)
                     {
@@ -1443,54 +1437,6 @@ namespace ArrowBlast.Editor
             }
         }
 
-        private void DrawKeyEditor()
-        {
-            EditorGUILayout.LabelField("Key Editor (Wall Grid)", EditorStyles.boldLabel);
-            EditorGUILayout.BeginHorizontal();
-            selectedLockId = EditorGUILayout.IntField("Target Lock ID:", selectedLockId);
-            if (GUILayout.Button("Clear All Keys", GUILayout.Width(120)))
-            {
-                Undo.RecordObject(currentLevelData, "Clear Keys");
-                currentLevelData.keys.Clear();
-                EditorUtility.SetDirty(currentLevelData);
-            }
-            EditorGUILayout.EndHorizontal();
-
-            float cellSize = 40f;
-            float startX = 20f;
-            float startY = GUILayoutUtility.GetRect(0, cellSize * currentLevelData.height + 20).y + 10;
-            Rect bgRect = new Rect(startX, startY, currentLevelData.width * cellSize, currentLevelData.height * cellSize);
-            EditorGUI.DrawRect(bgRect, new Color(0.2f, 0.2f, 0.2f, 0.5f));
-
-            for (int y = currentLevelData.height - 1; y >= 0; y--)
-            {
-                for (int x = 0; x < currentLevelData.width; x++)
-                {
-                    Rect cellRect = new Rect(startX + x * cellSize + 2, startY + (currentLevelData.height - 1 - y) * cellSize + 2, cellSize - 4, cellSize - 4);
-                    KeyData key = currentLevelData.keys.Find(k => k.gridX == x && k.gridY == y);
-                    
-                    if (cellRect.Contains(Event.current.mousePosition) && Event.current.type == EventType.MouseDown)
-                    {
-                        Undo.RecordObject(currentLevelData, "Modify Key");
-                        if (Event.current.button == 0) // LMB
-                        {
-                            if (key == null) currentLevelData.keys.Add(new KeyData { gridX = x, gridY = y, lockId = selectedLockId });
-                            else key.lockId = selectedLockId;
-                        }
-                        else if (Event.current.button == 1) // RMB
-                        {
-                            if (key != null) currentLevelData.keys.Remove(key);
-                        }
-                        EditorUtility.SetDirty(currentLevelData);
-                        Event.current.Use();
-                    }
-
-                    EditorGUI.DrawRect(cellRect, key != null ? GetColorFromEnum(selectedColor) : new Color(0.3f, 0.3f, 0.3f));
-                    if (key != null) GUI.Label(cellRect, key.lockId.ToString(), new GUIStyle(EditorStyles.miniBoldLabel) { alignment = TextAnchor.MiddleCenter });
-                }
-            }
-            EditorGUILayout.HelpBox("LMB to place/edit Key, RMB to remove. Set Lock ID to pair with a Lock.", MessageType.None);
-        }
 
         private void DrawLockEditor()
         {

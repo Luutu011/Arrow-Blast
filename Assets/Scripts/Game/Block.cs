@@ -9,9 +9,9 @@ namespace ArrowBlast.Game
     /// </summary>
     public class Block : MonoBehaviour
     {
-        public BlockColor Color { get; private set; }
-        public BlockColor SecondaryColor { get; private set; }
-        public bool IsTwoColor { get; private set; }
+        public BlockColor Color { get; protected set; }
+        public BlockColor SecondaryColor { get; protected set; }
+        public bool IsTwoColor { get; protected set; }
         public bool IsTargeted { get; set; }
         public int GridX { get; private set; }
         public int GridY { get; private set; }
@@ -19,9 +19,10 @@ namespace ArrowBlast.Game
         [SerializeField] private MeshRenderer meshRenderer;
         [SerializeField] private MeshRenderer innerMeshRenderer;
         [SerializeField] private string colorPropertyName = "_Color";
-        private MaterialPropertyBlock _propBlock;
+        protected MaterialPropertyBlock _propBlock;
+        protected bool _isInitialized;
 
-        public void Init(BlockColor color, int x, int y, bool isTwoColor = false, BlockColor secondaryColor = BlockColor.Red)
+        public virtual void Init(BlockColor color, int x, int y, bool isTwoColor = false, BlockColor secondaryColor = BlockColor.Red)
         {
             Color = color;
             SecondaryColor = secondaryColor;
@@ -33,7 +34,7 @@ namespace ArrowBlast.Game
             UpdateVisuals();
         }
 
-        public bool TakeHit()
+        public virtual bool TakeHit()
         {
             if (IsTwoColor)
             {
@@ -149,7 +150,7 @@ namespace ArrowBlast.Game
             _propBlock = new MaterialPropertyBlock();
         }
 
-        private void UpdateVisuals()
+        protected virtual void UpdateVisuals()
         {
             Color c = GetVisualColor(Color);
             if (meshRenderer != null)
