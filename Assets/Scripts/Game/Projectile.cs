@@ -1,9 +1,10 @@
 using UnityEngine;
 using ArrowBlast.Core;
+using ArrowBlast.Managers;
 
 namespace ArrowBlast.Game
 {
-    public class Projectile : MonoBehaviour
+    public class Projectile : MonoBehaviour, IFixedUpdateable, IInstancedObject
     {
         // Movement Data
         private float _elapsed;
@@ -23,11 +24,36 @@ namespace ArrowBlast.Game
 
         private MeshRenderer _renderer;
         private MaterialPropertyBlock _propBlock;
+        private Transform _transform;
 
         private void Awake()
         {
+            _transform = transform;
             _renderer = GetComponent<MeshRenderer>();
             _propBlock = new MaterialPropertyBlock();
+        }
+
+        private void OnEnable()
+        {
+            if (UpdateManager.Instance != null)
+                UpdateManager.Instance.RegisterFixedUpdateable(this);
+
+            if (InstancedCubeRenderer.Instance != null)
+                InstancedCubeRenderer.Instance.Register(this);
+        }
+
+        private void OnDisable()
+        {
+            if (UpdateManager.Instance != null)
+                UpdateManager.Instance.UnregisterFixedUpdateable(this);
+
+            if (InstancedCubeRenderer.Instance != null)
+                InstancedCubeRenderer.Instance.Unregister(this);
+        }
+
+        public void AddToInstancer(InstancedCubeRenderer renderer)
+        {
+            renderer.AddToBatch(transform, TargetBlock.Color, GetComponent<MeshFilter>().sharedMesh);
         }
 
         public void Initialize(BlockColor color, Block target, int x, int y, bool destroy,
@@ -42,6 +68,7 @@ namespace ArrowBlast.Game
 
             if (_renderer != null)
             {
+                _renderer.enabled = false; // Disable native renderer
                 Color c = GamePalette.GetColor(color);
 
                 if (_propBlock == null) _propBlock = new MaterialPropertyBlock();
@@ -54,14 +81,14 @@ namespace ArrowBlast.Game
 
         public void Launch(Vector3 targetPosition, float duration)
         {
-            _startPos = transform.position;
+            _startPos = _transform.position;
             _targetPos = targetPosition;
             _duration = (duration > 0) ? duration : 0.01f;
             _elapsed = 0;
             _isMoving = true;
         }
 
-        private void FixedUpdate()
+        public void ManagedFixedUpdate()
         {
             if (!_isMoving) return;
 
@@ -70,10 +97,10 @@ namespace ArrowBlast.Game
 
             // Replicate InQuad: fixed math t*t
             float easedT = t * t;
-            transform.position = Vector3.Lerp(_startPos, _targetPos, easedT);
+            _transform.position = Vector3.Lerp(_startPos, _targetPos, easedT);
 
             // Subtle rotation while flying
-            transform.Rotate(new Vector3(1, 1, 0) * (360f * Time.fixedDeltaTime));
+            _transform.Rotate(new Vector3(1, 1, 0) * (360f * Time.fixedDeltaTime));
 
             if (t >= 1f)
             {

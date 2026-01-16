@@ -1,14 +1,15 @@
 using UnityEngine;
 using System;
+using ArrowBlast.Managers;
 
-public class LivesManager : MonoBehaviour
+public class LivesManager : MonoBehaviour, IUpdateable
 {
     public static LivesManager Instance;
 
     private const int MAX_HEARTS = 5;
     private const int REGEN_SECONDS = 600; // 10 minutes
     private const string HEARTS_KEY = "PlayerHearts";
-    private const string LAST_REGEN_KEY = "LastRegenTime";
+    private const string LAST_REGEN_TIME_KEY = "LastRegenTime";
 
     private int currentHearts;
     private DateTime lastRegenTime;
@@ -28,7 +29,19 @@ public class LivesManager : MonoBehaviour
         }
     }
 
-    void Update()
+    private void OnEnable()
+    {
+        if (UpdateManager.Instance != null)
+            UpdateManager.Instance.RegisterUpdateable(this);
+    }
+
+    private void OnDisable()
+    {
+        if (UpdateManager.Instance != null)
+            UpdateManager.Instance.UnregisterUpdateable(this);
+    }
+
+    public void ManagedUpdate()
     {
         if (currentHearts < MAX_HEARTS)
         {
@@ -47,7 +60,7 @@ public class LivesManager : MonoBehaviour
     {
         currentHearts = PlayerPrefs.GetInt(HEARTS_KEY, MAX_HEARTS);
         
-string lastRegenStr = PlayerPrefs.GetString(LAST_REGEN_KEY, "");
+        string lastRegenStr = PlayerPrefs.GetString(LAST_REGEN_TIME_KEY, "");
         if (string.IsNullOrEmpty(lastRegenStr))
         {
             lastRegenTime = DateTime.Now;
@@ -55,28 +68,32 @@ string lastRegenStr = PlayerPrefs.GetString(LAST_REGEN_KEY, "");
         }
         else
         {
-            lastRegenTime = DateTime.Parse(lastRegenStr);
-            
-// Calculate hearts regenerated while offline
-            double elapsedSeconds = (DateTime.Now - lastRegenTime).TotalSeconds;
-            int heartsToAdd = Mathf.FloorToInt((float)elapsedSeconds / REGEN_SECONDS);
-            
-if (heartsToAdd > 0 && currentHearts < MAX_HEARTS)
+            if (DateTime.TryParse(lastRegenStr, out lastRegenTime))
             {
-                AddHeart(heartsToAdd);
+                double elapsedSeconds = (DateTime.Now - lastRegenTime).TotalSeconds;
+                int heartsToAdd = Mathf.FloorToInt((float)elapsedSeconds / REGEN_SECONDS);
+                
+                if (heartsToAdd > 0 && currentHearts < MAX_HEARTS)
+                {
+                    AddHeart(heartsToAdd);
+                }
+                
+                regenTimer = (float)(elapsedSeconds % REGEN_SECONDS);
             }
-            
-// Set timer to remainder
-            regenTimer = (float)(elapsedSeconds % REGEN_SECONDS);
+            else
+            {
+                lastRegenTime = DateTime.Now;
+                regenTimer = 0f;
+            }
         }
         
-SaveHearts();
+        SaveHearts();
     }
 
     void SaveHearts()
     {
         PlayerPrefs.SetInt(HEARTS_KEY, currentHearts);
-        PlayerPrefs.SetString(LAST_REGEN_KEY, lastRegenTime.ToString());
+        PlayerPrefs.SetString(LAST_REGEN_TIME_KEY, lastRegenTime.ToString());
         PlayerPrefs.Save();
     }
 
@@ -98,14 +115,13 @@ SaveHearts();
     {
         currentHearts = Mathf.Min(currentHearts + count, MAX_HEARTS);
         
-// Reset timer when hearts are full
         if (currentHearts >= MAX_HEARTS)
         {
             regenTimer = 0f;
             lastRegenTime = DateTime.Now;
         }
         
-SaveHearts();
+        SaveHearts();
     }
 
     public int GetCurrentHearts()

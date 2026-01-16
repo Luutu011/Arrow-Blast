@@ -1,5 +1,6 @@
 using UnityEngine;
 using ArrowBlast.Core;
+using ArrowBlast.Managers;
 
 namespace ArrowBlast.Game
 {
@@ -7,7 +8,7 @@ namespace ArrowBlast.Game
     /// 3D Block with MeshRenderer for wall
     /// Falls down with 2D-style animation (only Y axis)
     /// </summary>
-    public class Block : MonoBehaviour
+    public class Block : MonoBehaviour, IInstancedObject
     {
         public BlockColor Color { get; protected set; }
         public BlockColor SecondaryColor { get; protected set; }
@@ -18,6 +19,8 @@ namespace ArrowBlast.Game
 
         [SerializeField] private MeshRenderer meshRenderer;
         [SerializeField] private MeshRenderer innerMeshRenderer;
+        public Transform MeshTransform => meshRenderer != null ? meshRenderer.transform : transform;
+        public Transform InnerMeshTransform => innerMeshRenderer != null ? innerMeshRenderer.transform : transform;
         [SerializeField] private string colorPropertyName = "_Color";
         protected MaterialPropertyBlock _propBlock;
         protected bool _isInitialized;
@@ -145,38 +148,44 @@ namespace ArrowBlast.Game
             AnimationProgress = 1f;
         }
 
+        public void AddToInstancer(InstancedCubeRenderer renderer)
+        {
+            MeshFilter mf = MeshTransform.GetComponent<MeshFilter>();
+            if (mf != null) renderer.AddToBatch(MeshTransform, Color, mf.sharedMesh);
+
+            if (IsTwoColor)
+            {
+                MeshFilter imf = InnerMeshTransform.GetComponent<MeshFilter>();
+                if (imf != null) renderer.AddToBatch(InnerMeshTransform, SecondaryColor, imf.sharedMesh);
+            }
+        }
+
+        private void OnEnable()
+        {
+            if (InstancedCubeRenderer.Instance != null)
+                InstancedCubeRenderer.Instance.Register(this);
+
+            if (meshRenderer != null) meshRenderer.enabled = false;
+            if (innerMeshRenderer != null) innerMeshRenderer.enabled = false;
+        }
+
+        private void OnDisable()
+        {
+            if (InstancedCubeRenderer.Instance != null)
+                InstancedCubeRenderer.Instance.Unregister(this);
+        }
+
         private void Awake()
         {
             _propBlock = new MaterialPropertyBlock();
+            if (meshRenderer != null) meshRenderer.enabled = false;
+            if (innerMeshRenderer != null) innerMeshRenderer.enabled = false;
         }
 
         protected virtual void UpdateVisuals()
         {
-            Color c = GetVisualColor(Color);
-            if (meshRenderer != null)
-            {
-                if (_propBlock == null) _propBlock = new MaterialPropertyBlock();
-                meshRenderer.GetPropertyBlock(_propBlock);
-                _propBlock.SetColor("_Color", c);
-                _propBlock.SetColor("_BaseColor", c);
-                meshRenderer.SetPropertyBlock(_propBlock);
-            }
-
-            if (innerMeshRenderer != null)
-            {
-                innerMeshRenderer.gameObject.SetActive(IsTwoColor);
-                if (IsTwoColor)
-                {
-                    innerMeshRenderer.GetPropertyBlock(_propBlock);
-                    Color sc = GetVisualColor(SecondaryColor);
-                    _propBlock.SetColor("_Color", sc);
-                    _propBlock.SetColor("_BaseColor", sc);
-                    innerMeshRenderer.SetPropertyBlock(_propBlock);
-
-                    innerMeshRenderer.transform.localScale = new Vector3(0.65f, 0.65f, 0.65f); // Slightly larger
-                    innerMeshRenderer.transform.localPosition = new Vector3(0, 0, -0.2f); // Push forward more noticeably
-                }
-            }
+            // Visuals are now handled by InstancedBlockRenderer for maximum performance.
+            // Individual MeshRenderers are disabled in Awake/OnEnable.
         }
 
         private Color GetVisualColor(BlockColor color)

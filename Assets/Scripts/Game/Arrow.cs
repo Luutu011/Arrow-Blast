@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using ArrowBlast.Core;
+using ArrowBlast.Managers;
 using DG.Tweening;
 using System;
 
@@ -10,7 +11,7 @@ namespace ArrowBlast.Game
     /// 3D Arrow with MeshRenderer
     /// Moves with 2D-style animation when collected
     /// </summary>
-    public class Arrow : MonoBehaviour
+    public class Arrow : MonoBehaviour, IInstancedObject
     {
         public BlockColor Color { get; private set; }
         public Direction ArrowDirection { get; private set; }
@@ -173,10 +174,11 @@ namespace ArrowBlast.Game
             MeshFilter hMf = headObject.AddComponent<MeshFilter>();
             MeshRenderer hMr = headObject.AddComponent<MeshRenderer>();
             RoundedCube hRc = headObject.AddComponent<RoundedCube>();
-            hRc.xSize = 5; hRc.ySize = 5; hRc.zSize = 5; // Resolution
-            hRc.roundness = 0.15f; // Soft beveled look
+            hRc.xSize = 4; hRc.ySize = 4; hRc.zSize = 4; // Standardized resolution
+            hRc.roundness = 0.15f;
             hRc.Generate();
 
+            hMr.enabled = false; // Disable native renderer
             hMr.sharedMaterial = headMaterial != null ? headMaterial : new Material(Shader.Find("Standard"));
 
             if (_propBlock == null) _propBlock = new MaterialPropertyBlock();
@@ -191,7 +193,7 @@ namespace ArrowBlast.Game
                 iconObject = new GameObject("Icon");
                 iconObject.transform.SetParent(headObject.transform);
                 iconObject.transform.localPosition = new Vector3(0, 0, -0.6f);
-                iconObject.transform.localScale = Vector3.one * 0.3f;
+                iconObject.transform.localScale = Vector3.one * 0.8f;
                 iconObject.transform.localRotation = Quaternion.identity;
 
                 SpriteRenderer sr = iconObject.AddComponent<SpriteRenderer>();
@@ -225,6 +227,7 @@ namespace ArrowBlast.Game
                 bRc.roundness = 0.15f;
                 bRc.Generate();
 
+                bMr.enabled = false; // Disable native renderer
                 bMr.sharedMaterial = bodyMaterial != null ? bodyMaterial : new Material(Shader.Find("Standard"));
                 if (_propBlock == null) _propBlock = new MaterialPropertyBlock();
                 bMr.GetPropertyBlock(_propBlock);
@@ -436,6 +439,36 @@ namespace ArrowBlast.Game
             sequence.Play();
         }
 
+
+        public void AddToInstancer(InstancedCubeRenderer renderer)
+        {
+            if (headObject != null)
+            {
+                MeshFilter mf = headObject.GetComponent<MeshFilter>();
+                if (mf != null) renderer.AddToBatch(headObject.transform, Color, mf.sharedMesh);
+            }
+
+            foreach (var part in bodyParts)
+            {
+                if (part != null)
+                {
+                    MeshFilter mf = part.GetComponent<MeshFilter>();
+                    if (mf != null) renderer.AddToBatch(part.transform, Color, mf.sharedMesh);
+                }
+            }
+        }
+
+        private void OnEnable()
+        {
+            if (InstancedCubeRenderer.Instance != null)
+                InstancedCubeRenderer.Instance.Register(this);
+        }
+
+        private void OnDisable()
+        {
+            if (InstancedCubeRenderer.Instance != null)
+                InstancedCubeRenderer.Instance.Unregister(this);
+        }
 
         private void UpdateVisuals()
         {

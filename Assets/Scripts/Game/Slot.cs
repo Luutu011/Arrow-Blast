@@ -1,19 +1,17 @@
 using UnityEngine;
 using TMPro;
 using ArrowBlast.Core;
+using ArrowBlast.Managers;
 
 namespace ArrowBlast.Game
 {
-    /// <summary>
-    /// 3D GameObject-based Slot using MeshRenderer + TextMeshPro
-    /// All slots shoot simultaneously - no "active shooter" concept
-    /// Slots don't shift when empty - they just clear
-    /// </summary>
-    public class Slot : MonoBehaviour
+    public class Slot : MonoBehaviour, IUpdateable
     {
         private Quaternion targetRotation = Quaternion.identity;
         private float rotationSpeed = 10f;
         private MaterialPropertyBlock _propBlock;
+        private Transform _transform;
+
         public BlockColor CurrentColor { get; private set; }
         public int AmmoCount { get; private set; }
         public bool IsOccupied { get; private set; }
@@ -29,26 +27,38 @@ namespace ArrowBlast.Game
 
         public void Initialize()
         {
+            _transform = transform;
             ClearSlot();
-            targetRotation = transform.localRotation;
+            targetRotation = _transform.localRotation;
         }
 
-        private void Update()
+        private void OnEnable()
         {
-            if (Quaternion.Angle(transform.localRotation, targetRotation) > 0.01f)
+            if (UpdateManager.Instance != null)
+                UpdateManager.Instance.RegisterUpdateable(this);
+        }
+
+        private void OnDisable()
+        {
+            if (UpdateManager.Instance != null)
+                UpdateManager.Instance.UnregisterUpdateable(this);
+        }
+
+        public void ManagedUpdate()
+        {
+            if (Quaternion.Angle(_transform.localRotation, targetRotation) > 0.01f)
             {
-                transform.localRotation = Quaternion.Slerp(transform.localRotation, targetRotation, Time.deltaTime * rotationSpeed);
+                _transform.localRotation = Quaternion.Slerp(_transform.localRotation, targetRotation, Time.deltaTime * rotationSpeed);
             }
             else
             {
-                transform.localRotation = targetRotation;
+                _transform.localRotation = targetRotation;
             }
         }
 
         public void RotateToward(Vector3 worldTarget)
         {
-            Vector3 direction = worldTarget - transform.position;
-            // Calculate angle on XY plane (assuming default is pointing towards +Y)
+            Vector3 direction = worldTarget - _transform.position;
             float angle = Mathf.Atan2(direction.x, direction.y) * Mathf.Rad2Deg;
             targetRotation = Quaternion.Euler(0, 0, -angle);
         }

@@ -19,6 +19,7 @@ namespace ArrowBlast.UI
         [SerializeField] private Button shopButton;
         [SerializeField] private Button settingsButton;
         [SerializeField] private Button closeSettingsButton;
+        [SerializeField] private Button resetDataButton;
 
         [Header("Settings Toggles")]
         [SerializeField] private Toggle sfxToggle;
@@ -59,6 +60,7 @@ namespace ArrowBlast.UI
             if (shopButton) shopButton.onClick.AddListener(ShowShopPanel);
             if (settingsButton) settingsButton.onClick.AddListener(ShowSettingsPanel);
             if (closeSettingsButton) closeSettingsButton.onClick.AddListener(HideSettingsPanel);
+            if (resetDataButton) resetDataButton.onClick.AddListener(OnResetDataClicked);
 
             InitializeSettingsToggles();
 
@@ -330,6 +332,14 @@ namespace ArrowBlast.UI
             AudioManager.Instance.TriggerHaptic(Solo.MOST_IN_ONE.MOST_HapticFeedback.HapticTypes.SoftImpact);
             Debug.Log("Exiting Game...");
             Application.Quit();
+        }
+
+        private void OnResetDataClicked()
+        {
+            if (SettingsManager.Instance != null)
+            {
+                SettingsManager.Instance.ResetAllData();
+            }
         }
     }
 }

@@ -8,7 +8,7 @@ using ArrowBlast.Game;
 
 namespace ArrowBlast.Managers
 {
-    public class GameManager : MonoBehaviour
+    public class GameManager : MonoBehaviour, IUpdateable
     {
         [Header("Components")]
         [SerializeField] private LevelManager levelManager;
@@ -66,6 +66,16 @@ namespace ArrowBlast.Managers
             LoadCurrentLevel();
         }
 
+        private void Awake()
+        {
+            // Ensure Universal Instanced Renderer exists very early
+            if (InstancedCubeRenderer.Instance == null)
+            {
+                GameObject go = new GameObject("InstancedCubeRenderer");
+                go.AddComponent<InstancedCubeRenderer>();
+            }
+        }
+
         private void Start()
         {
             mainCamera = Camera.main;
@@ -84,12 +94,20 @@ namespace ArrowBlast.Managers
             if (slotsContainer != null) slotsContainer.gameObject.SetActive(false);
             if (loadingPanel != null) loadingPanel.SetActive(false);
 
+            if (UpdateManager.Instance != null)
+                UpdateManager.Instance.RegisterUpdateable(this);
+
             if (boosterUIManager != null)
             {
                 boosterUIManager.Initialize(this, coinSystem, boosterInventory);
                 boosterUIManager.SetVisible(false);
             }
-            // if (levelManager != null) LoadCurrentLevel(); // Removed: Load only from UI
+        }
+
+        private void OnDestroy()
+        {
+            if (UpdateManager.Instance != null)
+                UpdateManager.Instance.UnregisterUpdateable(this);
         }
 
         private void LoadCurrentLevel()
@@ -436,7 +454,7 @@ namespace ArrowBlast.Managers
             return new Vector3(gridX * cellSize + offsetX, gridY * cellSize + offsetY, 0);
         }
 
-        private void Update()
+        public void ManagedUpdate()
         {
             if (isGameOver || buildRoutine != null) return;
             HandleInput();

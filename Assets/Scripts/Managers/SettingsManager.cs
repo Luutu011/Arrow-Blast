@@ -64,5 +64,19 @@ namespace ArrowBlast.Managers
             PlayerPrefs.Save();
             MOST_HapticFeedback.HapticsEnabled = enabled;
         }
+
+        public void ResetAllData()
+        {
+            AudioManager.Instance.TriggerHaptic(MOST_HapticFeedback.HapticTypes.MediumImpact);
+            PlayerPrefs.DeleteAll();
+            PlayerPrefs.Save();
+            
+            // Reload settings to default
+            LoadSettings();
+            
+            // It's highly recommended to reload the active scene to ensure all 
+            // other managers (CoinSystem, LevelManager, etc.) refresh their state.
+            UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex);
+        }
     }
 }

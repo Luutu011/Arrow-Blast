@@ -113,6 +113,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!114 &2126982914838082015
 MonoBehaviour:
@@ -128,13 +129,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ArrowBlast.Game.Block
   meshRenderer: {fileID: 8235927079378045788}
   innerMeshRenderer: {fileID: 926224357243906548}
-  colorDefinitions:
-  - {r: 1, g: 0.2, b: 0.2, a: 1}
-  - {r: 0.2, g: 0.5, b: 1, a: 1}
-  - {r: 0.12941177, g: 0.8156863, b: 0.11764706, a: 1}
-  - {r: 1, g: 0.9, b: 0.2, a: 1}
-  - {r: 0.8, g: 0.3, b: 1, a: 1}
-  - {r: 1, g: 0.6, b: 0.2, a: 1}
   colorPropertyName: _Color
 --- !u!114 &1921482690566149060
 MonoBehaviour:
@@ -242,6 +236,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!65 &3454805825526193898
 BoxCollider:
