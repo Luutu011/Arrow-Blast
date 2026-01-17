@@ -458,7 +458,7 @@ namespace ArrowBlast.Editor
 
         private void SetupObstacles()
         {
-            GameManager gm = FindObjectOfType<GameManager>();
+            GameManager gm = FindAnyObjectByType<GameManager>();
             if (gm == null)
             {
                 EditorUtility.DisplayDialog("Error", "GameManager not found in scene. Please run 'Create Complete 3D Setup' first or add a GameManager to your scene.", "OK");

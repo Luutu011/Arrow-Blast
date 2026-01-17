@@ -51,8 +51,8 @@ namespace ArrowBlast.UI
 
         private void Start()
         {
-            levelManager = FindObjectOfType<LevelManager>();
-            gameManager = FindObjectOfType<GameManager>();
+            levelManager = FindAnyObjectByType<LevelManager>();
+            gameManager = FindAnyObjectByType<GameManager>();
 
             // Assign Navigation Listeners
             if (homeButton) homeButton.onClick.AddListener(ShowLevelPanel);

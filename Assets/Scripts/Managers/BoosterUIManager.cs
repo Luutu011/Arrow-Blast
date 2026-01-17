@@ -174,7 +174,7 @@ namespace ArrowBlast.Managers
 
         private void UpdateBoosterUnlockStatus()
         {
-            LevelManager levelManager = FindObjectOfType<LevelManager>();
+            LevelManager levelManager = FindAnyObjectByType<LevelManager>();
             if (levelManager == null) return;
 
             int currentLevel = levelManager.CurrentLevelIndex; // 0-based
@@ -244,7 +244,7 @@ namespace ArrowBlast.Managers
 
             pendingPurchaseType = type;
 
-            ShopManager shopManager = FindObjectOfType<ShopManager>();
+            ShopManager shopManager = FindAnyObjectByType<ShopManager>();
             int cost = shopManager != null ? shopManager.GetBoosterCost() : 50;
             int currentCoins = coinSystem != null ? coinSystem.GetBalance() : 0;
             bool canAfford = currentCoins >= cost;
@@ -265,7 +265,7 @@ namespace ArrowBlast.Managers
         private void OnConfirmPurchase()
         {
             AudioManager.Instance.TriggerHaptic(Solo.MOST_IN_ONE.MOST_HapticFeedback.HapticTypes.SoftImpact);
-            ShopManager shopManager = FindObjectOfType<ShopManager>();
+            ShopManager shopManager = FindAnyObjectByType<ShopManager>();
             if (shopManager != null)
             {
                 if (shopManager.PurchaseBooster(pendingPurchaseType))

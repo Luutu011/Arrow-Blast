@@ -3,7 +3,7 @@ using System;
 
 public class LivesManager : MonoBehaviour
 {
-    public static LivesManager Instance;
+    public static LivesManager Instance { get; private set; }
 
     private const int MAX_HEARTS = 5;
     private const int REGEN_SECONDS = 600; // 10 minutes
@@ -30,24 +30,31 @@ public class LivesManager : MonoBehaviour
 
     void Update()
     {
-        if (currentHearts < MAX_HEARTS)
-        {
-            regenTimer += Time.deltaTime;
+        if (currentHearts >= MAX_HEARTS) return;
 
-            if (regenTimer >= REGEN_SECONDS)
+        regenTimer += Time.deltaTime;
+
+        if (regenTimer >= REGEN_SECONDS)
+        {
+            regenTimer -= REGEN_SECONDS;
+            currentHearts++;
+            lastRegenTime = lastRegenTime.AddSeconds(REGEN_SECONDS);
+
+            if (currentHearts >= MAX_HEARTS)
             {
-                AddHeart(1);
                 regenTimer = 0f;
                 lastRegenTime = DateTime.Now;
             }
+
+            SaveHearts();
         }
     }
 
     void LoadHearts()
     {
         currentHearts = PlayerPrefs.GetInt(HEARTS_KEY, MAX_HEARTS);
-        
-string lastRegenStr = PlayerPrefs.GetString(LAST_REGEN_KEY, "");
+        string lastRegenStr = PlayerPrefs.GetString(LAST_REGEN_KEY, "");
+
         if (string.IsNullOrEmpty(lastRegenStr))
         {
             lastRegenTime = DateTime.Now;
@@ -55,22 +62,43 @@ string lastRegenStr = PlayerPrefs.GetString(LAST_REGEN_KEY, "");
         }
         else
         {
-            lastRegenTime = DateTime.Parse(lastRegenStr);
-            
-// Calculate hearts regenerated while offline
-            double elapsedSeconds = (DateTime.Now - lastRegenTime).TotalSeconds;
-            int heartsToAdd = Mathf.FloorToInt((float)elapsedSeconds / REGEN_SECONDS);
-            
-if (heartsToAdd > 0 && currentHearts < MAX_HEARTS)
+            if (DateTime.TryParse(lastRegenStr, out lastRegenTime))
             {
-                AddHeart(heartsToAdd);
+                double elapsedSeconds = (DateTime.Now - lastRegenTime).TotalSeconds;
+
+                if (currentHearts < MAX_HEARTS)
+                {
+                    int heartsToAdd = Mathf.FloorToInt((float)elapsedSeconds / REGEN_SECONDS);
+                    if (heartsToAdd > 0)
+                    {
+                        currentHearts = Mathf.Min(currentHearts + heartsToAdd, MAX_HEARTS);
+                        lastRegenTime = lastRegenTime.AddSeconds(heartsToAdd * REGEN_SECONDS);
+                    }
+
+                    if (currentHearts >= MAX_HEARTS)
+                    {
+                        regenTimer = 0f;
+                        lastRegenTime = DateTime.Now;
+                    }
+                    else
+                    {
+                        regenTimer = (float)(elapsedSeconds % REGEN_SECONDS);
+                    }
+                }
             }
-            
-// Set timer to remainder
-            regenTimer = (float)(elapsedSeconds % REGEN_SECONDS);
+            else
+            {
+                lastRegenTime = DateTime.Now;
+                regenTimer = 0f;
+            }
         }
-        
-SaveHearts();
+
+        SaveHearts();
+    }
+
+    private void OnApplicationPause(bool pauseStatus)
+    {
+        if (pauseStatus) SaveHearts();
     }
 
     void SaveHearts()
@@ -89,6 +117,11 @@ SaveHearts();
     {
         if (currentHearts > 0)
         {
+            if (currentHearts == MAX_HEARTS)
+            {
+                lastRegenTime = DateTime.Now;
+                regenTimer = 0f;
+            }
             currentHearts--;
             SaveHearts();
         }
@@ -97,15 +130,15 @@ SaveHearts();
     public void AddHeart(int count)
     {
         currentHearts = Mathf.Min(currentHearts + count, MAX_HEARTS);
-        
-// Reset timer when hearts are full
+
+        // Reset timer when hearts are full
         if (currentHearts >= MAX_HEARTS)
         {
             regenTimer = 0f;
             lastRegenTime = DateTime.Now;
         }
-        
-SaveHearts();
+
+        SaveHearts();
     }
 
     public int GetCurrentHearts()

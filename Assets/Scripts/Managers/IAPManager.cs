@@ -151,7 +151,7 @@ namespace ArrowBlast.Managers
 
         private void OnPurchaseCoins(int amount)
         {
-            CoinSystem coinSystem = FindObjectOfType<CoinSystem>();
+            CoinSystem coinSystem = FindAnyObjectByType<CoinSystem>();
             if (coinSystem != null)
             {
                 coinSystem.AddCoins(amount);

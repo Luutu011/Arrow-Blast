@@ -29,12 +29,6 @@ MonoBehaviour:
     secondaryColorIndex: 0
     isTwoColor: 0
     gridX: 0
-    gridY: 1
-    lockId: 0
-  - colorIndex: 4
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 0
     gridY: 2
     lockId: -1
   - colorIndex: 0
@@ -205,12 +199,6 @@ MonoBehaviour:
     gridX: 1
     gridY: 0
     lockId: -1
-  - colorIndex: 4
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 1
-    gridY: 1
-    lockId: 0
   - colorIndex: 4
     secondaryColorIndex: 0
     isTwoColor: 0
@@ -929,12 +917,6 @@ MonoBehaviour:
     secondaryColorIndex: 0
     isTwoColor: 0
     gridX: 5
-    gridY: 1
-    lockId: 0
-  - colorIndex: 1
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 5
     gridY: 2
     lockId: -1
   - colorIndex: 1
@@ -1819,6 +1801,24 @@ MonoBehaviour:
     gridX: 9
     gridY: 29
     lockId: -1
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 1
+    lockId: 1
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 1
+    gridY: 1
+    lockId: 2
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 0
+    gridY: 1
+    lockId: 3
   arrows:
   - colorIndex: 2
     direction: 2
@@ -2031,23 +2031,18 @@ MonoBehaviour:
     segments:
     - {x: 4, y: 5}
   locks:
-  - gridX: 3
-    gridY: 2
-    sizeX: 1
+  - gridX: 2
+    gridY: 1
+    sizeX: 2
     sizeY: 1
-    lockId: 3
+    lockId: 1
   - gridX: 0
     gridY: 3
     sizeX: 1
     sizeY: 1
-    lockId: 2
-  - gridX: 4
-    gridY: 4
-    sizeX: 1
-    sizeY: 1
-    lockId: 1
+    lockId: 3
   - gridX: 2
-    gridY: 1
-    sizeX: 1
+    gridY: 3
+    sizeX: 2
     sizeY: 1
-    lockId: 0
+    lockId: 2

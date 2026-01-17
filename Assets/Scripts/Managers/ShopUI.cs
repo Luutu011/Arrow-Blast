@@ -38,9 +38,9 @@ namespace ArrowBlast.Managers
         private void Awake()
         {
             // Auto-find dependencies
-            shopManager = FindObjectOfType<ShopManager>();
-            coinSystem = FindObjectOfType<CoinSystem>();
-            boosterInventory = FindObjectOfType<BoosterInventory>();
+            shopManager = FindAnyObjectByType<ShopManager>();
+            coinSystem = FindAnyObjectByType<CoinSystem>();
+            boosterInventory = FindAnyObjectByType<BoosterInventory>();
         }
 
         private void OnEnable()
@@ -72,7 +72,8 @@ namespace ArrowBlast.Managers
             if (buyRemoveAdsButton != null)
             {
                 buyRemoveAdsButton.onClick.RemoveAllListeners();
-                buyRemoveAdsButton.onClick.AddListener(() => {
+                buyRemoveAdsButton.onClick.AddListener(() =>
+                {
                     AudioManager.Instance.TriggerHaptic(Solo.MOST_IN_ONE.MOST_HapticFeedback.HapticTypes.SoftImpact);
                     IAPManager.Instance.BuyRemoveAds();
                 });
@@ -81,7 +82,8 @@ namespace ArrowBlast.Managers
             if (buy100CoinsButton != null)
             {
                 buy100CoinsButton.onClick.RemoveAllListeners();
-                buy100CoinsButton.onClick.AddListener(() => {
+                buy100CoinsButton.onClick.AddListener(() =>
+                {
                     AudioManager.Instance.TriggerHaptic(Solo.MOST_IN_ONE.MOST_HapticFeedback.HapticTypes.SoftImpact);
                     IAPManager.Instance.BuyCoins100();
                 });
@@ -90,7 +92,8 @@ namespace ArrowBlast.Managers
             if (buy500CoinsButton != null)
             {
                 buy500CoinsButton.onClick.RemoveAllListeners();
-                buy500CoinsButton.onClick.AddListener(() => {
+                buy500CoinsButton.onClick.AddListener(() =>
+                {
                     AudioManager.Instance.TriggerHaptic(Solo.MOST_IN_ONE.MOST_HapticFeedback.HapticTypes.SoftImpact);
                     IAPManager.Instance.BuyCoins500();
                 });

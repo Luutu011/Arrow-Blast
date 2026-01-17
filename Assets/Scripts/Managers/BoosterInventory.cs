@@ -26,8 +26,16 @@ namespace ArrowBlast.Managers
 
         private void Awake()
         {
-            if (Instance == null) Instance = this;
-            LoadInventory();
+            if (Instance == null)
+            {
+                Instance = this;
+                DontDestroyOnLoad(gameObject);
+                LoadInventory();
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
         }
 
         /// <summary>

@@ -34,8 +34,8 @@ namespace ArrowBlast.UI
 
         private void Start()
         {
-            gameManager = FindObjectOfType<GameManager>();
-            coinSystem = FindObjectOfType<CoinSystem>();
+            gameManager = FindAnyObjectByType<GameManager>();
+            coinSystem = FindAnyObjectByType<CoinSystem>();
 
             if (winDoubleCoinsButton) winDoubleCoinsButton.onClick.AddListener(OnWinDoubleCoinsClicked);
             if (winHomeButton) winHomeButton.onClick.AddListener(OnHomeClicked);

@@ -6,18 +6,7 @@ namespace ArrowBlast.Managers
 {
     public class TutorialManager : MonoBehaviour
     {
-        public static TutorialManager Instance
-        {
-            get
-            {
-                if (_instance == null)
-                {
-                    _instance = FindObjectOfType<TutorialManager>();
-                }
-                return _instance;
-            }
-        }
-        private static TutorialManager _instance;
+        public static TutorialManager Instance { get; private set; }
 
         [Header("Tutorial UI")]
         [SerializeField] private GameObject tutorialPanel;
@@ -33,11 +22,12 @@ namespace ArrowBlast.Managers
 
         private void Awake()
         {
-            if (_instance == null)
+            if (Instance == null)
             {
-                _instance = this;
+                Instance = this;
+                DontDestroyOnLoad(gameObject);
             }
-            else if (_instance != this)
+            else
             {
                 Destroy(gameObject);
                 return;

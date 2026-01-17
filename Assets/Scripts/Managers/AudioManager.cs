@@ -12,42 +12,30 @@ namespace ArrowBlast.Managers
 {
     public class AudioManager : MonoBehaviour
     {
-        private static AudioManager _instance;
-        public static AudioManager Instance
-        {
-            get
-            {
-                if (_instance == null)
-                {
-                    _instance = FindObjectOfType<AudioManager>();
-                    if (_instance == null)
-                    {
-                        GameObject go = new GameObject("AudioManager");
-                        _instance = go.AddComponent<AudioManager>();
-                    }
-                }
-                return _instance;
-            }
-        }
+        public static AudioManager Instance { get; private set; }
+
+        [SerializeField] private Sound[] musicSounds;
+        [SerializeField] private Sound[] sfxSounds;
+        [SerializeField] private AudioSource musicSource;
+        [SerializeField] private AudioSource sfxSource;
 
         private void Awake()
         {
-            if (_instance != null && _instance != this)
+            if (Instance == null)
+            {
+                Instance = this;
+                DontDestroyOnLoad(gameObject);
+            }
+            else
             {
                 Destroy(gameObject);
-                return;
             }
-            _instance = this;
-            DontDestroyOnLoad(gameObject);
         }
-
-        public Sound[] musicSounds, sfxSounds;
-        public AudioSource musicSource, sfxSource;
 
         private void Start()
         {
             UpdateSettings();
-            PlayMusic("Backgound");
+            PlayMusic("Background");
         }
 
         public void UpdateSettings()

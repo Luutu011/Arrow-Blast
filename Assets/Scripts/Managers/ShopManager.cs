@@ -16,8 +16,8 @@ namespace ArrowBlast.Managers
         private void Awake()
         {
             // Auto-find if not assigned
-            if (coinSystem == null) coinSystem = FindObjectOfType<CoinSystem>();
-            if (boosterInventory == null) boosterInventory = FindObjectOfType<BoosterInventory>();
+            if (coinSystem == null) coinSystem = FindAnyObjectByType<CoinSystem>();
+            if (boosterInventory == null) boosterInventory = FindAnyObjectByType<BoosterInventory>();
         }
 
         /// <summary>

@@ -76,9 +76,9 @@ namespace ArrowBlast.Managers
             }
 
             // Auto-find dependencies if not assigned
-            if (levelManager == null) levelManager = FindObjectOfType<LevelManager>();
-            if (coinSystem == null) coinSystem = FindObjectOfType<CoinSystem>();
-            if (boosterInventory == null) boosterInventory = FindObjectOfType<BoosterInventory>();
+            if (levelManager == null) levelManager = FindAnyObjectByType<LevelManager>();
+            if (coinSystem == null) coinSystem = FindAnyObjectByType<CoinSystem>();
+            if (boosterInventory == null) boosterInventory = FindAnyObjectByType<BoosterInventory>();
 
             InitializeSlots();
             if (slotsContainer != null) slotsContainer.gameObject.SetActive(false);

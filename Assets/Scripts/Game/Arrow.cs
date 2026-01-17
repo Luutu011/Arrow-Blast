@@ -191,7 +191,7 @@ namespace ArrowBlast.Game
                 iconObject = new GameObject("Icon");
                 iconObject.transform.SetParent(headObject.transform);
                 iconObject.transform.localPosition = new Vector3(0, 0, -0.6f);
-                iconObject.transform.localScale = Vector3.one * 0.3f;
+                iconObject.transform.localScale = Vector3.one * 0.75f;
                 iconObject.transform.localRotation = Quaternion.identity;
 
                 SpriteRenderer sr = iconObject.AddComponent<SpriteRenderer>();
