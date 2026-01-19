@@ -216,7 +216,7 @@ MonoBehaviour:
     isTwoColor: 0
     gridX: 1
     gridY: 4
-    lockId: -1
+    lockId: 1
   - colorIndex: 5
     secondaryColorIndex: 0
     isTwoColor: 0
@@ -377,722 +377,716 @@ MonoBehaviour:
     secondaryColorIndex: 0
     isTwoColor: 0
     gridX: 2
+    gridY: 2
+    lockId: -1
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 3
+    lockId: -1
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 4
+    lockId: -1
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 5
+    lockId: -1
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 6
+    lockId: -1
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 7
+    lockId: -1
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 8
+    lockId: -1
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 9
+    lockId: -1
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 10
+    lockId: -1
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 11
+    lockId: -1
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 12
+    lockId: -1
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 13
+    lockId: -1
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 14
+    lockId: -1
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 15
+    lockId: -1
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 16
+    lockId: -1
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 17
+    lockId: -1
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 18
+    lockId: -1
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 19
+    lockId: -1
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 20
+    lockId: -1
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 21
+    lockId: -1
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 22
+    lockId: -1
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 23
+    lockId: -1
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 24
+    lockId: -1
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 25
+    lockId: 3
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 26
+    lockId: -1
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 27
+    lockId: -1
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 28
+    lockId: -1
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 29
+    lockId: -1
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 0
+    lockId: -1
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 1
+    lockId: -1
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 2
+    lockId: -1
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 3
+    lockId: -1
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 4
+    lockId: -1
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 5
+    lockId: -1
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 6
+    lockId: -1
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 7
+    lockId: -1
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 8
+    lockId: -1
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 9
+    lockId: -1
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 10
+    lockId: -1
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 11
+    lockId: -1
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 12
+    lockId: -1
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 13
+    lockId: -1
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 14
+    lockId: -1
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 15
+    lockId: -1
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 16
+    lockId: -1
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 17
+    lockId: -1
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 18
+    lockId: -1
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 19
+    lockId: -1
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 20
+    lockId: -1
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 21
+    lockId: -1
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 22
+    lockId: -1
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 23
+    lockId: -1
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 24
+    lockId: -1
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 25
+    lockId: -1
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 26
+    lockId: -1
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 27
+    lockId: -1
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 28
+    lockId: -1
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 3
+    gridY: 29
+    lockId: -1
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 0
+    lockId: -1
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 1
+    lockId: -1
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 2
+    lockId: -1
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 3
+    lockId: -1
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 4
+    lockId: -1
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 5
+    lockId: -1
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 6
+    lockId: -1
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 7
+    lockId: -1
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 8
+    lockId: -1
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 9
+    lockId: -1
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 10
+    lockId: -1
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 11
+    lockId: -1
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 12
+    lockId: -1
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 13
+    lockId: -1
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 14
+    lockId: -1
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 15
+    lockId: -1
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 16
+    lockId: -1
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 17
+    lockId: -1
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 18
+    lockId: -1
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 19
+    lockId: -1
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 20
+    lockId: -1
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 21
+    lockId: -1
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 22
+    lockId: -1
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 23
+    lockId: -1
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 24
+    lockId: -1
+  - colorIndex: 5
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 25
+    lockId: -1
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 26
+    lockId: -1
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 27
+    lockId: -1
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 28
+    lockId: -1
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 4
+    gridY: 29
+    lockId: -1
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 0
+    lockId: -1
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 2
+    lockId: -1
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 3
+    lockId: -1
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 4
+    lockId: -1
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 5
+    lockId: -1
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 6
+    lockId: -1
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 7
+    lockId: -1
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 8
+    lockId: -1
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 9
+    lockId: -1
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 10
+    lockId: -1
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 11
+    lockId: -1
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 12
+    lockId: -1
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 13
+    lockId: -1
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 14
+    lockId: -1
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 15
+    lockId: -1
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 16
+    lockId: -1
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 17
+    lockId: -1
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 18
+    lockId: -1
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 19
+    lockId: -1
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 20
+    lockId: -1
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 21
+    lockId: -1
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 22
+    lockId: -1
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 23
+    lockId: -1
+  - colorIndex: 2
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 24
+    lockId: -1
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 25
+    lockId: -1
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 26
+    lockId: -1
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 27
+    lockId: -1
+  - colorIndex: 3
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 28
+    lockId: -1
+  - colorIndex: 0
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 29
+    lockId: -1
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 6
+    gridY: 0
+    lockId: -1
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 6
     gridY: 1
     lockId: 0
-  - colorIndex: 4
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 2
-    gridY: 2
-    lockId: -1
-  - colorIndex: 4
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 2
-    gridY: 3
-    lockId: -1
-  - colorIndex: 3
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 2
-    gridY: 4
-    lockId: -1
-  - colorIndex: 5
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 2
-    gridY: 5
-    lockId: -1
-  - colorIndex: 5
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 2
-    gridY: 6
-    lockId: -1
-  - colorIndex: 4
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 2
-    gridY: 7
-    lockId: -1
-  - colorIndex: 4
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 2
-    gridY: 8
-    lockId: -1
-  - colorIndex: 4
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 2
-    gridY: 9
-    lockId: -1
-  - colorIndex: 5
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 2
-    gridY: 10
-    lockId: -1
-  - colorIndex: 5
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 2
-    gridY: 11
-    lockId: -1
-  - colorIndex: 5
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 2
-    gridY: 12
-    lockId: -1
-  - colorIndex: 5
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 2
-    gridY: 13
-    lockId: -1
-  - colorIndex: 5
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 2
-    gridY: 14
-    lockId: -1
-  - colorIndex: 5
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 2
-    gridY: 15
-    lockId: -1
-  - colorIndex: 5
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 2
-    gridY: 16
-    lockId: -1
-  - colorIndex: 1
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 2
-    gridY: 17
-    lockId: -1
-  - colorIndex: 1
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 2
-    gridY: 18
-    lockId: -1
-  - colorIndex: 5
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 2
-    gridY: 19
-    lockId: -1
-  - colorIndex: 2
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 2
-    gridY: 20
-    lockId: -1
-  - colorIndex: 5
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 2
-    gridY: 21
-    lockId: -1
-  - colorIndex: 2
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 2
-    gridY: 22
-    lockId: -1
-  - colorIndex: 2
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 2
-    gridY: 23
-    lockId: -1
-  - colorIndex: 2
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 2
-    gridY: 24
-    lockId: -1
-  - colorIndex: 1
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 2
-    gridY: 25
-    lockId: -1
-  - colorIndex: 1
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 2
-    gridY: 26
-    lockId: -1
-  - colorIndex: 0
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 2
-    gridY: 27
-    lockId: -1
-  - colorIndex: 4
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 2
-    gridY: 28
-    lockId: -1
-  - colorIndex: 0
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 2
-    gridY: 29
-    lockId: -1
-  - colorIndex: 1
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 3
-    gridY: 0
-    lockId: -1
-  - colorIndex: 4
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 3
-    gridY: 1
-    lockId: -1
-  - colorIndex: 4
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 3
-    gridY: 2
-    lockId: -1
-  - colorIndex: 1
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 3
-    gridY: 3
-    lockId: -1
-  - colorIndex: 3
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 3
-    gridY: 4
-    lockId: -1
-  - colorIndex: 3
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 3
-    gridY: 5
-    lockId: -1
-  - colorIndex: 5
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 3
-    gridY: 6
-    lockId: -1
-  - colorIndex: 4
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 3
-    gridY: 7
-    lockId: -1
-  - colorIndex: 4
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 3
-    gridY: 8
-    lockId: -1
-  - colorIndex: 4
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 3
-    gridY: 9
-    lockId: -1
-  - colorIndex: 4
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 3
-    gridY: 10
-    lockId: -1
-  - colorIndex: 1
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 3
-    gridY: 11
-    lockId: -1
-  - colorIndex: 1
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 3
-    gridY: 12
-    lockId: -1
-  - colorIndex: 5
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 3
-    gridY: 13
-    lockId: -1
-  - colorIndex: 5
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 3
-    gridY: 14
-    lockId: -1
-  - colorIndex: 5
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 3
-    gridY: 15
-    lockId: -1
-  - colorIndex: 1
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 3
-    gridY: 16
-    lockId: -1
-  - colorIndex: 1
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 3
-    gridY: 17
-    lockId: -1
-  - colorIndex: 1
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 3
-    gridY: 18
-    lockId: -1
-  - colorIndex: 5
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 3
-    gridY: 19
-    lockId: -1
-  - colorIndex: 2
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 3
-    gridY: 20
-    lockId: -1
-  - colorIndex: 5
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 3
-    gridY: 21
-    lockId: -1
-  - colorIndex: 2
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 3
-    gridY: 22
-    lockId: -1
-  - colorIndex: 2
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 3
-    gridY: 23
-    lockId: -1
-  - colorIndex: 2
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 3
-    gridY: 24
-    lockId: -1
-  - colorIndex: 2
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 3
-    gridY: 25
-    lockId: -1
-  - colorIndex: 4
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 3
-    gridY: 26
-    lockId: -1
-  - colorIndex: 4
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 3
-    gridY: 27
-    lockId: -1
-  - colorIndex: 4
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 3
-    gridY: 28
-    lockId: -1
-  - colorIndex: 0
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 3
-    gridY: 29
-    lockId: -1
-  - colorIndex: 1
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 4
-    gridY: 0
-    lockId: -1
-  - colorIndex: 4
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 4
-    gridY: 1
-    lockId: -1
-  - colorIndex: 1
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 4
-    gridY: 2
-    lockId: -1
-  - colorIndex: 1
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 4
-    gridY: 3
-    lockId: -1
-  - colorIndex: 3
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 4
-    gridY: 4
-    lockId: -1
-  - colorIndex: 3
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 4
-    gridY: 5
-    lockId: -1
-  - colorIndex: 3
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 4
-    gridY: 6
-    lockId: -1
-  - colorIndex: 3
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 4
-    gridY: 7
-    lockId: -1
-  - colorIndex: 3
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 4
-    gridY: 8
-    lockId: -1
-  - colorIndex: 0
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 4
-    gridY: 9
-    lockId: -1
-  - colorIndex: 1
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 4
-    gridY: 10
-    lockId: -1
-  - colorIndex: 1
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 4
-    gridY: 11
-    lockId: -1
-  - colorIndex: 1
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 4
-    gridY: 12
-    lockId: -1
-  - colorIndex: 1
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 4
-    gridY: 13
-    lockId: -1
-  - colorIndex: 1
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 4
-    gridY: 14
-    lockId: -1
-  - colorIndex: 1
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 4
-    gridY: 15
-    lockId: -1
-  - colorIndex: 0
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 4
-    gridY: 16
-    lockId: -1
-  - colorIndex: 0
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 4
-    gridY: 17
-    lockId: -1
-  - colorIndex: 2
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 4
-    gridY: 18
-    lockId: -1
-  - colorIndex: 2
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 4
-    gridY: 19
-    lockId: -1
-  - colorIndex: 2
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 4
-    gridY: 20
-    lockId: -1
-  - colorIndex: 2
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 4
-    gridY: 21
-    lockId: -1
-  - colorIndex: 2
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 4
-    gridY: 22
-    lockId: -1
-  - colorIndex: 2
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 4
-    gridY: 23
-    lockId: -1
-  - colorIndex: 2
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 4
-    gridY: 24
-    lockId: -1
-  - colorIndex: 5
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 4
-    gridY: 25
-    lockId: -1
-  - colorIndex: 4
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 4
-    gridY: 26
-    lockId: -1
-  - colorIndex: 3
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 4
-    gridY: 27
-    lockId: -1
-  - colorIndex: 4
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 4
-    gridY: 28
-    lockId: -1
-  - colorIndex: 4
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 4
-    gridY: 29
-    lockId: -1
-  - colorIndex: 1
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 5
-    gridY: 0
-    lockId: -1
-  - colorIndex: 1
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 5
-    gridY: 2
-    lockId: -1
-  - colorIndex: 1
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 5
-    gridY: 3
-    lockId: -1
-  - colorIndex: 1
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 5
-    gridY: 4
-    lockId: -1
-  - colorIndex: 1
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 5
-    gridY: 5
-    lockId: -1
-  - colorIndex: 3
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 5
-    gridY: 6
-    lockId: -1
-  - colorIndex: 0
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 5
-    gridY: 7
-    lockId: -1
-  - colorIndex: 3
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 5
-    gridY: 8
-    lockId: -1
-  - colorIndex: 0
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 5
-    gridY: 9
-    lockId: -1
-  - colorIndex: 1
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 5
-    gridY: 10
-    lockId: -1
-  - colorIndex: 1
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 5
-    gridY: 11
-    lockId: -1
-  - colorIndex: 3
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 5
-    gridY: 12
-    lockId: -1
-  - colorIndex: 1
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 5
-    gridY: 13
-    lockId: -1
-  - colorIndex: 3
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 5
-    gridY: 14
-    lockId: -1
-  - colorIndex: 1
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 5
-    gridY: 15
-    lockId: -1
-  - colorIndex: 0
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 5
-    gridY: 16
-    lockId: -1
-  - colorIndex: 2
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 5
-    gridY: 17
-    lockId: -1
-  - colorIndex: 2
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 5
-    gridY: 18
-    lockId: -1
-  - colorIndex: 2
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 5
-    gridY: 19
-    lockId: -1
-  - colorIndex: 2
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 5
-    gridY: 20
-    lockId: -1
-  - colorIndex: 0
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 5
-    gridY: 21
-    lockId: -1
-  - colorIndex: 2
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 5
-    gridY: 22
-    lockId: -1
-  - colorIndex: 2
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 5
-    gridY: 23
-    lockId: -1
-  - colorIndex: 2
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 5
-    gridY: 24
-    lockId: -1
-  - colorIndex: 0
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 5
-    gridY: 25
-    lockId: -1
-  - colorIndex: 3
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 5
-    gridY: 26
-    lockId: -1
-  - colorIndex: 3
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 5
-    gridY: 27
-    lockId: -1
-  - colorIndex: 3
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 5
-    gridY: 28
-    lockId: -1
-  - colorIndex: 0
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 5
-    gridY: 29
-    lockId: -1
-  - colorIndex: 1
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 6
-    gridY: 0
-    lockId: -1
-  - colorIndex: 1
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 6
-    gridY: 1
-    lockId: -1
   - colorIndex: 1
     secondaryColorIndex: 0
     isTwoColor: 0
@@ -1362,7 +1356,7 @@ MonoBehaviour:
     isTwoColor: 0
     gridX: 7
     gridY: 16
-    lockId: -1
+    lockId: 2
   - colorIndex: 2
     secondaryColorIndex: 0
     isTwoColor: 0
@@ -1801,24 +1795,30 @@ MonoBehaviour:
     gridX: 9
     gridY: 29
     lockId: -1
-  - colorIndex: 1
-    secondaryColorIndex: 0
-    isTwoColor: 0
-    gridX: 5
-    gridY: 1
-    lockId: 1
   - colorIndex: 4
     secondaryColorIndex: 0
     isTwoColor: 0
     gridX: 1
     gridY: 1
-    lockId: 2
+    lockId: -1
+  - colorIndex: 4
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 2
+    gridY: 1
+    lockId: -1
   - colorIndex: 4
     secondaryColorIndex: 0
     isTwoColor: 0
     gridX: 0
     gridY: 1
-    lockId: 3
+    lockId: -1
+  - colorIndex: 1
+    secondaryColorIndex: 0
+    isTwoColor: 0
+    gridX: 5
+    gridY: 1
+    lockId: -1
   arrows:
   - colorIndex: 2
     direction: 2
@@ -1835,7 +1835,7 @@ MonoBehaviour:
     segments:
     - {x: 0, y: 1}
   - colorIndex: 3
-    direction: 0
+    direction: 3
     length: 1
     gridX: 0
     gridY: 2
@@ -1870,7 +1870,7 @@ MonoBehaviour:
     segments:
     - {x: 1, y: 0}
   - colorIndex: 5
-    direction: 0
+    direction: 3
     length: 1
     gridX: 1
     gridY: 1
@@ -1926,7 +1926,7 @@ MonoBehaviour:
     segments:
     - {x: 2, y: 2}
   - colorIndex: 4
-    direction: 1
+    direction: 0
     length: 1
     gridX: 2
     gridY: 3
@@ -1954,14 +1954,14 @@ MonoBehaviour:
     segments:
     - {x: 3, y: 0}
   - colorIndex: 3
-    direction: 0
+    direction: 2
     length: 1
     gridX: 3
     gridY: 1
     segments:
     - {x: 3, y: 1}
   - colorIndex: 5
-    direction: 1
+    direction: 0
     length: 1
     gridX: 3
     gridY: 2
@@ -2031,18 +2031,23 @@ MonoBehaviour:
     segments:
     - {x: 4, y: 5}
   locks:
-  - gridX: 2
-    gridY: 1
-    sizeX: 2
+  - gridX: 0
+    gridY: 5
+    sizeX: 1
+    sizeY: 1
+    lockId: 0
+  - gridX: 3
+    gridY: 4
+    sizeX: 1
     sizeY: 1
     lockId: 1
   - gridX: 0
-    gridY: 3
+    gridY: 1
+    sizeX: 1
+    sizeY: 1
+    lockId: 2
+  - gridX: 4
+    gridY: 2
     sizeX: 1
     sizeY: 1
     lockId: 3
-  - gridX: 2
-    gridY: 3
-    sizeX: 2
-    sizeY: 1
-    lockId: 2
